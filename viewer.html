@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AesthetIQ Premium 3D Viewer</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 20px 0 8px;
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin-bottom: 16px;
+      color: #cfcfcf;
+      font-size: 14px;
+    }
+
+    .viewer-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+    }
+
+    #viewer {
+      display: block;
+      width: 100%;
+      height: 68vh;
+      background: #000;
+    }
+
+    .controls {
+      background: rgba(255,255,255,0.07);
+      padding: 20px;
+    }
+
+    .top-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .top-controls button,
+    .procedure-buttons button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2a2a2a;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .top-controls button:hover,
+    .procedure-buttons button:hover {
+      background: #3a3a3a;
+    }
+
+    .procedure-buttons {
+      margin: 8px 0 18px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .status-row {
+      margin: 8px 0 18px;
+      font-size: 15px;
+    }
+
+    .status-row strong {
+      color: #fff;
+    }
+
+    .slider-block {
+      margin: 18px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      width: 320px;
+      max-width: 80vw;
+    }
+
+    .premium-badge {
+      display: inline-block;
+      margin-top: 4px;
+      margin-bottom: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #6b46c1;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AesthetIQ 3D Simulation</h1>
+  <div class="premium-badge">PREMIUM</div>
+  <div class="subtitle">Interactive 3D preview for aesthetic treatment exploration</div>
+
+  <div class="viewer-wrap">
+    <canvas id="viewer"></canvas>
+  </div>
+
+  <div class="controls">
+
+    <div class="top-controls">
+      <button onclick="resetView()">Reset View</button>
+      <button onclick="goBack()">Back</button>
+    </div>
+
+    <div class="status-row">
+      <strong>Selected Procedure:</strong>
+      <span id="selectedProcedureLabel">Forehead Botox</span>
+    </div>
+
+    <div class="procedure-buttons">
+      <button onclick="setProcedure('forehead')">Forehead Botox</button>
+      <button onclick="setProcedure('glabella')">11 Lines</button>
+      <button onclick="setProcedure('crowsfeet')">Crow's Feet</button>
+      <button onclick="setProcedure('brow')">Brow Lift</button>
+      <button onclick="setProcedure('lip')">Lip Flip</button>
+    </div>
+
+    <div class="slider-block">
+      <label for="intensitySlider">Intensity</label>
+      <input id="intensitySlider" type="range" min="0" max="2" step="0.01" value="1" />
+    </div>
+
+    <div class="slider-block">
+      <label for="recoverySlider">Recovery Progress</label>
+      <input id="recoverySlider" type="range" min="0" max="100" step="1" value="100" />
+    </div>
+
+  </div>
+
+  <script type="module" src="./faceViewer.js"></script>
+</body>
+</html>
