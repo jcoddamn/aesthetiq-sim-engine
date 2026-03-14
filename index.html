@@ -1,213 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AesthetIQ 2D Simulation</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+<title>AesthetIQ 2D Simulation</title>
 
-    h1 {
-      margin: 20px 0 10px;
-      font-size: 36px;
-      font-weight: 700;
-    }
+<style>
+body{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background:#0f172a;
+  color:white;
+  text-align:center;
+  margin:0;
+  padding:0;
+}
 
-    .top-bar {
-      padding: 16px;
-      background: rgba(255,255,255,0.06);
-    }
+h1{
+  margin-top:40px;
+  font-size:36px;
+}
 
-    .procedure-buttons {
-      margin: 12px 0 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      padding: 0 12px;
-    }
+.controls{
+  margin-top:20px;
+}
 
-    .procedure-buttons button,
-    .action-button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      background: #2a2a2a;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-    }
+button{
+  margin:6px;
+  padding:10px 16px;
+  border-radius:8px;
+  border:none;
+  background:#1f2937;
+  color:white;
+  font-size:14px;
+  cursor:pointer;
+}
 
-    .procedure-buttons button:hover,
-    .action-button:hover {
-      background: #3a3a3a;
-    }
+button:hover{
+  background:#374151;
+}
 
-    .camera-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
+.preview-container{
+  margin-top:30px;
+  display:flex;
+  justify-content:center;
+}
 
-    #cameraPreview {
-      width: min(90vw, 640px);
-      border-radius: 12px;
-      background: #000;
-    }
+#previewCanvas{
+  width:640px;
+  height:480px;
+  background:black;
+  border-radius:10px;
+}
 
-    .status {
-      margin: 10px 0 20px;
-      font-size: 15px;
-    }
+#videoElement{
+  display:none;
+}
+</style>
 
-    .results-wrap {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto 40px;
-    }
-
-    .result-card {
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .result-card h3 {
-      margin-top: 0;
-      font-size: 18px;
-    }
-
-    .result-card canvas {
-      width: 100%;
-      height: auto;
-      background: #000;
-      border-radius: 8px;
-    }
-
-    .premium-row {
-      margin: 0 auto 10px;
-      max-width: 1200px;
-      padding: 0 20px;
-    }
-
-    .premium-badge {
-      display: inline-block;
-      margin-left: 8px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #6b46c1;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    #camera {
-      display: none;
-    }
-  </style>
 </head>
+
 <body>
 
-  <h1>AesthetIQ 2D Simulation</h1>
+<h1>AesthetIQ 2D Simulation</h1>
 
-  <div class="top-bar">
-    <div>
-      <strong>Selected Procedure:</strong>
-      <span id="selectedProcedure">underEyeFiller</span>
-    </div>
+<div class="controls">
 
-   <div class="procedure-buttons">
+<div>
+<strong>Selected Procedure:</strong>
+<span id="selectedProcedure">underEyeFiller</span>
+</div>
 
-  <button onclick="setProcedure('underEyeFiller')">
-    Under-Eye Fillers
-  </button>
+<div style="margin-top:10px">
 
-  <button onclick="setProcedure('laserEye')">
-    Laser Resurfacing
-  </button>
-
-  <button onclick="setProcedure('lipFiller')">
-    Lip Fillers
-  </button>
-
-  <button onclick="setProcedure('lipFlip')">
-    Lip Flip
-  </button>
-
-  <button onclick="setProcedure('foreheadBotox')">
-    Forehead Botox
-  </button>
-
-  <button onclick="setProcedure('glabella')">
-    11 Lines
-  </button>
-
-  <button onclick="setProcedure('crowsfeet')">
-    Crow's Feet
-  </button>
-
-  <button onclick="setProcedure('chemicalPeel')">
-    Chemical Peel
-  </button>
+<button data-procedure="underEyeFiller">Under-Eye Fillers</button>
+<button data-procedure="laserResurfacing">Laser Resurfacing</button>
+<button data-procedure="lipFillers">Lip Fillers</button>
+<button data-procedure="lipFlip">Lip Flip</button>
+<button data-procedure="foreheadBotox">Forehead Botox</button>
+<button data-procedure="11Lines">11 Lines</button>
+<button data-procedure="crowsFeet">Crow's Feet</button>
+<button data-procedure="chemicalPeel">Chemical Peel</button>
 
 </div>
-    
-    <button id="simulateButton" class="action-button">Generate Preview</button>
-  </div>
 
-  <!-- Hidden video element used by MediaPipe -->
-  <video id="camera" autoplay playsinline muted></video>
+<div style="margin-top:20px">
+<button id="generatePreview">Generate Preview</button>
+</div>
 
-  <!-- Visible live camera preview -->
-  <div class="camera-wrap">
-    <canvas id="cameraPreview"></canvas>
-  </div>
+</div>
 
-  <div class="status">
-    Align your face in the frame, then tap <strong>Generate Preview</strong>.
-  </div>
+<div class="preview-container">
 
-  <div class="premium-row">
-    <button onclick="open3DViewer()" class="action-button">
-      View In 3D
-    </button>
-    <span class="premium-badge">PREMIUM</span>
-  </div>
+<video
+id="videoElement"
+autoplay
+playsinline
+width="640"
+height="480">
+</video>
 
-  <div class="results-wrap">
-    <div class="result-card">
-      <h3>Mask Preview</h3>
-      <canvas id="maskPreview"></canvas>
-    </div>
+<canvas
+id="previewCanvas"
+width="640"
+height="480">
+</canvas>
 
-    <div class="result-card">
-      <h3>Subtle</h3>
-      <canvas id="subtleResult"></canvas>
-    </div>
+</div>
 
-    <div class="result-card">
-      <h3>Moderate</h3>
-      <canvas id="moderateResult"></canvas>
-    </div>
+<p style="margin-top:10px;color:#9ca3af">
+Align your face in the frame, then tap Generate Preview.
+</p>
 
-    <div class="result-card">
-      <h3>Extreme</h3>
-      <canvas id="extremeResult"></canvas>
-    </div>
-  </div>
 
-  <script type="module" src="./js/appController.js"></script>
+<!-- MEDIAPIPE GLOBAL LIBRARIES -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+
+<!-- MAIN APP -->
+<script type="module" src="./js/appController.js"></script>
+
+
+<script>
+
+let currentProcedure="underEyeFiller"
+
+const procedureButtons=document.querySelectorAll("button[data-procedure]")
+const procedureLabel=document.getElementById("selectedProcedure")
+
+procedureButtons.forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    currentProcedure=btn.dataset.procedure
+    procedureLabel.textContent=currentProcedure
+  })
+})
+
+</script>
 
 </body>
 </html>
