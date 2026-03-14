@@ -2,57 +2,57 @@ export const PROCEDURES = {
   underEyeFiller: {
     label: 'Under-Eye Fillers',
     area: 'under-eyes',
-    viewer3D: 'forehead',
-    effect2D: 'underEyeFiller'
+    color: '#00bcd4',
+    viewer3D: 'forehead'
   },
 
   laserEye: {
     label: 'Laser Resurfacing',
     area: 'under-eyes',
-    viewer3D: 'forehead',
-    effect2D: 'laserEye'
+    color: '#00bcd4',
+    viewer3D: 'crowsfeet'
   },
 
   lipFiller: {
     label: 'Lip Fillers',
     area: 'lips',
-    viewer3D: 'lip',
-    effect2D: 'lipFiller'
+    color: '#c084fc',
+    viewer3D: 'lip'
   },
 
   lipFlip: {
     label: 'Lip Flip',
     area: 'lips',
-    viewer3D: 'lip',
-    effect2D: 'lipFlip'
+    color: '#c084fc',
+    viewer3D: 'lip'
   },
 
   foreheadBotox: {
     label: 'Forehead Botox',
     area: 'forehead',
-    viewer3D: 'forehead',
-    effect2D: 'foreheadBotox'
+    color: '#ff4d6d',
+    viewer3D: 'forehead'
   },
 
   glabella: {
     label: '11 Lines',
     area: 'forehead',
-    viewer3D: 'glabella',
-    effect2D: 'glabella'
+    color: '#f59e0b',
+    viewer3D: 'glabella'
   },
 
   crowsfeet: {
-    label: "Crow's Feet",
+    label: "Crow’s Feet",
     area: 'eyes',
-    viewer3D: 'crowsfeet',
-    effect2D: 'crowsfeet'
+    color: '#22c55e',
+    viewer3D: 'crowsfeet'
   },
 
   chemicalPeel: {
     label: 'Chemical Peel',
     area: 'full-face',
-    viewer3D: 'forehead',
-    effect2D: 'chemicalPeel'
+    color: '#38bdf8',
+    viewer3D: 'forehead'
   }
 };
 
@@ -64,6 +64,6 @@ export function getViewerProcedure(key) {
   return PROCEDURES[key]?.viewer3D || 'forehead';
 }
 
-export function get2DEffectProcedure(key) {
-  return PROCEDURES[key]?.effect2D || key;
+export function getProcedureColor(key) {
+  return PROCEDURES[key]?.color || '#00bcd4';
 }
