@@ -1,5 +1,5 @@
 import { FaceMesh } from "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js";
-import { Camera } from "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
+import Camera from "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 
 export function startFaceTracking(videoElement, onLandmarks) {
 
