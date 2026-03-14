@@ -1,164 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AesthetIQ 2D Simulation</title>
+import { startFaceTracking } from './mediapipeRunner.js';
+import {
+  runProcedureSimulationFromImage,
+  renderResultsToTargets
+} from './simulationPipeline.js';
 
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+let latestLandmarks = null;
+let currentProcedure = 'underEyeFiller';
 
-    h1 {
-      margin: 20px 0 10px;
-      font-size: 36px;
-      font-weight: 700;
-    }
+const video = document.getElementById('camera');
+const cameraPreview = document.getElementById('cameraPreview');
 
-    .top-bar {
-      padding: 16px;
-      background: rgba(255,255,255,0.06);
-    }
+const maskCanvas = document.getElementById('maskPreview');
+const subtleCanvas = document.getElementById('subtleResult');
+const moderateCanvas = document.getElementById('moderateResult');
+const extremeCanvas = document.getElementById('extremeResult');
 
-    .procedure-buttons {
-      margin: 12px 0 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      padding: 0 12px;
-    }
+const procedureLabel = document.getElementById('selectedProcedure');
+const simulateButton = document.getElementById('simulateButton');
 
-    .procedure-buttons button,
-    .action-button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      background: #2a2a2a;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-    }
+initApp();
 
-    .procedure-buttons button:hover,
-    .action-button:hover {
-      background: #3a3a3a;
-    }
+function initApp() {
+  if (!video) {
+    console.error('Camera video element not found');
+    return;
+  }
 
-    .camera-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
+  startFaceTracking(video, (landmarks) => {
+    latestLandmarks = landmarks;
+    drawCameraPreview();
+  });
 
-    #cameraPreview {
-      width: min(90vw, 640px);
-      border-radius: 12px;
-      background: #000;
-    }
+  if (simulateButton) {
+    simulateButton.addEventListener('click', () => {
+      runCurrentSimulation();
+    });
+  }
 
-    .status {
-      margin: 10px 0 20px;
-      font-size: 15px;
-    }
+  updateProcedureLabel();
+  startPreviewLoop();
+}
 
-    .results-wrap {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto 40px;
-    }
+function startPreviewLoop() {
+  function loop() {
+    drawCameraPreview();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
 
-    .result-card {
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 12px;
-    }
+function drawCameraPreview() {
+  if (!video || !cameraPreview) return;
+  if (!video.videoWidth || !video.videoHeight) return;
 
-    .result-card h3 {
-      margin-top: 0;
-      font-size: 18px;
-    }
+  cameraPreview.width = video.videoWidth;
+  cameraPreview.height = video.videoHeight;
 
-    .result-card canvas {
-      width: 100%;
-      height: auto;
-      background: #000;
-      border-radius: 8px;
-    }
+  const ctx = cameraPreview.getContext('2d');
+  ctx.clearRect(0, 0, cameraPreview.width, cameraPreview.height);
+  ctx.drawImage(video, 0, 0, cameraPreview.width, cameraPreview.height);
+}
 
-    #camera {
-      display: none;
-    }
-  </style>
-</head>
-<body>
+export function setProcedure(procedureName) {
+  currentProcedure = procedureName;
+  updateProcedureLabel();
+  console.log('Selected procedure:', currentProcedure);
+}
 
-  <h1>AesthetIQ 2D Simulation</h1>
+function updateProcedureLabel() {
+  if (procedureLabel) {
+    procedureLabel.textContent = currentProcedure;
+  }
+}
 
-  <div class="top-bar">
-    <div>
-      <strong>Selected Procedure:</strong>
-      <span id="selectedProcedure">underEyeFiller</span>
-    </div>
+export function runCurrentSimulation() {
+  if (!latestLandmarks) {
+    console.warn('No landmarks available yet');
+    return;
+  }
 
-    <div class="procedure-buttons">
-      <button onclick="setProcedure('underEyeFiller')">Under-Eye Fillers</button>
-      <button onclick="setProcedure('laserEye')">Laser Resurfacing</button>
-      <button onclick="setProcedure('lipFiller')">Lip Fillers</button>
-      <button onclick="setProcedure('lipFlip')">Lip Flip</button>
-      <button onclick="setProcedure('foreheadBotox')">Forehead Botox</button>
-      <button onclick="setProcedure('glabella')">11 Lines</button>
-      <button onclick="setProcedure('crowsfeet')">Crow's Feet</button>
-      <button onclick="setProcedure('chemicalPeel')">Chemical Peel</button>
-    </div>
+  try {
+    const results = runProcedureSimulationFromImage({
+      procedure: currentProcedure,
+      landmarks: latestLandmarks,
+      imageSource: video,
+      blurPx: 18
+    });
 
-    <button id="simulateButton" class="action-button">Generate Preview</button>
-  </div>
+    renderResultsToTargets(results, {
+      maskCanvas,
+      subtleCanvas,
+      moderateCanvas,
+      extremeCanvas
+    });
 
-  <!-- Hidden video element used by MediaPipe -->
-  <video id="camera" autoplay playsinline muted></video>
+    console.log('Simulation complete for:', currentProcedure);
+  } catch (error) {
+    console.error('Simulation failed:', error);
+  }
+}
 
-  <!-- Visible live camera preview -->
-  <div class="camera-wrap">
-    <canvas id="cameraPreview"></canvas>
-  </div>
-
-  <div class="status">
-    Align your face in the frame, then tap <strong>Generate Preview</strong>.
-  </div>
-
-  <div class="results-wrap">
-    <div class="result-card">
-      <h3>Mask Preview</h3>
-      <canvas id="maskPreview"></canvas>
-    </div>
-
-    <div class="result-card">
-      <h3>Subtle</h3>
-      <canvas id="subtleResult"></canvas>
-    </div>
-
-    <div class="result-card">
-      <h3>Moderate</h3>
-      <canvas id="moderateResult"></canvas>
-    </div>
-
-    <div class="result-card">
-      <h3>Extreme</h3>
-      <canvas id="extremeResult"></canvas>
-    </div>
-  </div>
-
-  <script type="module" src="./js/appController.js"></script>
-
-</body>
-</html>
+window.setProcedure = setProcedure;
+window.runCurrentSimulation = runCurrentSimulation;
