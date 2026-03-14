@@ -36,7 +36,7 @@ function init() {
   camera.position.set(0, 0, 2);
 
   renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
+    canvas,
     antialias: true
   });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -69,6 +69,7 @@ function init() {
 
   applyProcedureFromURL();
   updateProcedureLabel();
+  updateActiveProcedureButtons();
 }
 
 function onWindowResize() {
@@ -82,36 +83,17 @@ function loadModel() {
 
   loader.load(
     './models/female_head_2.glb',
-
-    function (gltf) {
+    (gltf) => {
       model = gltf.scene;
-
       model.position.set(0, -0.3, 0);
       model.scale.set(1.4, 1.4, 1.4);
 
       scene.add(model);
-
-      console.log('Model loaded');
-
-      model.traverse((child) => {
-        if (child.isMesh) {
-          console.log('Mesh:', child.name);
-
-          if (child.morphTargetDictionary) {
-            console.log('Morph targets:', child.morphTargetDictionary);
-          } else {
-            console.log('No morph targets on this mesh');
-          }
-        }
-      });
-
       onIntensityChange();
       onRecoveryChange();
     },
-
     undefined,
-
-    function (error) {
+    (error) => {
       console.error('Model failed to load', error);
     }
   );
@@ -131,18 +113,12 @@ function applyProcedureFromURL() {
 
 function getProcedureLabel(procedure) {
   switch (procedure) {
-    case 'forehead':
-      return 'Forehead Botox';
-    case 'glabella':
-      return '11 Lines';
-    case 'crowsfeet':
-      return "Crow's Feet";
-    case 'brow':
-      return 'Brow Lift';
-    case 'lip':
-      return 'Lip Flip';
-    default:
-      return 'Forehead Botox';
+    case 'forehead': return 'Forehead Botox';
+    case 'glabella': return '11 Lines';
+    case 'crowsfeet': return "Crow’s Feet";
+    case 'brow': return 'Brow Lift';
+    case 'lip': return 'Lip Flip';
+    default: return 'Forehead Botox';
   }
 }
 
@@ -152,9 +128,16 @@ function updateProcedureLabel() {
   }
 }
 
+function updateActiveProcedureButtons() {
+  document.querySelectorAll('.viewer-procedure-button').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.procedure === currentProcedure);
+  });
+}
+
 function setProcedure(name) {
   currentProcedure = name;
   updateProcedureLabel();
+  updateActiveProcedureButtons();
   onIntensityChange();
 }
 
