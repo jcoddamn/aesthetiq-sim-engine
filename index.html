@@ -85,7 +85,7 @@ button:hover{
 </div>
 
 <div style="margin-top:20px">
-<button id="generatePreview">Generate Preview</button>
+<button id="simulateButton">Generate Preview</button>
 </div>
 
 </div>
@@ -93,15 +93,16 @@ button:hover{
 <div class="preview-container">
 
 <video
-id="videoElement"
+id="camera"
 autoplay
 playsinline
+muted  
 width="640"
 height="480">
 </video>
 
 <canvas
-id="previewCanvas"
+id="cameraPreview"
 width="640"
 height="480">
 </canvas>
