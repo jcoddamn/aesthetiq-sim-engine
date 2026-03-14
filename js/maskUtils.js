@@ -12,6 +12,22 @@ export function drawPolygon(ctx, points) {
   ctx.fill();
 }
 
+export function drawPolygonOutline(ctx, points, color = '#00bcd4', lineWidth = 2) {
+  if (!points || !points.length) return;
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+
+  for (let i = 1; i < points.length; i++) {
+    ctx.lineTo(points[i].x, points[i].y);
+  }
+
+  ctx.closePath();
+  ctx.stroke();
+}
+
 export function createFeatheredMask(width, height, polygons, blurPx = 16) {
   const canvas = document.createElement('canvas');
   canvas.width = width;
