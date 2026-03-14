@@ -1,82 +1,164 @@
-import { startFaceTracking } from './mediapipeRunner.js';
-import {
-  runProcedureSimulationFromImage,
-  renderResultsToTargets
-} from './simulationPipeline.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AesthetIQ 2D Simulation</title>
 
-let latestLandmarks = null;
-let currentProcedure = 'underEyeFiller';
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-const video = document.getElementById('camera');
+    h1 {
+      margin: 20px 0 10px;
+      font-size: 36px;
+      font-weight: 700;
+    }
 
-const maskCanvas = document.getElementById('maskPreview');
-const subtleCanvas = document.getElementById('subtleResult');
-const moderateCanvas = document.getElementById('moderateResult');
-const extremeCanvas = document.getElementById('extremeResult');
+    .top-bar {
+      padding: 16px;
+      background: rgba(255,255,255,0.06);
+    }
 
-const procedureLabel = document.getElementById('selectedProcedure');
-const simulateButton = document.getElementById('simulateButton');
+    .procedure-buttons {
+      margin: 12px 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 12px;
+    }
 
-initApp();
+    .procedure-buttons button,
+    .action-button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2a2a2a;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
 
-function initApp() {
-  if (!video) {
-    console.error('Camera video element not found');
-    return;
-  }
+    .procedure-buttons button:hover,
+    .action-button:hover {
+      background: #3a3a3a;
+    }
 
-  startFaceTracking(video, (landmarks) => {
-    latestLandmarks = landmarks;
-    console.log('Landmarks updated');
-  });
+    .camera-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
 
-  if (simulateButton) {
-    simulateButton.addEventListener('click', () => {
-      runCurrentSimulation();
-    });
-  }
+    #cameraPreview {
+      width: min(90vw, 640px);
+      border-radius: 12px;
+      background: #000;
+    }
 
-  updateProcedureLabel();
-}
+    .status {
+      margin: 10px 0 20px;
+      font-size: 15px;
+    }
 
-export function setProcedure(procedureName) {
-  currentProcedure = procedureName;
-  updateProcedureLabel();
-  console.log('Selected procedure:', currentProcedure);
-}
+    .results-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto 40px;
+    }
 
-function updateProcedureLabel() {
-  if (procedureLabel) {
-    procedureLabel.textContent = currentProcedure;
-  }
-}
+    .result-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 12px;
+    }
 
-export function runCurrentSimulation() {
-  if (!latestLandmarks) {
-    console.warn('No landmarks available yet');
-    return;
-  }
+    .result-card h3 {
+      margin-top: 0;
+      font-size: 18px;
+    }
 
-  try {
-    const results = runProcedureSimulationFromImage({
-      procedure: currentProcedure,
-      landmarks: latestLandmarks,
-      imageSource: video,
-      blurPx: 18
-    });
+    .result-card canvas {
+      width: 100%;
+      height: auto;
+      background: #000;
+      border-radius: 8px;
+    }
 
-    renderResultsToTargets(results, {
-      maskCanvas,
-      subtleCanvas,
-      moderateCanvas,
-      extremeCanvas
-    });
+    #camera {
+      display: none;
+    }
+  </style>
+</head>
+<body>
 
-    console.log('Simulation complete for:', currentProcedure);
-  } catch (error) {
-    console.error('Simulation failed:', error);
-  }
-}
+  <h1>AesthetIQ 2D Simulation</h1>
 
-window.setProcedure = setProcedure;
-window.runCurrentSimulation = runCurrentSimulation;
+  <div class="top-bar">
+    <div>
+      <strong>Selected Procedure:</strong>
+      <span id="selectedProcedure">underEyeFiller</span>
+    </div>
+
+    <div class="procedure-buttons">
+      <button onclick="setProcedure('underEyeFiller')">Under-Eye Fillers</button>
+      <button onclick="setProcedure('laserEye')">Laser Resurfacing</button>
+      <button onclick="setProcedure('lipFiller')">Lip Fillers</button>
+      <button onclick="setProcedure('lipFlip')">Lip Flip</button>
+      <button onclick="setProcedure('foreheadBotox')">Forehead Botox</button>
+      <button onclick="setProcedure('glabella')">11 Lines</button>
+      <button onclick="setProcedure('crowsfeet')">Crow's Feet</button>
+      <button onclick="setProcedure('chemicalPeel')">Chemical Peel</button>
+    </div>
+
+    <button id="simulateButton" class="action-button">Generate Preview</button>
+  </div>
+
+  <!-- Hidden video element used by MediaPipe -->
+  <video id="camera" autoplay playsinline muted></video>
+
+  <!-- Visible live camera preview -->
+  <div class="camera-wrap">
+    <canvas id="cameraPreview"></canvas>
+  </div>
+
+  <div class="status">
+    Align your face in the frame, then tap <strong>Generate Preview</strong>.
+  </div>
+
+  <div class="results-wrap">
+    <div class="result-card">
+      <h3>Mask Preview</h3>
+      <canvas id="maskPreview"></canvas>
+    </div>
+
+    <div class="result-card">
+      <h3>Subtle</h3>
+      <canvas id="subtleResult"></canvas>
+    </div>
+
+    <div class="result-card">
+      <h3>Moderate</h3>
+      <canvas id="moderateResult"></canvas>
+    </div>
+
+    <div class="result-card">
+      <h3>Extreme</h3>
+      <canvas id="extremeResult"></canvas>
+    </div>
+  </div>
+
+  <script type="module" src="./js/appController.js"></script>
+
+</body>
+</html>
