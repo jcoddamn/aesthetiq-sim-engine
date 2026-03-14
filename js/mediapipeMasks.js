@@ -44,7 +44,6 @@ export function buildExpandedRibbon(indices, landmarks, width, height, drop = 18
 export function buildForeheadBand(landmarks, width, height, rise = 55) {
   const left = pointsFromIndices(REGION_POINTS.leftBrow, landmarks, width, height);
   const right = pointsFromIndices(REGION_POINTS.rightBrow, landmarks, width, height);
-
   const brow = [...left, ...right];
 
   const upper = brow.map((p) => ({
@@ -55,40 +54,26 @@ export function buildForeheadBand(landmarks, width, height, rise = 55) {
   return [...brow, ...upper];
 }
 
-export function buildGlabellaMask(landmarks, width, height, expandX = 10, expandY = 14) {
+export function buildGlabellaMask(landmarks, width, height, expand = 10) {
   const pts = pointsFromIndices(REGION_POINTS.glabella, landmarks, width, height);
-
   const center = getPolygonCenter(pts);
 
-  return pts.map((p) => {
-    const dx = p.x - center.x;
-    const dy = p.y - center.y;
-
-    return {
-      x: p.x + Math.sign(dx) * expandX * 0.25,
-      y: p.y + Math.sign(dy) * expandY * 0.25
-    };
-  });
+  return pts.map((p) => ({
+    x: p.x + Math.sign(p.x - center.x) * expand * 0.25,
+    y: p.y + Math.sign(p.y - center.y) * expand * 0.25
+  }));
 }
 
-export function buildCrowsFeetMask(indices, landmarks, width, height, outward = 18, downward = 10) {
+export function buildCrowsFeetMask(indices, landmarks, width, height, xShift = 12, yShift = 8) {
   const pts = pointsFromIndices(indices, landmarks, width, height);
-
-  const center = getPolygonCenter(pts);
-
-  return pts.map((p) => {
-    const horizontalDirection = p.x < center.x ? -1 : 1;
-
-    return {
-      x: p.x + horizontalDirection * outward,
-      y: p.y + downward
-    };
-  });
+  return pts.map((p) => ({
+    x: p.x + xShift,
+    y: p.y + yShift
+  }));
 }
 
 export function buildUpperLipMask(landmarks, width, height, lift = 6) {
   const pts = pointsFromIndices(REGION_POINTS.lipsOuter, landmarks, width, height);
-
   const upperHalf = pts.slice(0, 7);
   const lowerEdge = upperHalf.map((p) => ({
     x: p.x,
@@ -99,8 +84,6 @@ export function buildUpperLipMask(landmarks, width, height, lift = 6) {
 }
 
 export function getPolygonCenter(points) {
-  if (!points.length) return { x: 0, y: 0 };
-
   let x = 0;
   let y = 0;
 
@@ -118,52 +101,39 @@ export function getPolygonCenter(points) {
 export function getProcedureMask(procedure, landmarks, width, height) {
   switch (procedure) {
     case 'underEyeFiller':
-    case 'under-eye-fillers':
     case 'laserEye':
-    case 'laser-resurfacing-under-eyes':
       return [
         buildExpandedRibbon(REGION_POINTS.leftUnderEye, landmarks, width, height, 18),
         buildExpandedRibbon(REGION_POINTS.rightUnderEye, landmarks, width, height, 18)
       ];
 
     case 'lipFiller':
-    case 'lip-fillers':
       return [
         pointsFromIndices(REGION_POINTS.lipsOuter, landmarks, width, height)
       ];
 
-    case 'lipLift':
-    case 'lip-flip':
     case 'lipFlip':
       return [
         buildUpperLipMask(landmarks, width, height, 6)
       ];
 
     case 'foreheadBotox':
-    case 'forehead-neuromodulator':
-    case 'forehead':
       return [
         buildForeheadBand(landmarks, width, height, 55)
       ];
 
     case 'glabella':
-    case '11-lines':
-    case 'glabellaBotox':
       return [
-        buildGlabellaMask(landmarks, width, height, 10, 14)
+        buildGlabellaMask(landmarks, width, height, 10)
       ];
 
     case 'crowsfeet':
-    case 'crows-feet':
-    case 'crowsFeetBotox':
       return [
         buildCrowsFeetMask(REGION_POINTS.leftCrowsFeet, landmarks, width, height, -10, 8),
         buildCrowsFeetMask(REGION_POINTS.rightCrowsFeet, landmarks, width, height, 10, 8)
       ];
 
     case 'chemicalPeel':
-    case 'chemical-peel':
-    case 'laserResurfacingFullFace':
       return [
         pointsFromIndices(REGION_POINTS.faceOval, landmarks, width, height)
       ];
