@@ -3,6 +3,10 @@ import {
   runProcedureSimulationFromImage,
   renderResultsToTargets
 } from './simulationPipeline.js';
+import {
+  getProcedureLabel,
+  getViewerProcedure
+} from './procedureMap.js';
 
 let latestLandmarks = null;
 let currentProcedure = 'underEyeFiller';
@@ -46,6 +50,7 @@ function startPreviewLoop() {
     drawCameraPreview();
     requestAnimationFrame(loop);
   }
+
   loop();
 }
 
@@ -69,23 +74,8 @@ export function setProcedure(procedureName) {
 
 function updateProcedureLabel() {
   if (procedureLabel) {
-    procedureLabel.textContent = formatProcedureLabel(currentProcedure);
+    procedureLabel.textContent = getProcedureLabel(currentProcedure);
   }
-}
-
-function formatProcedureLabel(procedure) {
-  const labels = {
-    underEyeFiller: 'Under-Eye Fillers',
-    laserEye: 'Laser Resurfacing',
-    lipFiller: 'Lip Fillers',
-    lipFlip: 'Lip Flip',
-    foreheadBotox: 'Forehead Botox',
-    glabella: '11 Lines',
-    crowsfeet: "Crow's Feet",
-    chemicalPeel: 'Chemical Peel'
-  };
-
-  return labels[procedure] || procedure;
 }
 
 export function runCurrentSimulation() {
@@ -116,19 +106,7 @@ export function runCurrentSimulation() {
 }
 
 export function open3DViewer() {
-  const procedureMap = {
-    underEyeFiller: 'forehead',
-    laserEye: 'forehead',
-    lipFiller: 'lip',
-    lipFlip: 'lip',
-    foreheadBotox: 'forehead',
-    glabella: 'glabella',
-    crowsfeet: 'crowsfeet',
-    chemicalPeel: 'forehead'
-  };
-
-  const mappedProcedure = procedureMap[currentProcedure] || 'forehead';
-
+  const mappedProcedure = getViewerProcedure(currentProcedure);
   const url = `viewer.html?procedure=${mappedProcedure}`;
   window.location.href = url;
 }
