@@ -1,160 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AesthetIQ 2D Simulation</title>
 
-<title>AesthetIQ 2D Simulation</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:rgba(255,255,255,0.07);
+      --panel-2:rgba(255,255,255,0.05);
+      --text:#ffffff;
+      --muted:#a5b4fc;
+      --border:rgba(255,255,255,0.08);
+      --btn:#1f2937;
+      --btn-hover:#374151;
+      --accent:#6b46c1;
+    }
 
-<style>
-body{
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background:#0f172a;
-  color:white;
-  text-align:center;
-  margin:0;
-  padding:0;
-}
+    *{
+      box-sizing:border-box;
+    }
 
-h1{
-  margin-top:40px;
-  font-size:36px;
-}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      text-align:center;
+    }
 
-.controls{
-  margin-top:20px;
-}
+    .page{
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px 14px 40px;
+    }
 
-button{
-  margin:6px;
-  padding:10px 16px;
-  border-radius:8px;
-  border:none;
-  background:#1f2937;
-  color:white;
-  font-size:14px;
-  cursor:pointer;
-}
+    h1{
+      margin:8px 0 6px;
+      font-size:clamp(28px,4vw,38px);
+      line-height:1.1;
+    }
 
-#camera{
-  display:none !important;
-}
+    .subtitle{
+      margin:0 0 18px;
+      color:#cbd5e1;
+      font-size:14px;
+    }
 
-.preview-container{
-  position:relative
-  width:640px;
-  margin:autto;
-}
+    .status-bar{
+      margin:0 auto 18px;
+      max-width:860px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px 16px;
+    }
 
-#cameraPreview{
-  position:relative;
-  width:640px;
-  height:480px;
-}
-  
-button:hover{
-  background:#374151;
-}
+    .status-row{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px 18px;
+      font-size:14px;
+      color:#e5e7eb;
+    }
 
-.preview-container{
-  margin-top:30px;
-  display:flex;
-  justify-content:center;
-}
+    .status-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:var(--panel-2);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:8px 12px;
+    }
 
-#previewCanvas{
-  width:640px;
-  height:480px;
-  background:black;
-  border-radius:10px;
-}
+    .controls{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px 14px 16px;
+      margin:0 auto 18px;
+      max-width:980px;
+    }
 
-#videoElement{
-  display:none;
-}
-</style>
+    .procedure-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
+      margin:0 0 16px;
+    }
 
+    button{
+      margin:0;
+      padding:10px 14px;
+      border-radius:10px;
+      border:none;
+      background:var(--btn);
+      color:white;
+      font-size:14px;
+      cursor:pointer;
+      transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover{
+      background:var(--btn-hover);
+      transform:translateY(-1px);
+    }
+
+    button.active{
+      background:var(--accent);
+      box-shadow:0 0 0 2px rgba(255,255,255,0.12) inset;
+    }
+
+    .action-row{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .premium-badge{
+      display:inline-block;
+      margin-left:8px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:var(--accent);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:0.3px;
+    }
+
+    .camera-wrap{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin:0 auto 18px;
+    }
+
+    #camera{
+      display:none !important;
+    }
+
+    #cameraPreview{
+      width:min(92vw,640px);
+      height:auto;
+      aspect-ratio:4/3;
+      background:#000;
+      border-radius:16px;
+      border:1px solid var(--border);
+      display:block;
+      margin:0 auto;
+    }
+
+    .note{
+      margin:0 0 18px;
+      color:#cbd5e1;
+      font-size:14px;
+    }
+
+    .results-wrap{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+      margin-top:14px;
+    }
+
+    .result-card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .result-card h3{
+      margin:0 0 10px;
+      font-size:18px;
+    }
+
+    .result-card canvas{
+      width:100%;
+      height:auto;
+      aspect-ratio:4/3;
+      background:#000;
+      border-radius:12px;
+      border:1px solid var(--border);
+      display:block;
+    }
+
+    .footer-note{
+      max-width:920px;
+      margin:18px auto 0;
+      color:#cbd5e1;
+      font-size:12px;
+      line-height:1.5;
+      opacity:0.9;
+    }
+
+    .toggle-row{
+      display:flex;
+      justify-content:center;
+      gap:18px;
+      margin-top:12px;
+      flex-wrap:wrap;
+      font-size:14px;
+      color:#e5e7eb;
+    }
+
+    .toggle-row label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+    }
+
+    @media (max-width: 640px){
+      .controls{
+        padding:16px 10px 14px;
+      }
+
+      button{
+        font-size:13px;
+        padding:10px 12px;
+      }
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
 </head>
-
 <body>
+  <div class="page">
+    <h1>AesthetIQ 2D Simulation</h1>
+    <p class="subtitle">Live facial landmark tracking with procedure-specific 2D previews</p>
 
-<h1>AesthetIQ 2D Simulation</h1>
+    <div class="status-bar">
+      <div class="status-row">
+        <div class="status-chip">
+          <strong>Selected Procedure:</strong>
+          <span id="selectedProcedure">Under-Eye Fillers</span>
+        </div>
 
-<div class="controls">
+        <div class="status-chip">
+          <strong>Status:</strong>
+          <span id="trackingStatus">Starting camera…</span>
+        </div>
+      </div>
+    </div>
 
-<div>
-<strong>Selected Procedure:</strong>
-<span id="selectedProcedure">underEyeFiller</span>
-</div>
+    <div class="controls">
+      <div class="procedure-buttons">
+        <button class="procedure-button active" data-procedure="underEyeFiller">Under-Eye Fillers</button>
+        <button class="procedure-button" data-procedure="laserEye">Laser Resurfacing</button>
+        <button class="procedure-button" data-procedure="lipFiller">Lip Fillers</button>
+        <button class="procedure-button" data-procedure="lipFlip">Lip Flip</button>
+        <button class="procedure-button" data-procedure="foreheadBotox">Forehead Botox</button>
+        <button class="procedure-button" data-procedure="glabella">11 Lines</button>
+        <button class="procedure-button" data-procedure="crowsfeet">Crow’s Feet</button>
+        <button class="procedure-button" data-procedure="chemicalPeel">Chemical Peel</button>
+      </div>
 
-<div style="margin-top:10px">
+      <div class="action-row">
+        <button id="simulateButton">Generate Preview</button>
+        <button id="retakeButton">Reset Preview</button>
+        <button onclick="open3DViewer()">View In 3D</button>
+        <span class="premium-badge">PREMIUM</span>
+      </div>
 
-<button data-procedure="underEyeFiller">Under-Eye Fillers</button>
-<button data-procedure="laserResurfacing">Laser Resurfacing</button>
-<button data-procedure="lipFillers">Lip Fillers</button>
-<button data-procedure="lipFlip">Lip Flip</button>
-<button data-procedure="foreheadBotox">Forehead Botox</button>
-<button data-procedure="11Lines">11 Lines</button>
-<button data-procedure="crowsFeet">Crow's Feet</button>
-<button data-procedure="chemicalPeel">Chemical Peel</button>
+      <div class="toggle-row">
+        <label>
+          <input type="checkbox" id="showLandmarksToggle" checked />
+          Show landmarks
+        </label>
+        <label>
+          <input type="checkbox" id="showRegionsToggle" checked />
+          Show selected region
+        </label>
+      </div>
+    </div>
 
-</div>
+    <video id="camera" autoplay playsinline muted width="640" height="480"></video>
 
-<div style="margin-top:20px">
-<button id="simulateButton">Generate Preview</button>
-</div>
+    <div class="camera-wrap">
+      <canvas id="cameraPreview" width="640" height="480"></canvas>
+    </div>
 
-</div>
+    <p class="note">Use a neutral expression, look straight ahead, and keep your face centered in good lighting.</p>
 
-<div class="preview-container">
+    <div class="results-wrap">
+      <div class="result-card">
+        <h3>Mask Preview</h3>
+        <canvas id="maskPreview" width="640" height="480"></canvas>
+      </div>
 
-<video
-id="camera"
-autoplay
-playsinline
-muted  
-width="640"
-height="480">
-style="display:none;">  
-</video>
+      <div class="result-card">
+        <h3>Subtle</h3>
+        <canvas id="subtleResult" width="640" height="480"></canvas>
+      </div>
 
-<canvas
-id="cameraPreview"
-width="640"
-height="480">
-</canvas>
+      <div class="result-card">
+        <h3>Moderate</h3>
+        <canvas id="moderateResult" width="640" height="480"></canvas>
+      </div>
 
-</div>
+      <div class="result-card">
+        <h3>Extreme</h3>
+        <canvas id="extremeResult" width="640" height="480"></canvas>
+      </div>
+    </div>
 
-<p style="margin-top:10px;color:#9ca3af">
-Align your face in the frame, then tap Generate Preview.
-</p>
+    <p class="footer-note">
+      Simulation is for visualization only and is not a guarantee of clinical outcome. Always consult a qualified provider.
+    </p>
+  </div>
 
-
-<!-- MEDIAPIPE GLOBAL LIBRARIES -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-
-
-<!-- MAIN APP -->
-<script type="module" src="./js/appController.js"></script>
-
-
-<script>
-
-let currentProcedure="underEyeFiller"
-
-const procedureButtons=document.querySelectorAll("button[data-procedure]")
-const procedureLabel=document.getElementById("selectedProcedure")
-
-procedureButtons.forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    currentProcedure=btn.dataset.procedure
-    procedureLabel.textContent=currentProcedure
-  })
-})
-
-</script>
-
+  <script type="module" src="./js/appController.js"></script>
 </body>
 </html>
