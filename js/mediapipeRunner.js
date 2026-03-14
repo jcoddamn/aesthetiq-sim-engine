@@ -1,22 +1,9 @@
 export function startFaceTracking(videoElement, onLandmarks) {
-  if (!videoElement) {
-    console.error('startFaceTracking: videoElement not found');
-    return;
-  }
 
-  if (typeof FaceMesh === 'undefined') {
-    console.error('FaceMesh is not loaded. Check your script tags in index.html');
-    return;
-  }
-
-  if (typeof Camera === 'undefined') {
-    console.error('Camera is not loaded. Check your script tags in index.html');
-    return;
-  }
-
-  const faceMesh = new FaceMesh({
-    locateFile: (file) =>
-      `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+  const faceMesh = new window.FaceMesh({
+    locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+    }
   });
 
   faceMesh.setOptions({
@@ -27,22 +14,14 @@ export function startFaceTracking(videoElement, onLandmarks) {
   });
 
   faceMesh.onResults((results) => {
-    if (
-      results.multiFaceLandmarks &&
-      results.multiFaceLandmarks.length > 0 &&
-      typeof onLandmarks === 'function'
-    ) {
-      onLandmarks(results.multiFaceLandmarks[0], results);
+    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+      onLandmarks(results.multiFaceLandmarks[0]);
     }
   });
 
-  const camera = new Camera(videoElement, {
+  const camera = new window.Camera(videoElement, {
     onFrame: async () => {
-      try {
-        await faceMesh.send({ image: videoElement });
-      } catch (error) {
-        console.error('FaceMesh processing failed:', error);
-      }
+      await faceMesh.send({ image: videoElement });
     },
     width: 640,
     height: 480
