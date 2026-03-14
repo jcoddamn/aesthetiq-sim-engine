@@ -95,6 +95,23 @@
       border-radius: 8px;
     }
 
+    .premium-row {
+      margin: 0 auto 10px;
+      max-width: 1200px;
+      padding: 0 20px;
+    }
+
+    .premium-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #6b46c1;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
     #camera {
       display: none;
     }
@@ -134,6 +151,13 @@
 
   <div class="status">
     Align your face in the frame, then tap <strong>Generate Preview</strong>.
+  </div>
+
+  <div class="premium-row">
+    <button onclick="open3DViewer()" class="action-button">
+      View In 3D
+    </button>
+    <span class="premium-badge">PREMIUM</span>
   </div>
 
   <div class="results-wrap">
