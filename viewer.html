@@ -6,156 +6,178 @@
   <title>AesthetIQ Premium 3D Viewer</title>
 
   <style>
-    body {
-      margin: 0;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
+    :root{
+      --bg:#111827;
+      --panel:rgba(255,255,255,0.07);
+      --border:rgba(255,255,255,0.08);
+      --btn:#1f2937;
+      --btn-hover:#374151;
+      --accent:#6b46c1;
     }
 
-    h1 {
-      margin: 20px 0 8px;
-      font-size: 34px;
-      font-weight: 700;
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:#fff;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      text-align:center;
     }
 
-    .subtitle {
-      margin-bottom: 16px;
-      color: #cfcfcf;
-      font-size: 14px;
+    .page{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px 14px 28px;
     }
 
-    .viewer-wrap {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #000;
+    h1{
+      margin:8px 0 6px;
+      font-size:clamp(28px,4vw,36px);
+      line-height:1.1;
     }
 
-    #viewer {
-      display: block;
-      width: 100%;
-      height: 68vh;
-      background: #000;
+    .premium-badge{
+      display:inline-block;
+      margin-bottom:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:var(--accent);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:0.3px;
     }
 
-    .controls {
-      background: rgba(255,255,255,0.07);
-      padding: 20px;
+    .subtitle{
+      margin:0 0 16px;
+      color:#d1d5db;
+      font-size:14px;
     }
 
-    .top-controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 18px;
+    #viewer{
+      width:100%;
+      height:68vh;
+      background:#000;
+      border-radius:16px;
+      border:1px solid var(--border);
+      display:block;
+      margin:0 auto;
     }
 
-    .top-controls button,
-    .procedure-buttons button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      background: #2a2a2a;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
+    .controls{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px 14px 14px;
+      margin-top:16px;
     }
 
-    .top-controls button:hover,
-    .procedure-buttons button:hover {
-      background: #3a3a3a;
+    .top-controls,
+    .procedure-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
     }
 
-    .procedure-buttons {
-      margin: 8px 0 18px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
+    .top-controls{
+      margin-bottom:14px;
     }
 
-    .status-row {
-      margin: 8px 0 18px;
-      font-size: 15px;
+    .procedure-buttons{
+      margin-bottom:16px;
     }
 
-    .status-row strong {
-      color: #fff;
+    button{
+      padding:10px 14px;
+      border:none;
+      border-radius:10px;
+      background:var(--btn);
+      color:white;
+      cursor:pointer;
+      font-size:14px;
+      transition:background 0.15s ease, transform 0.15s ease;
     }
 
-    .slider-block {
-      margin: 18px 0;
+    button:hover{
+      background:var(--btn-hover);
+      transform:translateY(-1px);
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 15px;
-      font-weight: 600;
+    button.active{
+      background:var(--accent);
     }
 
-    input[type="range"] {
-      width: 320px;
-      max-width: 80vw;
+    .status-row{
+      margin-bottom:14px;
+      font-size:15px;
+      color:#e5e7eb;
     }
 
-    .premium-badge {
-      display: inline-block;
-      margin-top: 4px;
-      margin-bottom: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: #6b46c1;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
+    .slider-block{
+      margin:16px 0;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:600;
+      font-size:15px;
+    }
+
+    input[type="range"]{
+      width:min(420px,85vw);
+    }
+
+    .footer-note{
+      margin-top:14px;
+      color:#d1d5db;
+      font-size:12px;
+      line-height:1.5;
     }
   </style>
 </head>
 <body>
+  <div class="page">
+    <h1>AesthetIQ 3D Simulation</h1>
+    <div class="premium-badge">PREMIUM</div>
+    <p class="subtitle">Interactive 3D exploration from multiple angles</p>
 
-  <h1>AesthetIQ 3D Simulation</h1>
-  <div class="premium-badge">PREMIUM</div>
-  <div class="subtitle">Interactive 3D preview for aesthetic treatment exploration</div>
-
-  <div class="viewer-wrap">
     <canvas id="viewer"></canvas>
-  </div>
 
-  <div class="controls">
+    <div class="controls">
+      <div class="top-controls">
+        <button onclick="resetView()">Reset View</button>
+        <button onclick="goBack()">Back</button>
+      </div>
 
-    <div class="top-controls">
-      <button onclick="resetView()">Reset View</button>
-      <button onclick="goBack()">Back</button>
+      <div class="status-row">
+        <strong>Selected Procedure:</strong>
+        <span id="selectedProcedureLabel">Forehead Botox</span>
+      </div>
+
+      <div class="procedure-buttons">
+        <button class="viewer-procedure-button active" data-procedure="forehead" onclick="setProcedure('forehead')">Forehead Botox</button>
+        <button class="viewer-procedure-button" data-procedure="glabella" onclick="setProcedure('glabella')">11 Lines</button>
+        <button class="viewer-procedure-button" data-procedure="crowsfeet" onclick="setProcedure('crowsfeet')">Crow’s Feet</button>
+        <button class="viewer-procedure-button" data-procedure="brow" onclick="setProcedure('brow')">Brow Lift</button>
+        <button class="viewer-procedure-button" data-procedure="lip" onclick="setProcedure('lip')">Lip Flip</button>
+      </div>
+
+      <div class="slider-block">
+        <label for="intensitySlider">Intensity</label>
+        <input id="intensitySlider" type="range" min="0" max="2" step="0.01" value="1" />
+      </div>
+
+      <div class="slider-block">
+        <label for="recoverySlider">Recovery Progress</label>
+        <input id="recoverySlider" type="range" min="0" max="100" step="1" value="100" />
+      </div>
+
+      <p class="footer-note">
+        3D simulation is an approximate visualization for exploration and not a guaranteed clinical result.
+      </p>
     </div>
-
-    <div class="status-row">
-      <strong>Selected Procedure:</strong>
-      <span id="selectedProcedureLabel">Forehead Botox</span>
-    </div>
-
-    <div class="procedure-buttons">
-      <button onclick="setProcedure('forehead')">Forehead Botox</button>
-      <button onclick="setProcedure('glabella')">11 Lines</button>
-      <button onclick="setProcedure('crowsfeet')">Crow's Feet</button>
-      <button onclick="setProcedure('brow')">Brow Lift</button>
-      <button onclick="setProcedure('lip')">Lip Flip</button>
-    </div>
-
-    <div class="slider-block">
-      <label for="intensitySlider">Intensity</label>
-      <input id="intensitySlider" type="range" min="0" max="2" step="0.01" value="1" />
-    </div>
-
-    <div class="slider-block">
-      <label for="recoverySlider">Recovery Progress</label>
-      <input id="recoverySlider" type="range" min="0" max="100" step="1" value="100" />
-    </div>
-
   </div>
 
   <script type="module" src="./faceViewer.js"></script>
