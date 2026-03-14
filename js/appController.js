@@ -69,8 +69,23 @@ export function setProcedure(procedureName) {
 
 function updateProcedureLabel() {
   if (procedureLabel) {
-    procedureLabel.textContent = currentProcedure;
+    procedureLabel.textContent = formatProcedureLabel(currentProcedure);
   }
+}
+
+function formatProcedureLabel(procedure) {
+  const labels = {
+    underEyeFiller: 'Under-Eye Fillers',
+    laserEye: 'Laser Resurfacing',
+    lipFiller: 'Lip Fillers',
+    lipFlip: 'Lip Flip',
+    foreheadBotox: 'Forehead Botox',
+    glabella: '11 Lines',
+    crowsfeet: "Crow's Feet",
+    chemicalPeel: 'Chemical Peel'
+  };
+
+  return labels[procedure] || procedure;
 }
 
 export function runCurrentSimulation() {
@@ -100,5 +115,24 @@ export function runCurrentSimulation() {
   }
 }
 
+export function open3DViewer() {
+  const procedureMap = {
+    underEyeFiller: 'forehead',
+    laserEye: 'forehead',
+    lipFiller: 'lip',
+    lipFlip: 'lip',
+    foreheadBotox: 'forehead',
+    glabella: 'glabella',
+    crowsfeet: 'crowsfeet',
+    chemicalPeel: 'forehead'
+  };
+
+  const mappedProcedure = procedureMap[currentProcedure] || 'forehead';
+
+  const url = `viewer.html?procedure=${mappedProcedure}`;
+  window.location.href = url;
+}
+
 window.setProcedure = setProcedure;
 window.runCurrentSimulation = runCurrentSimulation;
+window.open3DViewer = open3DViewer;
