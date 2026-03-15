@@ -11,7 +11,6 @@
       --panel:rgba(255,255,255,0.07);
       --panel-2:rgba(255,255,255,0.05);
       --text:#ffffff;
-      --muted:#a5b4fc;
       --border:rgba(255,255,255,0.08);
       --btn:#1f2937;
       --btn-hover:#374151;
@@ -94,15 +93,15 @@
     }
 
     button{
-      margin:0;
       padding:10px 14px;
-      border-radius:10px;
       border:none;
+      border-radius:10px;
       background:var(--btn);
       color:white;
-      font-size:14px;
       cursor:pointer;
-      transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      font-size:14px;
+      transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      border:1px solid transparent;
     }
 
     button:hover{
@@ -112,7 +111,8 @@
 
     button.active{
       background:var(--accent);
-      box-shadow:0 0 0 2px rgba(255,255,255,0.12) inset;
+      border-color:rgba(255,255,255,0.28);
+      box-shadow:0 0 0 2px rgba(255,255,255,0.10) inset, 0 8px 24px rgba(107,70,193,0.28);
     }
 
     .action-row{
@@ -145,6 +145,12 @@
       display:none !important;
     }
 
+    .preview-container{
+      position:relative;
+      width:min(92vw,640px);
+      margin:auto;
+    }
+
     #cameraPreview{
       width:min(92vw,640px);
       height:auto;
@@ -157,7 +163,7 @@
     }
 
     .note{
-      margin:0 0 18px;
+      margin:10px 0 18px;
       color:#cbd5e1;
       font-size:14px;
     }
@@ -217,7 +223,7 @@
       cursor:pointer;
     }
 
-    @media (max-width: 640px){
+    @media (max-width:640px){
       .controls{
         padding:16px 10px 14px;
       }
@@ -269,11 +275,14 @@
         <span class="premium-badge">PREMIUM</span>
       </div>
 
+      <p class="note">Explore this treatment from multiple angles in 3D with the premium viewer.</p>
+
       <div class="toggle-row">
         <label>
-          <input type="checkbox" id="showLandmarksToggle" checked />
+          <input type="checkbox" id="showLandmarksToggle" />
           Show landmarks
         </label>
+
         <label>
           <input type="checkbox" id="showRegionsToggle" checked />
           Show selected region
@@ -284,7 +293,9 @@
     <video id="camera" autoplay playsinline muted width="640" height="480"></video>
 
     <div class="camera-wrap">
-      <canvas id="cameraPreview" width="640" height="480"></canvas>
+      <div class="preview-container">
+        <canvas id="cameraPreview" width="640" height="480"></canvas>
+      </div>
     </div>
 
     <p class="note">Use a neutral expression, look straight ahead, and keep your face centered in good lighting.</p>
