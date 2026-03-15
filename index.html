@@ -3,28 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AesthetIQ 2D Simulation</title>
+  <title>AesthetIQ Premium 3D Viewer</title>
 
   <style>
     :root{
-      --bg:#0f172a;
+      --bg:#111827;
       --panel:rgba(255,255,255,0.07);
-      --panel-2:rgba(255,255,255,0.05);
-      --text:#ffffff;
       --border:rgba(255,255,255,0.08);
       --btn:#1f2937;
       --btn-hover:#374151;
       --accent:#6b46c1;
     }
 
-    *{
-      box-sizing:border-box;
-    }
+    *{ box-sizing:border-box; }
 
     body{
       margin:0;
       background:var(--bg);
-      color:var(--text);
+      color:#fff;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       text-align:center;
     }
@@ -32,64 +28,64 @@
     .page{
       max-width:1200px;
       margin:0 auto;
-      padding:20px 14px 40px;
+      padding:18px 14px 28px;
     }
 
     h1{
       margin:8px 0 6px;
-      font-size:clamp(28px,4vw,38px);
+      font-size:clamp(28px,4vw,36px);
       line-height:1.1;
     }
 
-    .subtitle{
-      margin:0 0 18px;
-      color:#cbd5e1;
-      font-size:14px;
-    }
-
-    .status-bar{
-      margin:0 auto 18px;
-      max-width:860px;
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:14px 16px;
-    }
-
-    .status-row{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:10px 18px;
-      font-size:14px;
-      color:#e5e7eb;
-    }
-
-    .status-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      background:var(--panel-2);
-      border:1px solid var(--border);
+    .premium-badge{
+      display:inline-block;
+      margin-bottom:8px;
+      padding:6px 12px;
       border-radius:999px;
-      padding:8px 12px;
+      background:var(--accent);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:0.3px;
+    }
+
+    .subtitle{
+      margin:0 0 16px;
+      color:#d1d5db;
+      font-size:14px;
+    }
+
+    #viewer{
+      width:100%;
+      height:68vh;
+      background:#000;
+      border-radius:16px;
+      border:1px solid var(--border);
+      display:block;
+      margin:0 auto;
     }
 
     .controls{
       background:var(--panel);
       border:1px solid var(--border);
       border-radius:16px;
-      padding:18px 14px 16px;
-      margin:0 auto 18px;
-      max-width:980px;
+      padding:18px 14px 14px;
+      margin-top:16px;
     }
 
+    .top-controls,
     .procedure-buttons{
       display:flex;
       flex-wrap:wrap;
       justify-content:center;
       gap:8px;
-      margin:0 0 16px;
+    }
+
+    .top-controls{
+      margin-bottom:14px;
+    }
+
+    .procedure-buttons{
+      margin-bottom:16px;
     }
 
     button{
@@ -100,8 +96,7 @@
       color:white;
       cursor:pointer;
       font-size:14px;
-      transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-      border:1px solid transparent;
+      transition:background 0.15s ease, transform 0.15s ease;
     }
 
     button:hover{
@@ -111,222 +106,80 @@
 
     button.active{
       background:var(--accent);
-      border-color:rgba(255,255,255,0.28);
-      box-shadow:0 0 0 2px rgba(255,255,255,0.10) inset, 0 8px 24px rgba(107,70,193,0.28);
     }
 
-    .action-row{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:10px;
-      margin-top:8px;
-    }
-
-    .premium-badge{
-      display:inline-block;
-      margin-left:8px;
-      padding:4px 10px;
-      border-radius:999px;
-      background:var(--accent);
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:0.3px;
-    }
-
-    .camera-wrap{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      margin:0 auto 18px;
-    }
-
-    #camera{
-      display:none !important;
-    }
-
-    .preview-container{
-      position:relative;
-      width:min(92vw,640px);
-      margin:auto;
-    }
-
-    #cameraPreview{
-      width:min(92vw,640px);
-      height:auto;
-      aspect-ratio:4/3;
-      background:#000;
-      border-radius:16px;
-      border:1px solid var(--border);
-      display:block;
-      margin:0 auto;
-    }
-
-    .note{
-      margin:10px 0 18px;
-      color:#cbd5e1;
-      font-size:14px;
-    }
-
-    .results-wrap{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:16px;
-      margin-top:14px;
-    }
-
-    .result-card{
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:12px;
-    }
-
-    .result-card h3{
-      margin:0 0 10px;
-      font-size:18px;
-    }
-
-    .result-card canvas{
-      width:100%;
-      height:auto;
-      aspect-ratio:4/3;
-      background:#000;
-      border-radius:12px;
-      border:1px solid var(--border);
-      display:block;
-    }
-
-    .footer-note{
-      max-width:920px;
-      margin:18px auto 0;
-      color:#cbd5e1;
-      font-size:12px;
-      line-height:1.5;
-      opacity:0.9;
-    }
-
-    .toggle-row{
-      display:flex;
-      justify-content:center;
-      gap:18px;
-      margin-top:12px;
-      flex-wrap:wrap;
-      font-size:14px;
+    .status-row{
+      margin-bottom:14px;
+      font-size:15px;
       color:#e5e7eb;
     }
 
-    .toggle-row label{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
+    .slider-block{
+      margin:16px 0;
     }
 
-    @media (max-width:640px){
-      .controls{
-        padding:16px 10px 14px;
-      }
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:600;
+      font-size:15px;
+    }
 
-      button{
-        font-size:13px;
-        padding:10px 12px;
-      }
+    input[type="range"]{
+      width:min(420px,85vw);
+    }
+
+    .footer-note{
+      margin-top:14px;
+      color:#d1d5db;
+      font-size:12px;
+      line-height:1.5;
     }
   </style>
-
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
 </head>
 <body>
   <div class="page">
-    <h1>AesthetIQ 2D Simulation</h1>
-    <p class="subtitle">Live facial landmark tracking with procedure-specific 2D previews</p>
+    <h1>AesthetIQ 3D Simulation</h1>
+    <div class="premium-badge">PREMIUM</div>
+    <p class="subtitle">Interactive 3D exploration from multiple angles</p>
 
-    <div class="status-bar">
-      <div class="status-row">
-        <div class="status-chip">
-          <strong>Selected Procedure:</strong>
-          <span id="selectedProcedure">Under-Eye Fillers</span>
-        </div>
-
-        <div class="status-chip">
-          <strong>Status:</strong>
-          <span id="trackingStatus">Starting camera…</span>
-        </div>
-      </div>
-    </div>
+    <canvas id="viewer"></canvas>
 
     <div class="controls">
+      <div class="top-controls">
+        <button onclick="resetView()">Reset View</button>
+        <button onclick="goBack()">Back</button>
+      </div>
+
+      <div class="status-row">
+        <strong>Selected Procedure:</strong>
+        <span id="selectedProcedureLabel">Forehead Botox</span>
+      </div>
+
       <div class="procedure-buttons">
-        <button class="procedure-button active" data-procedure="underEyeFiller">Under-Eye Fillers</button>
-        <button class="procedure-button" data-procedure="laserEye">Laser Resurfacing</button>
-        <button class="procedure-button" data-procedure="lipFiller">Lip Fillers</button>
-        <button class="procedure-button" data-procedure="lipFlip">Lip Flip</button>
-        <button class="procedure-button" data-procedure="foreheadBotox">Forehead Botox</button>
-        <button class="procedure-button" data-procedure="glabella">11 Lines</button>
-        <button class="procedure-button" data-procedure="crowsfeet">Crow’s Feet</button>
-        <button class="procedure-button" data-procedure="chemicalPeel">Chemical Peel</button>
+        <button class="viewer-procedure-button active" data-procedure="forehead" onclick="setProcedure('forehead')">Forehead Botox</button>
+        <button class="viewer-procedure-button" data-procedure="glabella" onclick="setProcedure('glabella')">11 Lines</button>
+        <button class="viewer-procedure-button" data-procedure="crowsfeet" onclick="setProcedure('crowsfeet')">Crow’s Feet</button>
+        <button class="viewer-procedure-button" data-procedure="brow" onclick="setProcedure('brow')">Brow Lift</button>
+        <button class="viewer-procedure-button" data-procedure="lip" onclick="setProcedure('lip')">Lip Flip</button>
       </div>
 
-      <div class="action-row">
-        <button id="simulateButton">Generate Preview</button>
-        <button id="retakeButton">Reset Preview</button>
-        <button onclick="open3DViewer()">View In 3D</button>
-        <span class="premium-badge">PREMIUM</span>
+      <div class="slider-block">
+        <label for="intensitySlider">Intensity</label>
+        <input id="intensitySlider" type="range" min="0" max="2" step="0.01" value="1" />
       </div>
 
-      <p class="note">Explore this treatment from multiple angles in 3D with the premium viewer.</p>
-
-      <div class="toggle-row">
-        <label>
-          <input type="checkbox" id="showLandmarksToggle" />
-          Show landmarks
-        </label>
-
-        <label>
-          <input type="checkbox" id="showRegionsToggle" checked />
-          Show selected region
-        </label>
+      <div class="slider-block">
+        <label for="recoverySlider">Recovery Progress</label>
+        <input id="recoverySlider" type="range" min="0" max="100" step="1" value="100" />
       </div>
+
+      <p class="footer-note">
+        3D simulation is an approximate visualization for exploration and not a guaranteed clinical result.
+      </p>
     </div>
-
-    <video id="camera" autoplay playsinline muted width="640" height="480"></video>
-
-    <div class="camera-wrap">
-      <div class="preview-container">
-        <canvas id="cameraPreview" width="640" height="480"></canvas>
-      </div>
-    </div>
-
-    <p class="note">Use a neutral expression, look straight ahead, and keep your face centered in good lighting.</p>
-
-    <div class="results-wrap">
-      <div class="result-card">
-        <h3>Mask Preview</h3>
-        <canvas id="maskPreview" width="640" height="480"></canvas>
-      </div>
-
-      <div class="result-card">
-        <h3>Subtle</h3>
-        <canvas id="subtleResult" width="640" height="480"></canvas>
-      </div>
-
-      <div class="result-card">
-        <h3>Moderate</h3>
-        <canvas id="moderateResult" width="640" height="480"></canvas>
-      </div>
-
-      <div class="result-card">
-        <h3>Extreme</h3>
-        <canvas id="extremeResult" width="640" height="480"></canvas>
-      </div>
-    </div>
-
-    <p class="footer-note">
-      Simulation is for visualization only and is not a guarantee of clinical outcome. Always consult a qualified provider.
-    </p>
   </div>
 
-  <script type="module" src="./js/appController.js"></script>
+  <script type="module" src="./faceViewer.js"></script>
 </body>
 </html>
