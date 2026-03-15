@@ -82,7 +82,7 @@ function loadModel() {
   const loader = new GLTFLoader();
 
   loader.load(
-    './models/female_head_3.glb',
+    './models/female_head_2.glb',
     (gltf) => {
       model = gltf.scene;
       model.position.set(0, -0.3, 0);
