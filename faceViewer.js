@@ -86,7 +86,7 @@ function loadModel() {
     (gltf) => {
       model = gltf.scene;
       model.position.set(0, -0.3, 0);
-      model.scale.set(1.4, 1.4, 1.4);
+      model.scale.set(3.0, 3.0, 3.0);
 
       scene.add(model);
       onIntensityChange();
