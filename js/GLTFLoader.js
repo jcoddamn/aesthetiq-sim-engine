@@ -10,8 +10,6 @@ const {
   Object3D,
   Skeleton
 } = THREE;
-import { toTrianglesDrawMode } from '../utils/BufferGeometryUtils.js';
-import { clone } from '../utils/SkeletonUtils.js';
 
 /**
  * A loader for the glTF 2.0 format.
