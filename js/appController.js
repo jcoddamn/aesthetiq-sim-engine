@@ -39,9 +39,7 @@ function initApp() {
   bindProcedureButtons();
 
   if (simulateButton) {
-    simulateButton.addEventListener('click', () => {
-      runCurrentSimulation();
-    });
+    simulateButton.addEventListener('click', runCurrentSimulation);
   }
 
   if (retakeButton) {
@@ -49,6 +47,10 @@ function initApp() {
   }
 
   updateProcedureLabel();
+
+  if (showLandmarksToggle) showLandmarksToggle.checked = false;
+  if (showRegionsToggle) showRegionsToggle.checked = true;
+
   setStatus('Starting camera…');
 
   startFaceTracking(
@@ -70,6 +72,7 @@ function bindProcedureButtons() {
       currentProcedure = button.dataset.procedure;
       updateProcedureLabel();
       updateActiveProcedureButtons();
+      setStatus('Procedure selected');
     });
   });
 
@@ -136,7 +139,7 @@ function drawLandmarks(landmarks) {
     const y = point.y * cameraPreview.height;
 
     ctx.beginPath();
-    ctx.arc(x, y, 1.3, 0, Math.PI * 2);
+    ctx.arc(x, y, 1.0, 0, Math.PI * 2);
     ctx.fill();
   }
 }
@@ -182,6 +185,11 @@ export function runCurrentSimulation() {
     return;
   }
 
+  if (!video.videoWidth || !video.videoHeight) {
+    setStatus('Camera not ready');
+    return;
+  }
+
   try {
     setGenerateButtonLoading(true);
     setStatus('Generating previews…');
@@ -201,6 +209,11 @@ export function runCurrentSimulation() {
     });
 
     setStatus('Preview ready');
+
+    subtleCanvas?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   } catch (error) {
     console.error('Simulation failed:', error);
     setStatus('Simulation failed');
@@ -214,4 +227,4 @@ export function open3DViewer() {
   window.location.href = `viewer.html?procedure=${mappedProcedure}`;
 }
 
-window.open3DViewer = open3DViewer
+window.open3DViewer = open3DViewer;
