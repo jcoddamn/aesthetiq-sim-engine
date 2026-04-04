@@ -139,29 +139,26 @@ export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
 export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
 
-  const featheredMask = featherMask(maskCanvas, 35);
+  const featheredMask = featherMask(maskCanvas, 40);
 
-  // Step 1: Strong smoothing
-  const smoothBlur = 2 + Math.pow(intensity, 1.6) * 14;
-
+  // 1. Strong smoothing
   const smoothLayer = createEffectLayer(
     sourceCanvas,
-    `blur(${smoothBlur}px)`
+    `blur(${2 + Math.pow(intensity, 1.7) * 16}px)`
   );
 
-  // Step 2: Tone flattening (THIS is what removes wrinkle visibility)
-  const flattenLayer = createEffectLayer(
+  // 2. Tone flatten (kills wrinkle shadows)
+  const toneLayer = createEffectLayer(
     sourceCanvas,
-    `contrast(${1 - intensity * 0.35}) brightness(${1 + intensity * 0.08})`
+    `contrast(${1 - intensity * 0.4}) brightness(${1 + intensity * 0.1})`
   );
 
-  // Step 3: Strong wrinkle kill layer
-  const wrinkleKill = createEffectLayer(
+  // 3. Light diffusion (THIS is the missing realism)
+  const glowLayer = createEffectLayer(
     sourceCanvas,
-    `blur(${smoothBlur * 2.2}px) contrast(${1 - intensity * 0.4})`
+    `blur(${8 + intensity * 12}px) brightness(${1 + intensity * 0.15})`
   );
 
-  // Apply smoothing
   let result = applyMaskedLayer(
     sourceCanvas,
     smoothLayer,
@@ -169,20 +166,19 @@ export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderat
     0.5 + intensity * 0.4
   );
 
-  // Apply tone flattening
   result = applyMaskedLayer(
     result,
-    flattenLayer,
+    toneLayer,
     featheredMask,
     0.4 + intensity * 0.3
   );
 
-  // Apply wrinkle kill (stronger center feel)
+  // light diffusion pass (low opacity = realistic)
   result = applyMaskedLayer(
     result,
-    wrinkleKill,
+    glowLayer,
     featheredMask,
-    0.35 + intensity * 0.5
+    0.15 + intensity * 0.25
   );
 
   return result;
