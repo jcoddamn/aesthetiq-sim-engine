@@ -202,7 +202,7 @@ export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderat
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
 
-  const featheredMask = featherMask(maskCanvas, 26);
+  const featheredMask = featherMask(maskCanvas, 10);
 
   // Base smoothing for the center brow area
   const smoothLayer = createEffectLayer(
