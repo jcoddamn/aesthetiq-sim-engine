@@ -136,39 +136,61 @@ export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
   return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
-  const featheredMask = featherMask(maskCanvas, 18);
+function applyForeheadBotoxEffect(sourceCanvas, maskCanvas, intensity) {
+  const width = sourceCanvas.width;
+  const height = sourceCanvas.height;
 
+  const output = document.createElement('canvas');
+  output.width = width;
+  output.height = height;
+
+  const octx = output.getContext('2d');
+
+  // ORIGINAL
+  octx.drawImage(sourceCanvas, 0, 0);
+
+  // CREATE STRONG SMOOTH VERSION
+  const smooth = document.createElement('canvas');
+  smooth.width = width;
+  smooth.height = height;
+
+  const sctx = smooth.getContext('2d');
+
+  const blur =
+    intensity === 'subtle' ? 4 :
+    intensity === 'moderate' ? 8 :
+    14;
+
+  sctx.filter = `blur(${blur}px)`;
+  sctx.drawImage(sourceCanvas, 0, 0);
+  sctx.filter = 'none';
+
+  // APPLY MASK (THIS IS THE KEY FIX)
+  octx.save();
+
+  // Use mask as alpha
+  octx.globalCompositeOperation = 'destination-in';
+  octx.drawImage(maskCanvas, 0, 0);
+
+  octx.restore();
+
+  // Blend smooth ONLY into masked region
   const strength =
-    level === 'subtle' ? 0.22 :
-    level === 'moderate' ? 0.5 :
+    intensity === 'subtle' ? 0.35 :
+    intensity === 'moderate' ? 0.65 :
     0.9;
 
-  const smoothLayer = createEffectLayer(
-    sourceCanvas,
-    `blur(${2 + strength * 8}px) contrast(${1 - strength * 0.18}) brightness(${1 + strength * 0.03})`
-  );
+  octx.globalAlpha = strength;
+  octx.drawImage(smooth, 0, 0);
+  octx.globalAlpha = 1;
 
-  const wrinkleLayer = createEffectLayer(
-    sourceCanvas,
-    `blur(${4 + strength * 10}px) contrast(${1 - strength * 0.28})`
-  );
+  // Overlay original again to preserve non-mask areas
+  octx.globalCompositeOperation = 'destination-over';
+  octx.drawImage(sourceCanvas, 0, 0);
 
-  let result = applyMaskedLayer(
-    sourceCanvas,
-    smoothLayer,
-    featheredMask,
-    0.35 + strength * 0.35
-  );
+  octx.globalCompositeOperation = 'source-over';
 
-  result = applyMaskedLayer(
-    result,
-    wrinkleLayer,
-    featheredMask,
-    0.2 + strength * 0.4
-  );
-
-  return result;
+  return output;
 }
     
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
