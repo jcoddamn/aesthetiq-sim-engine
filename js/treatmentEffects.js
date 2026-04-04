@@ -2,7 +2,7 @@ export function getIntensityValue(level) {
   if (level === 'subtle') return 0.6;
   if (level === 'moderate') return 1.2;
   if (level === 'extreme') return 2.0;
-  return 0.5;
+  return 1.2;
 }
 
 export function cloneCanvas(sourceCanvas) {
