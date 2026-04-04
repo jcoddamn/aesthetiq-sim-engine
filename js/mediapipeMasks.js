@@ -31,16 +31,6 @@ export function pointsFromIndices(indices, landmarks, width, height) {
   return indices.map((i) => toPixel(landmarks[i], width, height));
 }
 
-export function buildExpandedRibbon(indices, landmarks, width, height, drop = 18) {
-  const top = pointsFromIndices(indices, landmarks, width, height);
-  const bottom = top.map((p) => ({
-    x: p.x,
-    y: p.y + drop
-  })).reverse();
-
-  return [...top, ...bottom];
-}
-
 export function getPolygonCenter(points) {
   let x = 0;
   let y = 0;
@@ -66,6 +56,16 @@ export function smoothPoints(points) {
       y: (prev.y + p.y + next.y) / 3
     };
   });
+}
+
+export function buildExpandedRibbon(indices, landmarks, width, height, drop = 18) {
+  const top = pointsFromIndices(indices, landmarks, width, height);
+  const bottom = top.map((p) => ({
+    x: p.x,
+    y: p.y + drop
+  })).reverse();
+
+  return smoothPoints([...top, ...bottom]);
 }
 
 export function buildForeheadBand(landmarks, width, height, rise = 68) {
@@ -96,29 +96,35 @@ export function buildGlabellaMask(landmarks, width, height, expandX = 12, expand
   const pts = pointsFromIndices(REGION_POINTS.glabella, landmarks, width, height);
   const center = getPolygonCenter(pts);
 
-  return pts.map((p) => ({
+  const expanded = pts.map((p) => ({
     x: p.x + Math.sign(p.x - center.x) * expandX,
     y: p.y + Math.sign(p.y - center.y) * expandY
   }));
+
+  return smoothPoints(expanded);
 }
 
 export function buildCrowsFeetMask(indices, landmarks, width, height, xShift = 12, yShift = 8) {
   const pts = pointsFromIndices(indices, landmarks, width, height);
-  return pts.map((p) => ({
+
+  const shifted = pts.map((p) => ({
     x: p.x + xShift,
     y: p.y + yShift
   }));
+
+  return smoothPoints(shifted);
 }
 
 export function buildUpperLipMask(landmarks, width, height, lift = 6) {
   const pts = pointsFromIndices(REGION_POINTS.lipsOuter, landmarks, width, height);
   const upperHalf = pts.slice(0, 7);
+
   const lowerEdge = upperHalf.map((p) => ({
     x: p.x,
     y: p.y - lift
   })).reverse();
 
-  return [...upperHalf, ...lowerEdge];
+  return smoothPoints([...upperHalf, ...lowerEdge]);
 }
 
 export function getProcedureMask(procedure, landmarks, width, height) {
@@ -142,7 +148,7 @@ export function getProcedureMask(procedure, landmarks, width, height) {
 
     case 'foreheadBotox':
       return [
-        buildForeheadBand(landmarks, width, height, 58)
+        buildForeheadBand(landmarks, width, height, 68)
       ];
 
     case 'glabella':
