@@ -1,8 +1,8 @@
 export function getIntensityValue(level) {
-  if (level === 'subtle') return 0.25;
-  if (level === 'moderate') return 0.7;
-  if (level === 'extreme') return 1.6;
-  return 0.7;
+  if (level === 'subtle') return 0.2;
+  if (level === 'moderate') return 0.65;
+  if (level === 'extreme') return 2.1;
+  return 0.65;
 }
 
 export function cloneCanvas(sourceCanvas) {
@@ -141,48 +141,44 @@ export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderat
 
   const featheredMask = featherMask(maskCanvas, 40);
 
-  // 1. Skin smoothing
   const smoothLayer = createEffectLayer(
     sourceCanvas,
     `blur(${2 + Math.pow(intensity, 1.7) * 14}px)`
   );
 
-  // 2. Wrinkle + shadow reduction
   const flattenLayer = createEffectLayer(
     sourceCanvas,
-    `contrast(${1 - intensity * 0.35}) brightness(${1 + intensity * 0.05})`
+    `contrast(${1 - intensity * 0.38}) brightness(${1 + intensity * 0.04})`
   );
 
-  // 3. MATTE skin effect (THIS is the missing realism)
   const matteLayer = createEffectLayer(
     sourceCanvas,
-    `contrast(${1 - intensity * 0.25}) saturate(${1 - intensity * 0.15})`
+    `contrast(${1 - intensity * 0.28}) saturate(${1 - intensity * 0.12})`
   );
 
   let result = applyMaskedLayer(
     sourceCanvas,
     smoothLayer,
     featheredMask,
-    0.5 + intensity * 0.4
+    0.42 + intensity * 0.28
   );
 
   result = applyMaskedLayer(
     result,
     flattenLayer,
     featheredMask,
-    0.4 + intensity * 0.3
+    0.48 + intensity * 0.34
   );
 
-  // Replace glow with matte (more realistic)
   result = applyMaskedLayer(
     result,
     matteLayer,
     featheredMask,
-    0.3 + intensity * 0.3
+    0.26 + intensity * 0.24
   );
 
   return result;
-}
+} 
 
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
