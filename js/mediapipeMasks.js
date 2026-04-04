@@ -56,7 +56,7 @@ export function getPolygonCenter(points) {
   };
 }
 
-export function buildForeheadBand(landmarks, width, height, rise = 65) {
+export function buildForeheadBand(landmarks, width, height, rise = 68) {
   const left = pointsFromIndices(REGION_POINTS.leftBrow, landmarks, width, height);
   const right = pointsFromIndices(REGION_POINTS.rightBrow, landmarks, width, height);
 
@@ -65,19 +65,14 @@ export function buildForeheadBand(landmarks, width, height, rise = 65) {
 
   const upper = brow.map((p) => {
     const dx = p.x - center.x;
+    const norm = Math.min(1, Math.abs(dx) / (width * 0.23));
 
-    // normalized distance from center
-    const norm = Math.min(1, Math.abs(dx) / (width * 0.25));
-
-    // stronger drop at sides
-    const curveDrop = norm * 40;
-
-    // taper height at edges
-    const taper = 1 - norm * 0.6;
+    const sideDrop = norm * 42;
+    const taper = 1 - norm * 0.7;
 
     return {
       x: p.x,
-      y: p.y - (rise * taper) + curveDrop
+      y: p.y - (rise * taper) + sideDrop
     };
   }).reverse();
 
