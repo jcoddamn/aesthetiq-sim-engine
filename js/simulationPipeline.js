@@ -20,7 +20,15 @@ export function imageToCanvas(imageSource) {
 export function generateMaskCanvas(procedure, landmarks, width, height, blurPx = 18) {
   const polygons = getProcedureMask(procedure, landmarks, width, height);
   if (!polygons || polygons.length === 0) return null;
-  return createFeatheredMask(width, height, polygons, blurPx);
+
+  const procedureBlur =
+    procedure === 'glabella' ? 5 :
+    procedure === 'lipFiller' || procedure === 'lipFlip' ? 10 :
+    procedure === 'crowsfeet' ? 12 :
+    procedure === 'foreheadBotox' ? 18 :
+    blurPx;
+
+  return createFeatheredMask(width, height, polygons, procedureBlur);
 }
 
 export function runProcedureSimulation({ procedure, landmarks, sourceCanvas, blurPx = 18 }) {
