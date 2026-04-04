@@ -56,6 +56,18 @@ export function getPolygonCenter(points) {
   };
 }
 
+export function smoothPoints(points) {
+  return points.map((p, i, arr) => {
+    const prev = arr[(i - 1 + arr.length) % arr.length];
+    const next = arr[(i + 1) % arr.length];
+
+    return {
+      x: (prev.x + p.x + next.x) / 3,
+      y: (prev.y + p.y + next.y) / 3
+    };
+  });
+}
+
 export function buildForeheadBand(landmarks, width, height, rise = 68) {
   const left = pointsFromIndices(REGION_POINTS.leftBrow, landmarks, width, height);
   const right = pointsFromIndices(REGION_POINTS.rightBrow, landmarks, width, height);
@@ -69,14 +81,15 @@ export function buildForeheadBand(landmarks, width, height, rise = 68) {
 
     const sideDrop = norm * 42;
     const taper = 1 - norm * 0.7;
+    const centerLift = (1 - norm) * 6;
 
     return {
-      x: p.x,
-      y: p.y - (rise * taper) + sideDrop
+      x: p.x - dx * 0.06,
+      y: p.y - (rise * taper) + sideDrop - centerLift + 6
     };
   }).reverse();
 
-  return [...brow, ...upper];
+  return smoothPoints([...brow, ...upper]);
 }
 
 export function buildGlabellaMask(landmarks, width, height, expandX = 12, expandY = 18) {
