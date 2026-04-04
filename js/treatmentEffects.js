@@ -53,6 +53,32 @@ export function applyMaskedLayer(baseCanvas, effectCanvas, maskCanvas, opacity =
   return output;
 }
 
+export function applyBotoxEffect(ctx, sourceCanvas, maskCanvas, intensity = 0.5) {
+  const w = sourceCanvas.width;
+  const h = sourceCanvas.height;
+
+  const temp = document.createElement('canvas');
+  temp.width = w;
+  temp.height = h;
+  const tctx = temp.getContext('2d');
+
+  tctx.drawImage(sourceCanvas, 0, 0);
+
+  const blurAmount = 2 + intensity * 8;
+  tctx.filter = `blur(${blurAmount}px)`;
+  tctx.drawImage(sourceCanvas, 0, 0);
+  tctx.filter = 'none';
+
+  tctx.globalCompositeOperation = 'destination-in';
+  tctx.drawImage(maskCanvas, 0, 0);
+
+  ctx.save();
+  ctx.globalAlpha = 0.4 + intensity * 0.4;
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.drawImage(temp, 0, 0);
+  ctx.restore();
+}
+
 export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
 
@@ -123,17 +149,12 @@ export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
 export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
 
-  const brighten = 1 + intensity * 0.04;
-  const contrast = 1 - intensity * 0.1;
-  const blur = 2.2 + intensity * 6.2;
-  const opacity = Math.min(0.94, 0.72 + intensity * 0.18);
+  const output = cloneCanvas(sourceCanvas);
+  const ctx = output.getContext('2d');
 
-  const effectCanvas = createEffectLayer(
-    sourceCanvas,
-    `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
-  );
+  applyBotoxEffect(ctx, sourceCanvas, maskCanvas, intensity);
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return output;
 }
 
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
