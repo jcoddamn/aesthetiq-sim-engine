@@ -141,44 +141,63 @@ export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderat
 
   const featheredMask = featherMask(maskCanvas, 40);
 
+  // Base smoothing
   const smoothLayer = createEffectLayer(
     sourceCanvas,
     `blur(${2 + Math.pow(intensity, 1.7) * 14}px)`
   );
 
+  // Wrinkle reduction
   const flattenLayer = createEffectLayer(
     sourceCanvas,
-    `contrast(${1 - intensity * 0.38}) brightness(${1 + intensity * 0.04})`
+    `contrast(${1 - intensity * 0.4}) brightness(${1 + intensity * 0.04})`
   );
 
+  // Matte skin
   const matteLayer = createEffectLayer(
     sourceCanvas,
     `contrast(${1 - intensity * 0.28}) saturate(${1 - intensity * 0.12})`
+  );
+
+  // 🔥 CENTER BOOST (targets that vertical line)
+  const centerBoost = createEffectLayer(
+    sourceCanvas,
+    `blur(${4 + intensity * 10}px) contrast(${1 - intensity * 0.5})`
   );
 
   let result = applyMaskedLayer(
     sourceCanvas,
     smoothLayer,
     featheredMask,
-    0.42 + intensity * 0.28
+    0.4 + intensity * 0.3
   );
 
   result = applyMaskedLayer(
     result,
     flattenLayer,
     featheredMask,
-    0.48 + intensity * 0.34
+    0.5 + intensity * 0.35
   );
 
   result = applyMaskedLayer(
     result,
     matteLayer,
     featheredMask,
-    0.26 + intensity * 0.24
+    0.25 + intensity * 0.25
   );
 
+  // 🔥 Apply stronger only when moderate/extreme
+  if (level !== 'subtle') {
+    result = applyMaskedLayer(
+      result,
+      centerBoost,
+      featheredMask,
+      level === 'extreme' ? 0.6 : 0.35
+    );
+  }
+
   return result;
-} 
+}
 
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
