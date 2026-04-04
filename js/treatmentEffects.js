@@ -141,22 +141,22 @@ export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderat
 
   const featheredMask = featherMask(maskCanvas, 40);
 
-  // 1. Strong smoothing
+  // 1. Skin smoothing
   const smoothLayer = createEffectLayer(
     sourceCanvas,
-    `blur(${2 + Math.pow(intensity, 1.7) * 16}px)`
+    `blur(${2 + Math.pow(intensity, 1.7) * 14}px)`
   );
 
-  // 2. Tone flatten (kills wrinkle shadows)
-  const toneLayer = createEffectLayer(
+  // 2. Wrinkle + shadow reduction
+  const flattenLayer = createEffectLayer(
     sourceCanvas,
-    `contrast(${1 - intensity * 0.4}) brightness(${1 + intensity * 0.1})`
+    `contrast(${1 - intensity * 0.35}) brightness(${1 + intensity * 0.05})`
   );
 
-  // 3. Light diffusion (THIS is the missing realism)
-  const glowLayer = createEffectLayer(
+  // 3. MATTE skin effect (THIS is the missing realism)
+  const matteLayer = createEffectLayer(
     sourceCanvas,
-    `blur(${8 + intensity * 12}px) brightness(${1 + intensity * 0.15})`
+    `contrast(${1 - intensity * 0.25}) saturate(${1 - intensity * 0.15})`
   );
 
   let result = applyMaskedLayer(
@@ -168,17 +168,17 @@ export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderat
 
   result = applyMaskedLayer(
     result,
-    toneLayer,
+    flattenLayer,
     featheredMask,
     0.4 + intensity * 0.3
   );
 
-  // light diffusion pass (low opacity = realistic)
+  // Replace glow with matte (more realistic)
   result = applyMaskedLayer(
     result,
-    glowLayer,
+    matteLayer,
     featheredMask,
-    0.15 + intensity * 0.25
+    0.3 + intensity * 0.3
   );
 
   return result;
