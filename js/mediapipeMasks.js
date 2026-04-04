@@ -92,16 +92,24 @@ export function buildForeheadBand(landmarks, width, height, rise = 68) {
   return smoothPoints([...brow, ...upper]);
 }
 
-export function buildGlabellaMask(landmarks, width, height, expandX = 12, expandY = 18) {
+export function buildGlabellaMask(landmarks, width, height) {
   const pts = pointsFromIndices(REGION_POINTS.glabella, landmarks, width, height);
   const center = getPolygonCenter(pts);
 
-  const expanded = pts.map((p) => ({
-    x: p.x + Math.sign(p.x - center.x) * expandX,
-    y: p.y + Math.sign(p.y - center.y) * expandY
-  }));
+  const shaped = pts.map((p) => {
+    const dx = p.x - center.x;
+    const dy = p.y - center.y;
 
-  return smoothPoints(expanded);
+    return {
+      // 🔥 shrink horizontal
+      x: center.x + dx * 0.6,
+
+      // 🔥 stretch vertical
+      y: center.y + dy * 2.2
+    };
+  });
+
+  return smoothPoints(shaped);
 }
 
 export function buildCrowsFeetMask(indices, landmarks, width, height, xShift = 12, yShift = 8) {
