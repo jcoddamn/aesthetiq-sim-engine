@@ -41,26 +41,50 @@ export function buildExpandedRibbon(indices, landmarks, width, height, drop = 18
   return [...top, ...bottom];
 }
 
+export function getPolygonCenter(points) {
+  let x = 0;
+  let y = 0;
+
+  for (const p of points) {
+    x += p.x;
+    y += p.y;
+  }
+
+  return {
+    x: x / points.length,
+    y: y / points.length
+  };
+}
+
 export function buildForeheadBand(landmarks, width, height, rise = 55) {
   const left = pointsFromIndices(REGION_POINTS.leftBrow, landmarks, width, height);
   const right = pointsFromIndices(REGION_POINTS.rightBrow, landmarks, width, height);
-  const brow = [...left, ...right];
 
-  const upper = brow.map((p) => ({
-    x: p.x,
-    y: p.y - rise
-  })).reverse();
+  const brow = [...left, ...right];
+  const center = getPolygonCenter(brow);
+
+  const upper = brow.map((p) => {
+    const distanceFromCenter = Math.abs(p.x - center.x);
+    const normalized = Math.min(1, distanceFromCenter / (width * 0.18));
+
+    const sideDrop = normalized * 18;
+
+    return {
+      x: p.x,
+      y: p.y - rise + sideDrop
+    };
+  }).reverse();
 
   return [...brow, ...upper];
 }
 
-export function buildGlabellaMask(landmarks, width, height, expand = 10) {
+export function buildGlabellaMask(landmarks, width, height, expandX = 12, expandY = 18) {
   const pts = pointsFromIndices(REGION_POINTS.glabella, landmarks, width, height);
   const center = getPolygonCenter(pts);
 
   return pts.map((p) => ({
-    x: p.x + Math.sign(p.x - center.x) * expand * 0.25,
-    y: p.y + Math.sign(p.y - center.y) * expand * 0.25
+    x: p.x + Math.sign(p.x - center.x) * expandX,
+    y: p.y + Math.sign(p.y - center.y) * expandY
   }));
 }
 
@@ -81,21 +105,6 @@ export function buildUpperLipMask(landmarks, width, height, lift = 6) {
   })).reverse();
 
   return [...upperHalf, ...lowerEdge];
-}
-
-export function getPolygonCenter(points) {
-  let x = 0;
-  let y = 0;
-
-  for (const p of points) {
-    x += p.x;
-    y += p.y;
-  }
-
-  return {
-    x: x / points.length,
-    y: y / points.length
-  };
 }
 
 export function getProcedureMask(procedure, landmarks, width, height) {
@@ -119,12 +128,12 @@ export function getProcedureMask(procedure, landmarks, width, height) {
 
     case 'foreheadBotox':
       return [
-        buildForeheadBand(landmarks, width, height, 55)
+        buildForeheadBand(landmarks, width, height, 58)
       ];
 
     case 'glabella':
       return [
-        buildGlabellaMask(landmarks, width, height, 10)
+        buildGlabellaMask(landmarks, width, height, 12, 18)
       ];
 
     case 'crowsfeet':
