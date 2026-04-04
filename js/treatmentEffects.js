@@ -201,19 +201,64 @@ export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderat
 
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
-  const featheredMask = featherMask(maskCanvas, 20);
 
-  const brighten = 1 + intensity * 0.1;
-  const contrast = 1 - intensity * 0.12;
-  const blur = 1.8 + intensity * 5;
-  const opacity = Math.min(0.98, 0.68 + intensity * 0.22);
+  const featheredMask = featherMask(maskCanvas, 26);
 
-  const effectCanvas = createEffectLayer(
+  // Base smoothing for the center brow area
+  const smoothLayer = createEffectLayer(
     sourceCanvas,
-    `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+    `blur(${1.5 + Math.pow(intensity, 1.6) * 10}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
+  // Flatten shadow/contrast in the frown-line zone
+  const flattenLayer = createEffectLayer(
+    sourceCanvas,
+    `contrast(${1 - intensity * 0.45}) brightness(${1 + intensity * 0.05})`
+  );
+
+  // Stronger center-line removal pass
+  const centerKillLayer = createEffectLayer(
+    sourceCanvas,
+    `blur(${3 + intensity * 9}px) contrast(${1 - intensity * 0.55})`
+  );
+
+  // Matte pass so it doesn't look shiny or filtered
+  const matteLayer = createEffectLayer(
+    sourceCanvas,
+    `contrast(${1 - intensity * 0.22}) saturate(${1 - intensity * 0.1})`
+  );
+
+  let result = applyMaskedLayer(
+    sourceCanvas,
+    smoothLayer,
+    featheredMask,
+    0.42 + intensity * 0.28
+  );
+
+  result = applyMaskedLayer(
+    result,
+    flattenLayer,
+    featheredMask,
+    0.5 + intensity * 0.32
+  );
+
+  result = applyMaskedLayer(
+    result,
+    matteLayer,
+    featheredMask,
+    0.22 + intensity * 0.18
+  );
+
+  if (level !== 'subtle') {
+    result = applyMaskedLayer(
+      result,
+      centerKillLayer,
+      featheredMask,
+      level === 'extreme' ? 0.62 : 0.38
+    );
+  }
+
+  return result;
 }
 
 export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'moderate') {
