@@ -1,8 +1,8 @@
 export function getIntensityValue(level) {
-  if (level === 'subtle') return 0.6;
-  if (level === 'moderate') return 1.15;
-  if (level === 'extreme') return 2.4;
-  return 1.15;
+  if (level === 'subtle') return 0.2;
+  if (level === 'moderate') return 0.6;
+  if (level === 'extreme') return 1.4;
+  return 0.6;
 }
 
 export function cloneCanvas(sourceCanvas) {
@@ -62,20 +62,29 @@ export function applyBotoxEffect(ctx, sourceCanvas, maskCanvas, intensity = 0.5)
   temp.height = h;
   const tctx = temp.getContext('2d');
 
+  // base
   tctx.drawImage(sourceCanvas, 0, 0);
 
-  const blurAmount = 2 + intensity * 8;
+  // stronger smoothing curve
+  const blurAmount = 1 + Math.pow(intensity, 1.5) * 14;
+
   tctx.filter = `blur(${blurAmount}px)`;
   tctx.drawImage(sourceCanvas, 0, 0);
   tctx.filter = 'none';
 
+  // mask it
   tctx.globalCompositeOperation = 'destination-in';
   tctx.drawImage(maskCanvas, 0, 0);
 
   ctx.save();
-  ctx.globalAlpha = 0.4 + intensity * 0.4;
+
+  // MUCH stronger separation
+  ctx.globalAlpha = 0.25 + intensity * 0.75;
+
   ctx.globalCompositeOperation = 'soft-light';
+
   ctx.drawImage(temp, 0, 0);
+
   ctx.restore();
 }
 
