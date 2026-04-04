@@ -96,16 +96,15 @@ export function buildGlabellaMask(landmarks, width, height) {
   const pts = pointsFromIndices(REGION_POINTS.glabella, landmarks, width, height);
   const center = getPolygonCenter(pts);
 
-  const halfWidth = 18;
-  const upperHeight = 12;
-  const lowerHeight = 34;
+  const halfWidth = 12;   // 🔥 tighter
+  const heightTop = 10;   // above center
+  const heightBottom = 42; // 🔥 extends down into frown area
 
   const shape = [
-    { x: center.x,                 y: center.y - upperHeight },
-    { x: center.x - halfWidth,     y: center.y - 4 },
-    { x: center.x - halfWidth * 0.7, y: center.y + lowerHeight },
-    { x: center.x + halfWidth * 0.7, y: center.y + lowerHeight },
-    { x: center.x + halfWidth,     y: center.y - 4 }
+    { x: center.x - halfWidth, y: center.y - heightTop },
+    { x: center.x - halfWidth, y: center.y + heightBottom },
+    { x: center.x + halfWidth, y: center.y + heightBottom },
+    { x: center.x + halfWidth, y: center.y - heightTop }
   ];
 
   return smoothPoints(shape);
