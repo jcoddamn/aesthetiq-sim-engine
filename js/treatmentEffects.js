@@ -120,14 +120,13 @@ export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
   return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
 }
 
-function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
 
-  const brighten = 1 + intensity * 0.1;
-  const contrast = 1 - intensity * 0.12;
-  const blur = 2.5 + intensity * 7;
-
-  const opacity = Math.min(1, 0.75 + intensity * 0.25);
+  const brighten = 1 + intensity * 0.04;
+  const contrast = 1 - intensity * 0.1;
+  const blur = 2.2 + intensity * 6.2;
+  const opacity = Math.min(0.94, 0.72 + intensity * 0.18);
 
   const effectCanvas = createEffectLayer(
     sourceCanvas,
