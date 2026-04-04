@@ -1,8 +1,8 @@
 export function getIntensityValue(level) {
-  if (level === 'subtle') return 0.2;
-  if (level === 'moderate') return 0.6;
-  if (level === 'extreme') return 1.4;
-  return 0.6;
+  if (level === 'subtle') return 0.25;
+  if (level === 'moderate') return 0.7;
+  if (level === 'extreme') return 1.6;
+  return 0.7;
 }
 
 export function cloneCanvas(sourceCanvas) {
@@ -53,39 +53,33 @@ export function applyMaskedLayer(baseCanvas, effectCanvas, maskCanvas, opacity =
   return output;
 }
 
-export function applyBotoxEffect(ctx, sourceCanvas, maskCanvas, intensity = 0.5) {
-  const w = sourceCanvas.width;
-  const h = sourceCanvas.height;
+export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
+  const intensity = getIntensityValue(level);
 
-  const temp = document.createElement('canvas');
-  temp.width = w;
-  temp.height = h;
-  const tctx = temp.getContext('2d');
+  const smoothBlur = 1 + Math.pow(intensity, 1.4) * 10;
+  const reduceContrast = 1 - intensity * 0.18;
+  const brighten = 1 + intensity * 0.05;
+  const opacity = Math.min(0.95, 0.5 + intensity * 0.4);
 
-  // base
-  tctx.drawImage(sourceCanvas, 0, 0);
+  // STEP 1: smooth skin
+  const smoothLayer = createEffectLayer(
+    sourceCanvas,
+    `blur(${smoothBlur}px) brightness(${brighten}) contrast(${reduceContrast})`
+  );
 
-  // stronger smoothing curve
-  const blurAmount = 1 + Math.pow(intensity, 1.5) * 14;
+  // STEP 2: extra line softening layer (KEY DIFFERENCE)
+  const lineSoftenLayer = createEffectLayer(
+    sourceCanvas,
+    `blur(${smoothBlur * 1.6}px) contrast(${1 - intensity * 0.25})`
+  );
 
-  tctx.filter = `blur(${blurAmount}px)`;
-  tctx.drawImage(sourceCanvas, 0, 0);
-  tctx.filter = 'none';
+  // Apply base smoothing
+  let result = applyMaskedLayer(sourceCanvas, smoothLayer, maskCanvas, opacity);
 
-  // mask it
-  tctx.globalCompositeOperation = 'destination-in';
-  tctx.drawImage(maskCanvas, 0, 0);
+  // Apply line reduction (lighter pass)
+  result = applyMaskedLayer(result, lineSoftenLayer, maskCanvas, opacity * 0.6);
 
-  ctx.save();
-
-  // MUCH stronger separation
-  ctx.globalAlpha = 0.25 + intensity * 0.75;
-
-  ctx.globalCompositeOperation = 'soft-light';
-
-  ctx.drawImage(temp, 0, 0);
-
-  ctx.restore();
+  return result;
 }
 
 export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'moderate') {
