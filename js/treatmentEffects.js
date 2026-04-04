@@ -74,4 +74,144 @@ export function simulateLaserResurfacing(sourceCanvas, maskCanvas, level = 'mode
 
   const brighten = 1 + intensity * 0.12;
   const contrast = 1 - intensity * 0.1;
-  const saturate =
+  const saturate = 1 + intensity * 0.08;
+  const blur = 1.5 + intensity * 4.2;
+  const opacity = Math.min(0.96, 0.72 + intensity * 0.2);
+
+  const effectCanvas = createEffectLayer(
+    sourceCanvas,
+    `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
+  );
+
+  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+}
+
+export function simulateLipFiller(sourceCanvas, maskCanvas, level = 'moderate') {
+  const intensity = getIntensityValue(level);
+
+  const saturate = 1 + intensity * 0.45;
+  const brighten = 1 + intensity * 0.12;
+  const contrast = 1 + intensity * 0.14;
+  const blur = intensity * 0.5;
+  const opacity = Math.min(0.98, 0.72 + intensity * 0.22);
+
+  const effectCanvas = createEffectLayer(
+    sourceCanvas,
+    `saturate(${saturate}) brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+  );
+
+  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+}
+
+export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
+  const intensity = getIntensityValue(level);
+
+  const brighten = 1 + intensity * 0.08;
+  const saturate = 1 + intensity * 0.22;
+  const contrast = 1 + intensity * 0.08;
+  const blur = intensity * 1.2;
+  const opacity = Math.min(0.92, 0.58 + intensity * 0.18);
+
+  const effectCanvas = createEffectLayer(
+    sourceCanvas,
+    `brightness(${brighten}) saturate(${saturate}) contrast(${contrast}) blur(${blur}px)`
+  );
+
+  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+}
+
+export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
+  const intensity = getIntensityValue(level);
+
+  const brighten = 1 + intensity * 0.08;
+  const contrast = 1 - intensity * 0.08;
+  const blur = 1.8 + intensity * 4.5;
+  const opacity = Math.min(0.96, 0.62 + intensity * 0.22);
+
+  const effectCanvas = createEffectLayer(
+    sourceCanvas,
+    `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+  );
+
+  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+}
+
+export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
+  const intensity = getIntensityValue(level);
+
+  const brighten = 1 + intensity * 0.1;
+  const contrast = 1 - intensity * 0.12;
+  const blur = 1.8 + intensity * 5;
+  const opacity = Math.min(0.98, 0.68 + intensity * 0.22);
+
+  const effectCanvas = createEffectLayer(
+    sourceCanvas,
+    `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+  );
+
+  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+}
+
+export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'moderate') {
+  const intensity = getIntensityValue(level);
+
+  const brighten = 1 + intensity * 0.08;
+  const contrast = 1 - intensity * 0.08;
+  const blur = 1.5 + intensity * 4;
+  const opacity = Math.min(0.95, 0.62 + intensity * 0.2);
+
+  const effectCanvas = createEffectLayer(
+    sourceCanvas,
+    `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+  );
+
+  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+}
+
+export function simulateChemicalPeel(sourceCanvas, maskCanvas, level = 'moderate') {
+  const intensity = getIntensityValue(level);
+
+  const brighten = 1 + intensity * 0.18;
+  const contrast = 1 - intensity * 0.06;
+  const saturate = 1 + intensity * 0.1;
+  const blur = 2 + intensity * 4.5;
+  const opacity = Math.min(0.98, 0.72 + intensity * 0.2);
+
+  const effectCanvas = createEffectLayer(
+    sourceCanvas,
+    `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
+  );
+
+  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+}
+
+export function applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, level = 'moderate') {
+  switch (procedure) {
+    case 'underEyeFiller':
+      return simulateUnderEyeFiller(sourceCanvas, maskCanvas, level);
+
+    case 'laserEye':
+      return simulateLaserResurfacing(sourceCanvas, maskCanvas, level);
+
+    case 'lipFiller':
+      return simulateLipFiller(sourceCanvas, maskCanvas, level);
+
+    case 'lipFlip':
+      return simulateLipFlip(sourceCanvas, maskCanvas, level);
+
+    case 'foreheadBotox':
+      return simulateForeheadBotox(sourceCanvas, maskCanvas, level);
+
+    case 'glabella':
+      return simulateGlabellaBotox(sourceCanvas, maskCanvas, level);
+
+    case 'crowsfeet':
+      return simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level);
+
+    case 'chemicalPeel':
+      return simulateChemicalPeel(sourceCanvas, maskCanvas, level);
+
+    default:
+      return cloneCanvas(sourceCanvas);
+  }
+}
