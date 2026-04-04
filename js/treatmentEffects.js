@@ -53,37 +53,21 @@ export function applyMaskedLayer(baseCanvas, effectCanvas, maskCanvas, opacity =
   return output;
 }
 
-export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
-  const intensity = getIntensityValue(level);
+export function featherMask(maskCanvas, blur = 25) {
+  const canvas = document.createElement('canvas');
+  canvas.width = maskCanvas.width;
+  canvas.height = maskCanvas.height;
 
-  const smoothBlur = 1 + Math.pow(intensity, 1.4) * 10;
-  const reduceContrast = 1 - intensity * 0.18;
-  const brighten = 1 + intensity * 0.05;
-  const opacity = Math.min(0.95, 0.5 + intensity * 0.4);
+  const ctx = canvas.getContext('2d');
+  ctx.filter = `blur(${blur}px)`;
+  ctx.drawImage(maskCanvas, 0, 0);
 
-  // STEP 1: smooth skin
-  const smoothLayer = createEffectLayer(
-    sourceCanvas,
-    `blur(${smoothBlur}px) brightness(${brighten}) contrast(${reduceContrast})`
-  );
-
-  // STEP 2: extra line softening layer (KEY DIFFERENCE)
-  const lineSoftenLayer = createEffectLayer(
-    sourceCanvas,
-    `blur(${smoothBlur * 1.6}px) contrast(${1 - intensity * 0.25})`
-  );
-
-  // Apply base smoothing
-  let result = applyMaskedLayer(sourceCanvas, smoothLayer, maskCanvas, opacity);
-
-  // Apply line reduction (lighter pass)
-  result = applyMaskedLayer(result, lineSoftenLayer, maskCanvas, opacity * 0.6);
-
-  return result;
+  return canvas;
 }
 
 export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 18);
 
   const brighten = 1 + intensity * 0.22;
   const contrast = 1 - intensity * 0.12;
@@ -95,11 +79,12 @@ export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'modera
     `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
 export function simulateLaserResurfacing(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 24);
 
   const brighten = 1 + intensity * 0.12;
   const contrast = 1 - intensity * 0.1;
@@ -112,11 +97,12 @@ export function simulateLaserResurfacing(sourceCanvas, maskCanvas, level = 'mode
     `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
 export function simulateLipFiller(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 10);
 
   const saturate = 1 + intensity * 0.45;
   const brighten = 1 + intensity * 0.12;
@@ -129,11 +115,12 @@ export function simulateLipFiller(sourceCanvas, maskCanvas, level = 'moderate') 
     `saturate(${saturate}) brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
 export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 10);
 
   const brighten = 1 + intensity * 0.08;
   const saturate = 1 + intensity * 0.22;
@@ -146,22 +133,47 @@ export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
     `brightness(${brighten}) saturate(${saturate}) contrast(${contrast}) blur(${blur}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
 export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 30);
 
-  const output = cloneCanvas(sourceCanvas);
-  const ctx = output.getContext('2d');
+  const smoothBlur = 2 + Math.pow(intensity, 1.5) * 12;
+  const contrast = 1 - intensity * 0.2;
+  const brighten = 1 + intensity * 0.05;
 
-  applyBotoxEffect(ctx, sourceCanvas, maskCanvas, intensity);
+  const smoothLayer = createEffectLayer(
+    sourceCanvas,
+    `blur(${smoothBlur}px) brightness(${brighten}) contrast(${contrast})`
+  );
 
-  return output;
+  const wrinkleLayer = createEffectLayer(
+    sourceCanvas,
+    `blur(${smoothBlur * 2}px) contrast(${1 - intensity * 0.3})`
+  );
+
+  let result = applyMaskedLayer(
+    sourceCanvas,
+    smoothLayer,
+    featheredMask,
+    0.6 + intensity * 0.3
+  );
+
+  result = applyMaskedLayer(
+    result,
+    wrinkleLayer,
+    featheredMask,
+    0.4 + intensity * 0.4
+  );
+
+  return result;
 }
 
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 20);
 
   const brighten = 1 + intensity * 0.1;
   const contrast = 1 - intensity * 0.12;
@@ -173,11 +185,12 @@ export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderat
     `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
 export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 16);
 
   const brighten = 1 + intensity * 0.08;
   const contrast = 1 - intensity * 0.08;
@@ -189,11 +202,12 @@ export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'modera
     `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
 export function simulateChemicalPeel(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 28);
 
   const brighten = 1 + intensity * 0.18;
   const contrast = 1 - intensity * 0.06;
@@ -206,7 +220,7 @@ export function simulateChemicalPeel(sourceCanvas, maskCanvas, level = 'moderate
     `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
   );
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, maskCanvas, opacity);
+  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
 export function applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, level = 'moderate') {
