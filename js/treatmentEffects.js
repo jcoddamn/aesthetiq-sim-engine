@@ -137,72 +137,44 @@ export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
 }
 
 export function simulateForeheadBotox(sourceCanvas, maskCanvas, level = 'moderate') {
-  const intensity = getIntensityValue(level);
+  const featheredMask = featherMask(maskCanvas, 18);
 
-  const featheredMask = featherMask(maskCanvas, 40);
+  const strength =
+    level === 'subtle' ? 0.22 :
+    level === 'moderate' ? 0.5 :
+    0.9;
 
-  // Base smoothing
   const smoothLayer = createEffectLayer(
     sourceCanvas,
-    `blur(${2 + Math.pow(intensity, 1.7) * 14}px)`
+    `blur(${2 + strength * 8}px) contrast(${1 - strength * 0.18}) brightness(${1 + strength * 0.03})`
   );
 
-  // Wrinkle reduction
-  const flattenLayer = createEffectLayer(
+  const wrinkleLayer = createEffectLayer(
     sourceCanvas,
-    `contrast(${1 - intensity * 0.4}) brightness(${1 + intensity * 0.04})`
-  );
-
-  // Matte skin
-  const matteLayer = createEffectLayer(
-    sourceCanvas,
-    `contrast(${1 - intensity * 0.28}) saturate(${1 - intensity * 0.12})`
-  );
-
-  // 🔥 CENTER BOOST (targets that vertical line)
-  const centerBoost = createEffectLayer(
-    sourceCanvas,
-    `blur(${4 + intensity * 10}px) contrast(${1 - intensity * 0.5})`
+    `blur(${4 + strength * 10}px) contrast(${1 - strength * 0.28})`
   );
 
   let result = applyMaskedLayer(
     sourceCanvas,
     smoothLayer,
     featheredMask,
-    0.4 + intensity * 0.3
+    0.35 + strength * 0.35
   );
 
   result = applyMaskedLayer(
     result,
-    flattenLayer,
+    wrinkleLayer,
     featheredMask,
-    0.5 + intensity * 0.35
+    0.2 + strength * 0.4
   );
-
-  result = applyMaskedLayer(
-    result,
-    matteLayer,
-    featheredMask,
-    0.25 + intensity * 0.25
-  );
-
-  // 🔥 Apply stronger only when moderate/extreme
-  if (level !== 'subtle') {
-    result = applyMaskedLayer(
-      result,
-      centerBoost,
-      featheredMask,
-      level === 'extreme' ? 0.6 : 0.35
-    );
-  }
 
   return result;
 }
-
+    
 export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
   const intensity = getIntensityValue(level);
 
-  const featheredMask = featherMask(maskCanvas, 6);
+  const featheredMask = featherMask(maskCanvas, 10);
 
   // Base smoothing for the center brow area
   const smoothLayer = createEffectLayer(
