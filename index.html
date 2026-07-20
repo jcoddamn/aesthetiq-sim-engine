@@ -1,1 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <title>AesthetIQ</title>
+
+  <style>
+    :root {
+      --background: #f7f7f9;
+      --surface: #ffffff;
+      --surface-soft: #f0edf8;
+      --text: #18181b;
+      --muted: #71717a;
+      --border: #e4e4e7;
+      --accent: #6b46c1;
+      --accent-dark: #5532a4;
+      --shadow: 0 12px 35px rgba(24, 24, 27, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding-bottom: 100px;
+      background: var(--background);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 20px 10px;
+    }
+
+    .brand {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .profile-button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .hero {
+      padding: 18px 20px 10px;
+    }
+
+    .hero-card {
+      background:
+        linear-gradient(
+          135deg,
+          #1f1831 0%,
+          #4a2d78 52%,
+          #7651bb 100%
+        );
+      color: white;
+      border-radius: 28px;
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      right: -60px;
+      top: -60px;
+    }
+
+    .eyebrow {
+      margin: 0 0 9px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    .hero h1 {
+      max-width: 340px;
+      margin: 0;
+      font-size: 31px;
+      line-height: 1.08;
+      letter-spacing: -1px;
+    }
+
+    .hero-description {
+      max-width: 350px;
+      margin: 14px 0 22px;
+      line-height: 1.55;
+      font-size: 14px;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 15px;
+      background: white;
+      color: #2a1a42;
+      font-weight: 750;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section {
+      padding: 14px 20px 0;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 5px 0 13px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.4px;
+    }
+
+    .section-heading a {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .procedure-card {
+      min-height: 145px;
+      padding: 17px;
+      border: 1px solid var(--border);
+      border-radius: 21px;
+      background: var(--surface);
+      box-shadow: 0 5px 18px rgba(24,24,27,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .procedure-card:active {
+      transform: scale(0.98);
+    }
+
+    .procedure-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 14px;
+      background: var(--surface-soft);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+    }
+
+    .procedure-card h3 {
+      margin: 20px 0 4px;
+      font-size: 15px;
+    }
+
+    .procedure-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .category-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .category {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .category-button {
+      width: 100%;
+      padding: 17px;
+      border: 0;
+      background: transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .category-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .category-icon {
+      width: 41px;
+      height: 41px;
+      border-radius: 13px;
+      background: var(--surface-soft);
+      display: grid;
+      place-items: center;
+      font-size: 19px;
+    }
+
+    .category-name {
+      display: block;
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .category-count {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .arrow {
+      font-size: 20px;
+      color: var(--muted);
+      transition: transform 0.2s ease;
+    }
+
+    .category.open .arrow {
+      transform: rotate(90deg);
+    }
+
+    .procedure-list {
+      display: none;
+      padding: 0 17px 15px 71px;
+    }
+
+    .category.open .procedure-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .procedure-link {
+      padding: 12px 13px;
+      border-radius: 12px;
+      color: #3f3f46;
+      font-size: 14px;
+      background: #fafafa;
+    }
+
+    .procedure-link:hover {
+      background: var(--surface-soft);
+      color: var(--accent);
+    }
+
+    .premium-card {
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: 22px;
+      background: #17131f;
+      color: white;
+    }
+
+    .premium-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .premium-card p {
+      margin: 0 0 15px;
+      color: rgba(255,255,255,0.68);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .premium-link {
+      display: inline-flex;
+      padding: 11px 15px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .disclaimer {
+      padding: 22px 24px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 520px;
+      height: 78px;
+      padding: 9px 14px 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(18px);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 10;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+    }
+
+    .nav-item.active {
+      color: var(--accent);
+    }
+
+    @media (min-width: 700px) {
+      body {
+        padding: 24px 0;
+      }
+
+      .app {
+        min-height: calc(100vh - 48px);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .bottom-nav {
+        bottom: 24px;
+        border-radius: 0 0 30px 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="brand">Aesthet<span>IQ</span></div>
+
+      <button class="profile-button" aria-label="Open profile">
+        👤
+      </button>
+    </header>
+
+    <section class="hero">
+      <div class="hero-card">
+        <p class="eyebrow">Cosmetic visualization</p>
+
+        <h1>See the possibilities before your procedure.</h1>
+
+        <p class="hero-description">
+          Explore cosmetic treatments and generate personalized 2D
+          visualizations using your camera.
+        </p>
+
+        <a
+          class="primary-button"
+          href="simulation.html?procedure=underEyeFiller"
+        >
+          Start simulation
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <h2>Popular procedures</h2>
+        <a href="#all-procedures">View all</a>
+      </div>
+
+      <div class="quick-grid">
+        <a
+          class="procedure-card"
+          href="simulation.html?procedure=lipFiller"
+        >
+          <div class="procedure-icon">💋</div>
+
+          <div>
+            <h3>Lip Filler</h3>
+            <p>Non-surgical</p>
+          </div>
+        </a>
+
+        <a
+          class="procedure-card"
+          href="simulation.html?procedure=underEyeFiller"
+        >
+          <div class="procedure-icon">👁️</div>
+
+          <div>
+            <h3>Under-Eye Filler</h3>
+            <p>Non-surgical</p>
+          </div>
+        </a>
+
+        <a
+          class="procedure-card"
+          href="simulation.html?procedure=foreheadBotox"
+        >
+          <div class="procedure-icon">✨</div>
+
+          <div>
+            <h3>Forehead Botox</h3>
+            <p>Neuromodulator</p>
+          </div>
+        </a>
+
+        <a
+          class="procedure-card"
+          href="simulation.html?procedure=chemicalPeel"
+        >
+          <div class="procedure-icon">🌿</div>
+
+          <div>
+            <h3>Chemical Peel</h3>
+            <p>Skin treatment</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="all-procedures">
+      <div class="section-heading">
+        <h2>Explore procedures</h2>
+      </div>
+
+      <div class="category-list">
+        <article class="category open">
+          <button class="category-button" type="button">
+            <span class="category-left">
+              <span class="category-icon">👤</span>
+
+              <span>
+                <span class="category-name">Face</span>
+                <span class="category-count">9 procedures</span>
+              </span>
+            </span>
+
+            <span class="arrow">›</span>
+          </button>
+
+          <div class="procedure-list">
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=underEyeFiller"
+            >
+              Under-Eye Filler
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=lipFiller"
+            >
+              Lip Filler
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=lipFlip"
+            >
+              Lip Flip
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=foreheadBotox"
+            >
+              Forehead Botox
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=glabella"
+            >
+              11 Lines
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=crowsfeet"
+            >
+              Crow’s Feet
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=laserEye"
+            >
+              Laser Resurfacing
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=chemicalPeel"
+            >
+              Chemical Peel
+            </a>
+
+            <a class="procedure-link" href="simulation.html">
+              Facial Simulation
+            </a>
+          </div>
+        </article>
+
+        <article class="category">
+          <button class="category-button" type="button">
+            <span class="category-left">
+              <span class="category-icon">💉</span>
+
+              <span>
+                <span class="category-name">Injectables</span>
+                <span class="category-count">7 procedures</span>
+              </span>
+            </span>
+
+            <span class="arrow">›</span>
+          </button>
+
+          <div class="procedure-list">
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=lipFiller"
+            >
+              Lip Filler
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=underEyeFiller"
+            >
+              Under-Eye Filler
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=foreheadBotox"
+            >
+              Forehead Botox
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=glabella"
+            >
+              Glabella Treatment
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=crowsfeet"
+            >
+              Crow’s Feet Treatment
+            </a>
+          </div>
+        </article>
+
+        <article class="category">
+          <button class="category-button" type="button">
+            <span class="category-left">
+              <span class="category-icon">🌿</span>
+
+              <span>
+                <span class="category-name">Skin</span>
+                <span class="category-count">5 procedures</span>
+              </span>
+            </span>
+
+            <span class="arrow">›</span>
+          </button>
+
+          <div class="procedure-list">
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=chemicalPeel"
+            >
+              Chemical Peel
+            </a>
+
+            <a
+              class="procedure-link"
+              href="simulation.html?procedure=laserEye"
+            >
+              Laser Resurfacing
+            </a>
+
+            <a class="procedure-link" href="simulation.html">
+              Microneedling
+            </a>
+
+            <a class="procedure-link" href="simulation.html">
+              RF Microneedling
+            </a>
+
+            <a class="procedure-link" href="simulation.html">
+              IPL Treatment
+            </a>
+          </div>
+        </article>
+
+        <article class="category">
+          <button class="category-button" type="button">
+            <span class="category-left">
+              <span class="category-icon">🧍</span>
+
+              <span>
+                <span class="category-name">Body</span>
+                <span class="category-count">Coming soon</span>
+              </span>
+            </span>
+
+            <span class="arrow">›</span>
+          </button>
+
+          <div class="procedure-list">
+            <a class="procedure-link" href="#">Body visualization coming soon</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="premium-card">
+        <h3>Unlock premium 3D visualization</h3>
+
+        <p>
+          Rotate the model, compare angles, and explore enhanced procedure
+          previews in the premium 3D viewer.
+        </p>
+
+        <a class="premium-link" href="viewer.html">
+          Explore premium 3D
+        </a>
+      </div>
+    </section>
+
+    <p class="disclaimer">
+      AesthetIQ simulations are for educational visualization only and do
+      not guarantee clinical results. Consult a licensed medical provider
+      before making treatment decisions.
+    </p>
+  </main>
+
+  <nav class="bottom-nav">
+    <a class="nav-item active" href="index.html">
+      <span class="nav-icon">⌂</span>
+      <span>Home</span>
+    </a>
+
+    <a class="nav-item" href="#">
+      <span class="nav-icon">◷</span>
+      <span>Journey</span>
+    </a>
+
+    <a class="nav-item" href="#">
+      <span class="nav-icon">✚</span>
+      <span>Clinics</span>
+    </a>
+
+    <a class="nav-item" href="#">
+      <span class="nav-icon">○</span>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script>
+    const categories = document.querySelectorAll(".category");
+
+    categories.forEach((category) => {
+      const button = category.querySelector(".category-button");
+
+      button.addEventListener("click", () => {
+        category.classList.toggle("open");
+      });
+    });
+  </script>
+</body>
+</html>
