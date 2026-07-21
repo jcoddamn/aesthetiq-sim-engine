@@ -41,7 +41,8 @@
       --danger-soft: #fff1f2;
       --danger-text: #9f1239;
 
-      --shadow: 0 14px 40px rgba(45, 35, 67, 0.08);
+      --shadow:
+        0 14px 40px rgba(45, 35, 67, 0.08);
     }
 
     * {
@@ -94,8 +95,10 @@
         env(safe-area-inset-top)
         18px
         0;
-      border-bottom: 1px solid rgba(232, 229, 238, 0.85);
-      background: rgba(247, 246, 250, 0.92);
+      border-bottom:
+        1px solid rgba(232, 229, 238, 0.85);
+      background:
+        rgba(247, 246, 250, 0.92);
       backdrop-filter: blur(18px);
     }
 
@@ -107,8 +110,16 @@
       background: var(--surface);
       display: grid;
       place-items: center;
-      box-shadow: 0 8px 24px rgba(45, 35, 67, 0.07);
+      color: var(--text);
+      box-shadow:
+        0 8px 24px rgba(45, 35, 67, 0.07);
       font-size: 18px;
+    }
+
+    .topbar-button.saved {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
     }
 
     .brand {
@@ -143,16 +154,19 @@
           #5732a8
         );
       color: white;
-      box-shadow: 0 20px 48px rgba(88, 52, 165, 0.25);
+      box-shadow:
+        0 20px 48px rgba(88, 52, 165, 0.25);
     }
 
     .hero-icon {
       width: 66px;
       height: 66px;
       margin-bottom: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.32);
+      border:
+        1px solid rgba(255, 255, 255, 0.32);
       border-radius: 21px;
-      background: rgba(255, 255, 255, 0.16);
+      background:
+        rgba(255, 255, 255, 0.16);
       display: grid;
       place-items: center;
       backdrop-filter: blur(12px);
@@ -165,7 +179,8 @@
       align-items: center;
       gap: 7px;
       margin-bottom: 9px;
-      color: rgba(255, 255, 255, 0.82);
+      color:
+        rgba(255, 255, 255, 0.82);
       font-size: 10px;
       font-weight: 800;
       letter-spacing: 0.55px;
@@ -180,7 +195,8 @@
     .hero h1 {
       max-width: 570px;
       margin: 0;
-      font-size: clamp(31px, 8vw, 47px);
+      font-size:
+        clamp(31px, 8vw, 47px);
       line-height: 1.02;
       letter-spacing: -1.7px;
     }
@@ -188,7 +204,8 @@
     .hero-summary {
       max-width: 590px;
       margin: 14px 0 0;
-      color: rgba(255, 255, 255, 0.88);
+      color:
+        rgba(255, 255, 255, 0.88);
       font-size: 14px;
       line-height: 1.6;
     }
@@ -206,7 +223,8 @@
       min-height: 31px;
       padding: 6px 11px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16);
+      background:
+        rgba(255, 255, 255, 0.16);
       color: white;
       font-size: 10px;
       font-weight: 850;
@@ -215,7 +233,8 @@
 
     .quick-actions {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
       gap: 11px;
       margin-top: 15px;
     }
@@ -237,6 +256,42 @@
 
     .quick-action:active {
       transform: scale(0.98);
+    }
+
+    .save-button {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 12px;
+      border: 1px solid var(--accent);
+      border-radius: 17px;
+      background: var(--surface);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: var(--shadow);
+    }
+
+    .save-button.saved {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-dark);
+    }
+
+    .save-button:active {
+      transform: scale(0.985);
+    }
+
+    .save-confirmation {
+      min-height: 20px;
+      margin: 7px 0 0;
+      color: var(--success-text);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .section {
@@ -289,7 +344,8 @@
 
     .information-list li {
       position: relative;
-      padding: 13px 14px 13px 42px;
+      padding:
+        13px 14px 13px 42px;
       border: 1px solid var(--border);
       border-radius: 16px;
       background: var(--surface-soft);
@@ -324,7 +380,8 @@
     .camera-card {
       margin-top: 16px;
       padding: 22px;
-      border: 1px solid rgba(109, 69, 198, 0.2);
+      border:
+        1px solid rgba(109, 69, 198, 0.2);
       border-radius: 26px;
       background:
         linear-gradient(
@@ -351,7 +408,9 @@
       display: grid;
       place-items: center;
       font-size: 21px;
-      box-shadow: 0 12px 25px rgba(109, 69, 198, 0.24);
+      box-shadow:
+        0 12px 25px
+        rgba(109, 69, 198, 0.24);
     }
 
     .camera-card h2 {
@@ -379,17 +438,20 @@
     }
 
     .status-interactive {
-      background: var(--success-background);
+      background:
+        var(--success-background);
       color: var(--success-text);
     }
 
     .status-preview {
-      background: var(--preview-background);
+      background:
+        var(--preview-background);
       color: var(--preview-text);
     }
 
     .status-educational {
-      background: var(--education-background);
+      background:
+        var(--education-background);
       color: var(--education-text);
     }
 
@@ -407,7 +469,9 @@
       gap: 9px;
       font-size: 13px;
       font-weight: 850;
-      box-shadow: 0 14px 30px rgba(109, 69, 198, 0.25);
+      box-shadow:
+        0 14px 30px
+        rgba(109, 69, 198, 0.25);
     }
 
     .camera-button:active {
@@ -420,13 +484,7 @@
       box-shadow: none;
       cursor: not-allowed;
     }
-<button
-  id="saveProcedureButton"
-  type="button"
-  class="save-button"
->
-  ♡ Save Procedure
-</button>
+
     .disclaimer {
       margin-top: 16px;
       padding: 17px;
@@ -482,9 +540,13 @@
       padding:
         10px
         15px
-        calc(10px + env(safe-area-inset-bottom));
+        calc(
+          10px +
+          env(safe-area-inset-bottom)
+        );
       border-top: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.95);
+      background:
+        rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(18px);
     }
 
@@ -493,7 +555,8 @@
       max-width: 700px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 55px minmax(0, 1fr);
+      grid-template-columns:
+        55px minmax(0, 1fr);
       gap: 10px;
     }
 
@@ -504,6 +567,12 @@
       background: var(--surface);
       color: var(--accent);
       font-size: 22px;
+    }
+
+    .favorite-button.saved {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
     }
 
     .main-bottom-button {
@@ -518,7 +587,9 @@
       gap: 8px;
       font-size: 13px;
       font-weight: 850;
-      box-shadow: 0 13px 28px rgba(109, 69, 198, 0.23);
+      box-shadow:
+        0 13px 28px
+        rgba(109, 69, 198, 0.23);
     }
 
     .main-bottom-button.disabled {
@@ -536,7 +607,8 @@
 
       .details-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
         gap: 16px;
       }
 
@@ -572,12 +644,19 @@
       </button>
     </header>
 
-    <div id="pageContent" class="page-content">
+    <div
+      id="pageContent"
+      class="page-content"
+    >
       <p>Loading procedure...</p>
     </div>
   </main>
 
-  <div id="bottomActionBar" class="bottom-action-bar" hidden>
+  <div
+    id="bottomActionBar"
+    class="bottom-action-bar"
+    hidden
+  >
     <div class="bottom-action-inner">
       <button
         id="bottomFavoriteButton"
@@ -604,29 +683,48 @@
       getProcedureById
     } from "./js/procedureData.js";
 
+    const STORAGE_KEY =
+      "aesthetiqSavedProcedures";
+
     const pageContent =
-      document.getElementById("pageContent");
+      document.getElementById(
+        "pageContent"
+      );
 
     const bottomActionBar =
-      document.getElementById("bottomActionBar");
+      document.getElementById(
+        "bottomActionBar"
+      );
 
     const topFavoriteButton =
-      document.getElementById("topFavoriteButton");
+      document.getElementById(
+        "topFavoriteButton"
+      );
 
     const bottomFavoriteButton =
-      document.getElementById("bottomFavoriteButton");
+      document.getElementById(
+        "bottomFavoriteButton"
+      );
 
     const bottomCameraButton =
-      document.getElementById("bottomCameraButton");
+      document.getElementById(
+        "bottomCameraButton"
+      );
 
     const parameters =
-      new URLSearchParams(window.location.search);
+      new URLSearchParams(
+        window.location.search
+      );
 
     const procedureId =
       parameters.get("id");
 
     const procedure =
-      getProcedureById(procedureId);
+      procedureId
+        ? getProcedureById(procedureId)
+        : null;
+
+    let confirmationTimer = null;
 
     function escapeHtml(value) {
       return String(value || "")
@@ -643,16 +741,25 @@
           .toLowerCase();
 
       if (
-        simulation.includes("2d available") ||
-        simulation.includes("interactive")
+        simulation.includes(
+          "2d available"
+        ) ||
+        simulation.includes(
+          "interactive"
+        )
       ) {
         return "Interactive";
       }
 
       if (
-        simulation.includes("camera preview") ||
-        item.cameraProcedure === null
+        simulation.includes(
+          "camera preview"
+        )
       ) {
+        return "Camera Preview";
+      }
+
+      if (item.cameraProcedure) {
         return "Camera Preview";
       }
 
@@ -664,78 +771,124 @@
         return "status-interactive";
       }
 
-      if (status === "Camera Preview") {
+      if (
+        status === "Camera Preview"
+      ) {
         return "status-preview";
       }
 
       return "status-educational";
     }
 
-    function createList(items, extraClass = "") {
-      if (!Array.isArray(items) || items.length === 0) {
+    function createList(
+      items,
+      extraClass = ""
+    ) {
+      if (
+        !Array.isArray(items) ||
+        items.length === 0
+      ) {
         return `
           <p>
-            Additional information will be added as this
-            procedure is reviewed.
+            Additional information will be
+            added as this procedure is reviewed.
           </p>
         `;
       }
 
       return `
-        <ul class="information-list ${extraClass}">
+        <ul
+          class="information-list ${extraClass}"
+        >
           ${items
             .map(
-              (item) =>
-                `<li>${escapeHtml(item)}</li>`
+              item => `
+                <li>
+                  ${escapeHtml(item)}
+                </li>
+              `
             )
             .join("")}
         </ul>
       `;
     }
 
-    function getCameraInformation(item, status) {
+    function getCameraInformation(
+      item,
+      status
+    ) {
       if (status === "Interactive") {
         return {
-          title: "Interactive preview available",
+          title:
+            "Interactive preview available",
+
           description:
             "Open the AesthetIQ camera to explore a visual preview. Results are educational estimates and are not medical predictions.",
-          buttonText: "Open Interactive Camera",
+
+          buttonText:
+            "Open Interactive Camera",
+
           disabled: false
         };
       }
 
-      if (status === "Camera Preview") {
+      if (
+        status === "Camera Preview"
+      ) {
         return {
-          title: "Camera preview available",
+          title:
+            "Camera preview available",
+
           description:
             "You can open the camera experience while this procedure's interactive result controls are still being developed.",
-          buttonText: "Open Camera Preview",
+
+          buttonText:
+            "Open Camera Preview",
+
           disabled: false
         };
       }
 
       return {
-        title: "Educational information only",
+        title:
+          "Educational information only",
+
         description:
           "An interactive camera preview has not been added for this procedure yet.",
-        buttonText: "Camera Coming Soon",
+
+        buttonText:
+          "Camera Coming Soon",
+
         disabled: true
       };
     }
 
-    function buildCameraUrl(item, status) {
-      if (status === "Interactive") {
+    function buildCameraUrl(
+      item,
+      status
+    ) {
+      if (
+        status === "Interactive" &&
+        item.cameraProcedure
+      ) {
         return (
           "simulation.html?procedure=" +
-          encodeURIComponent(item.cameraProcedure)
+          encodeURIComponent(
+            item.cameraProcedure
+          )
         );
       }
 
-      if (status === "Camera Preview") {
+      if (
+        status === "Camera Preview"
+      ) {
         return (
           "simulation.html?mode=preview" +
           "&procedure=" +
-          encodeURIComponent(item.id)
+          encodeURIComponent(
+            item.cameraProcedure ||
+            item.id
+          )
         );
       }
 
@@ -751,8 +904,10 @@
           <h1>Procedure not found</h1>
 
           <p>
-            The procedure link may be incomplete or the selected
-            procedure may not exist in the database.
+            The procedure link may be
+            incomplete, or the selected
+            procedure may not exist in
+            the database.
           </p>
 
           <a
@@ -765,6 +920,7 @@
       `;
 
       bottomActionBar.hidden = true;
+      topFavoriteButton.disabled = true;
     }
 
     function renderProcedure(item) {
@@ -775,10 +931,16 @@
         getStatusClass(status);
 
       const cameraInformation =
-        getCameraInformation(item, status);
+        getCameraInformation(
+          item,
+          status
+        );
 
       const cameraUrl =
-        buildCameraUrl(item, status);
+        buildCameraUrl(
+          item,
+          status
+        );
 
       document.title =
         `${item.name} | AesthetIQ`;
@@ -786,12 +948,19 @@
       pageContent.innerHTML = `
         <section class="hero">
           <div class="hero-icon">
-            ${escapeHtml(item.icon || "✨")}
+            ${escapeHtml(
+              item.icon || "✨"
+            )}
           </div>
 
           <div class="hero-meta">
-            <span>${escapeHtml(item.area)}</span>
-            <span>${escapeHtml(item.type)}</span>
+            <span>
+              ${escapeHtml(item.area)}
+            </span>
+
+            <span>
+              ${escapeHtml(item.type)}
+            </span>
           </div>
 
           <h1>
@@ -804,7 +973,10 @@
 
           <div class="hero-badges">
             <span class="hero-badge">
-              ${escapeHtml(item.category || item.area)}
+              ${escapeHtml(
+                item.category ||
+                item.area
+              )}
             </span>
 
             <span class="hero-badge">
@@ -831,10 +1003,40 @@
           </a>
         </div>
 
+        <button
+          id="saveProcedureButton"
+          class="save-button"
+          type="button"
+          aria-label="Save procedure"
+        >
+          <span
+            id="saveProcedureIcon"
+          >
+            ♡
+          </span>
+
+          <span
+            id="saveProcedureText"
+          >
+            Save Procedure
+          </span>
+        </button>
+
+        <p
+          id="saveConfirmation"
+          class="save-confirmation"
+          aria-live="polite"
+        ></p>
+
         <section class="section">
           <div class="section-heading">
-            <div class="section-icon">🎯</div>
-            <h2>What it may change</h2>
+            <div class="section-icon">
+              🎯
+            </div>
+
+            <h2>
+              What it may change
+            </h2>
           </div>
 
           ${createList(item.goals)}
@@ -846,12 +1048,19 @@
             class="section"
           >
             <div class="section-heading">
-              <div class="section-icon">👤</div>
-              <h2>Potential candidates</h2>
+              <div class="section-icon">
+                👤
+              </div>
+
+              <h2>
+                Potential candidates
+              </h2>
             </div>
 
             <p>
-              ${escapeHtml(item.candidate)}
+              ${escapeHtml(
+                item.candidate
+              )}
             </p>
           </section>
 
@@ -860,12 +1069,19 @@
             class="section"
           >
             <div class="section-heading">
-              <div class="section-icon">⏱</div>
-              <h2>Recovery overview</h2>
+              <div class="section-icon">
+                ⏱
+              </div>
+
+              <h2>
+                Recovery overview
+              </h2>
             </div>
 
             <p>
-              ${escapeHtml(item.recovery)}
+              ${escapeHtml(
+                item.recovery
+              )}
             </p>
           </section>
         </div>
@@ -875,11 +1091,19 @@
           class="section"
         >
           <div class="section-heading">
-            <div class="section-icon">⚠️</div>
-            <h2>Risks and considerations</h2>
+            <div class="section-icon">
+              ⚠️
+            </div>
+
+            <h2>
+              Risks and considerations
+            </h2>
           </div>
 
-          ${createList(item.risks, "risk-list")}
+          ${createList(
+            item.risks,
+            "risk-list"
+          )}
         </section>
 
         <section class="camera-card">
@@ -890,30 +1114,43 @@
 
             <div>
               <h2>
-                ${cameraInformation.title}
+                ${escapeHtml(
+                  cameraInformation.title
+                )}
               </h2>
 
               <p class="camera-description">
-                ${cameraInformation.description}
+                ${escapeHtml(
+                  cameraInformation.description
+                )}
               </p>
             </div>
           </div>
 
           <span
-            class="status-badge ${statusClass}"
+            class="
+              status-badge
+              ${statusClass}
+            "
           >
-            ${status}
+            ${escapeHtml(status)}
           </span>
 
           ${
             cameraInformation.disabled
               ? `
                 <button
-                  class="camera-button disabled"
+                  class="
+                    camera-button
+                    disabled
+                  "
                   type="button"
                   disabled
                 >
-                  ${cameraInformation.buttonText}
+                  ${escapeHtml(
+                    cameraInformation
+                      .buttonText
+                  )}
                 </button>
               `
               : `
@@ -922,8 +1159,12 @@
                   href="${cameraUrl}"
                 >
                   <span>📷</span>
+
                   <span>
-                    ${cameraInformation.buttonText}
+                    ${escapeHtml(
+                      cameraInformation
+                        .buttonText
+                    )}
                   </span>
                 </a>
               `
@@ -931,22 +1172,28 @@
         </section>
 
         <aside class="disclaimer">
-          AesthetIQ provides educational information and visual
-          previews only. It does not diagnose medical conditions,
-          recommend treatment, guarantee results, or replace a
-          consultation with a qualified healthcare professional.
-          Actual outcomes, risks, candidacy, and recovery vary.
+          AesthetIQ provides educational
+          information and visual previews
+          only. It does not diagnose medical
+          conditions, recommend treatment,
+          guarantee results, or replace a
+          consultation with a qualified
+          healthcare professional. Actual
+          outcomes, risks, candidacy, and
+          recovery vary.
         </aside>
       `;
 
       bottomActionBar.hidden = false;
 
-      bottomCameraButton.href =
-        cameraUrl;
-
       bottomCameraButton.innerHTML = `
         <span>📷</span>
-        <span>${cameraInformation.buttonText}</span>
+
+        <span>
+          ${escapeHtml(
+            cameraInformation.buttonText
+          )}
+        </span>
       `;
 
       bottomCameraButton.classList.toggle(
@@ -955,40 +1202,113 @@
       );
 
       if (cameraInformation.disabled) {
-        bottomCameraButton.removeAttribute("href");
+        bottomCameraButton.removeAttribute(
+          "href"
+        );
+
         bottomCameraButton.setAttribute(
           "aria-disabled",
           "true"
         );
+      } else {
+        bottomCameraButton.href =
+          cameraUrl;
+
+        bottomCameraButton.removeAttribute(
+          "aria-disabled"
+        );
       }
+
+      const saveProcedureButton =
+        document.getElementById(
+          "saveProcedureButton"
+        );
+
+      saveProcedureButton.addEventListener(
+        "click",
+        toggleFavorite
+      );
     }
 
     function getSavedProcedures() {
       try {
-        return JSON.parse(
-          localStorage.getItem(
-            "aesthetiqSavedProcedures"
-          ) || "[]"
+        const saved =
+          JSON.parse(
+            localStorage.getItem(
+              STORAGE_KEY
+            ) || "[]"
+          );
+
+        if (!Array.isArray(saved)) {
+          return [];
+        }
+
+        return saved.filter(
+          item =>
+            typeof item === "string"
         );
-      } catch {
+      } catch (error) {
+        console.error(
+          "Could not read saved procedures:",
+          error
+        );
+
         return [];
       }
     }
 
+    function saveProcedures(
+      savedProcedures
+    ) {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(
+            savedProcedures
+          )
+        );
+
+        return true;
+      } catch (error) {
+        console.error(
+          "Could not save procedure:",
+          error
+        );
+
+        return false;
+      }
+    }
+
     function isSaved() {
-      return getSavedProcedures().includes(
-        procedureId
-      );
+      if (!procedureId) {
+        return false;
+      }
+
+      return getSavedProcedures()
+        .includes(procedureId);
     }
 
     function updateFavoriteButtons() {
       const saved = isSaved();
 
-      topFavoriteButton.textContent =
+      const icon =
         saved ? "♥" : "♡";
 
+      topFavoriteButton.textContent =
+        icon;
+
       bottomFavoriteButton.textContent =
-        saved ? "♥" : "♡";
+        icon;
+
+      topFavoriteButton.classList.toggle(
+        "saved",
+        saved
+      );
+
+      bottomFavoriteButton.classList.toggle(
+        "saved",
+        saved
+      );
 
       topFavoriteButton.setAttribute(
         "aria-label",
@@ -1003,36 +1323,124 @@
           ? "Remove saved procedure"
           : "Save procedure"
       );
+
+      const saveProcedureButton =
+        document.getElementById(
+          "saveProcedureButton"
+        );
+
+      const saveProcedureIcon =
+        document.getElementById(
+          "saveProcedureIcon"
+        );
+
+      const saveProcedureText =
+        document.getElementById(
+          "saveProcedureText"
+        );
+
+      if (saveProcedureButton) {
+        saveProcedureButton.classList.toggle(
+          "saved",
+          saved
+        );
+
+        saveProcedureButton.setAttribute(
+          "aria-label",
+          saved
+            ? "Remove saved procedure"
+            : "Save procedure"
+        );
+      }
+
+      if (saveProcedureIcon) {
+        saveProcedureIcon.textContent =
+          icon;
+      }
+
+      if (saveProcedureText) {
+        saveProcedureText.textContent =
+          saved
+            ? "Saved Procedure"
+            : "Save Procedure";
+      }
     }
 
-    function toggleFavorite() {
-      if (!procedure) {
+    function showSaveConfirmation(
+      message
+    ) {
+      const confirmation =
+        document.getElementById(
+          "saveConfirmation"
+        );
+
+      if (!confirmation) {
         return;
       }
 
-      const savedProcedures =
+      confirmation.textContent =
+        message;
+
+      if (confirmationTimer) {
+        clearTimeout(
+          confirmationTimer
+        );
+      }
+
+      confirmationTimer =
+        setTimeout(() => {
+          confirmation.textContent = "";
+        }, 2500);
+    }
+
+    function toggleFavorite() {
+      if (
+        !procedure ||
+        !procedureId
+      ) {
+        return;
+      }
+
+      let savedProcedures =
         getSavedProcedures();
 
-      const existingIndex =
-        savedProcedures.indexOf(procedureId);
-
-      if (existingIndex >= 0) {
-        savedProcedures.splice(
-          existingIndex,
-          1
+      const currentlySaved =
+        savedProcedures.includes(
+          procedureId
         );
+
+      if (currentlySaved) {
+        savedProcedures =
+          savedProcedures.filter(
+            savedId =>
+              savedId !== procedureId
+          );
       } else {
         savedProcedures.push(
           procedureId
         );
       }
 
-      localStorage.setItem(
-        "aesthetiqSavedProcedures",
-        JSON.stringify(savedProcedures)
-      );
+      const success =
+        saveProcedures(
+          savedProcedures
+        );
+
+      if (!success) {
+        showSaveConfirmation(
+          "Could not update saved procedures."
+        );
+
+        return;
+      }
 
       updateFavoriteButtons();
+
+      showSaveConfirmation(
+        currentlySaved
+          ? "Removed from Saved Procedures"
+          : "Added to Saved Procedures"
+      );
     }
 
     topFavoriteButton.addEventListener(
@@ -1045,7 +1453,21 @@
       toggleFavorite
     );
 
-    if (!procedureId || !procedure) {
+    window.addEventListener(
+      "storage",
+      event => {
+        if (
+          event.key === STORAGE_KEY
+        ) {
+          updateFavoriteButtons();
+        }
+      }
+    );
+
+    if (
+      !procedureId ||
+      !procedure
+    ) {
       renderError();
     } else {
       renderProcedure(procedure);
