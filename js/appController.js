@@ -228,3 +228,70 @@ export function open3DViewer() {
 }
 
 window.open3DViewer = open3DViewer;
+
+// =========================================================
+// OPEN SELECTED PROCEDURE FROM PROCEDURE DETAIL PAGE
+// =========================================================
+
+const simulationParams =
+  new URLSearchParams(window.location.search);
+
+const requestedProcedure =
+  simulationParams.get("procedure");
+
+const isPreviewMode =
+  simulationParams.get("mode") === "preview";
+
+const procedureAliases = {
+  underEyeFiller: "underEyeFiller",
+  lipFiller: "lipFiller",
+  lipFlip: "lipFlip",
+  foreheadBotox: "foreheadBotox",
+  glabellaBotox: "glabella",
+  crowsFeetBotox: "crowsfeet",
+  chemicalPeel: "chemicalPeel",
+  laserResurfacing: "laserEye"
+};
+
+function openRequestedProcedure() {
+  if (!requestedProcedure) {
+    return;
+  }
+
+  const simulationProcedure =
+    procedureAliases[requestedProcedure] ||
+    requestedProcedure;
+
+  const matchingButton =
+    document.querySelector(
+      `.procedure-button[data-procedure="${simulationProcedure}"]`
+    );
+
+  if (!matchingButton) {
+    console.warn(
+      `No simulation button was found for: ${requestedProcedure}`
+    );
+
+    if (isPreviewMode) {
+      const selectedProcedureText =
+        document.getElementById("selectedProcedure");
+
+      if (selectedProcedureText) {
+        selectedProcedureText.textContent =
+          "Camera Preview";
+      }
+    }
+
+    return;
+  }
+
+  matchingButton.click();
+
+  matchingButton.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest",
+    inline: "center"
+  });
+}
+
+window.setTimeout(openRequestedProcedure, 250);
