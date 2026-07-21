@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AesthetIQ | Saved Procedures</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    body{
+      background:#f6f6fb;
+      color:#222;
+    }
+
+    header{
+      background:white;
+      padding:20px;
+      box-shadow:0 2px 12px rgba(0,0,0,.08);
+      position:sticky;
+      top:0;
+      z-index:100;
+    }
+
+    header h1{
+      color:#6c3df4;
+      font-size:28px;
+    }
+
+    header p{
+      color:#666;
+      margin-top:4px;
+    }
+
+    main{
+      max-width:900px;
+      margin:auto;
+      padding:25px;
+    }
+
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+
+    .section-title h2{
+      font-size:24px;
+    }
+
+    .saved-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:20px;
+    }
+
+    .card{
+      background:white;
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 8px 24px rgba(0,0,0,.08);
+      transition:.25s;
+    }
+
+    .card:hover{
+      transform:translateY(-5px);
+    }
+
+    .card-image{
+      height:140px;
+      background:linear-gradient(135deg,#8a5cff,#b18cff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:56px;
+      color:white;
+    }
+
+    .card-content{
+      padding:18px;
+    }
+
+    .category{
+      color:#6c3df4;
+      font-size:12px;
+      font-weight:bold;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+
+    .card h3{
+      margin-bottom:8px;
+    }
+
+    .summary{
+      color:#666;
+      line-height:1.5;
+      font-size:14px;
+      margin-bottom:16px;
+    }
+
+    .buttons{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      flex:1;
+      text-align:center;
+      padding:10px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .primary{
+      background:#6c3df4;
+      color:white;
+    }
+
+    .secondary{
+      background:#ece8ff;
+      color:#6c3df4;
+    }
+
+    .danger{
+      background:#ffe5e5;
+      color:#d22;
+    }
+
+    .empty{
+      background:white;
+      border-radius:20px;
+      padding:60px;
+      text-align:center;
+      box-shadow:0 8px 24px rgba(0,0,0,.08);
+    }
+
+    .empty h2{
+      margin:15px 0;
+    }
+
+    .empty p{
+      color:#666;
+      margin-bottom:20px;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      bottom:0;
+      width:100%;
+      background:white;
+      display:flex;
+      justify-content:space-around;
+      padding:14px;
+      box-shadow:0 -2px 15px rgba(0,0,0,.08);
+    }
+
+    .bottom-nav a{
+      text-decoration:none;
+      color:#555;
+      font-size:14px;
+      font-weight:600;
+    }
+
+    .bottom-nav a.active{
+      color:#6c3df4;
+    }
+
+    body{
+      padding-bottom:90px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>AesthetIQ</h1>
+  <p>Your saved cosmetic procedures</p>
+</header>
+
+<main>
+
+<div class="section-title">
+<h2>❤️ Saved Procedures</h2>
+</div>
+
+<div id="savedContainer" class="saved-grid">
+
+<div class="empty">
+<h2>No saved procedures yet</h2>
+
+<p>
+Tap the ❤️ button on any procedure to save it here.
+</p>
+
+<a href="procedures.html" class="btn primary">
+Browse Procedures
+</a>
+
+</div>
+
+</div>
+
+</main>
+
+<nav class="bottom-nav">
+<a href="home.html">🏠 Home</a>
+<a href="procedures.html">📚 Library</a>
+<a href="simulation.html">📷 Camera</a>
+<a class="active" href="saved.html">❤️ Saved</a>
+<a href="#">👤 Profile</a>
+</nav>
+
+<script type="module">
+import { getProcedureById } from "./js/procedureData.js";
+
+const STORAGE_KEY = "aesthetiqSavedProcedures";
+const container = document.getElementById("savedContainer");
+
+loadSavedProcedures();
+
+function loadSavedProcedures() {
+
+  const savedIds = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "[]"
+  );
+
+  if (savedIds.length === 0) {
+    return;
+  }
+
+  container.innerHTML = "";
+
+  savedIds.forEach(id => {
+
+    const procedure = getProcedureById(id);
+
+    if (!procedure) return;
+
+    const card = document.createElement("div");
+
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="card-image">
+        ${procedure.icon || "✨"}
+      </div>
+
+      <div class="card-content">
+
+        <div class="category">
+          ${procedure.category || procedure.area}
+        </div>
+
+        <h3>
+          ${procedure.name}
+        </h3>
+
+        <p class="summary">
+          ${procedure.summary}
+        </p>
+
+        <div class="buttons">
+
+          <a
+            class="btn primary"
+            href="procedure.html?id=${procedure.id}">
+            Details
+          </a>
+
+          <a
+            class="btn secondary"
+            href="simulation.html?procedure=${procedure.cameraProcedure}">
+            Simulate
+          </a>
+
+          <button
+            class="btn danger remove-btn"
+            data-id="${procedure.id}">
+            Remove
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+    container.appendChild(card);
+
+  });
+
+  attachRemoveButtons();
+
+}
+
+function attachRemoveButtons() {
+
+  document
+    .querySelectorAll(".remove-btn")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        removeFavorite(button.dataset.id);
+
+      });
+
+    });
+
+}
+
+function removeFavorite(id) {
+
+  let saved = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "[]"
+  );
+
+  saved = saved.filter(item => item !== id);
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(saved)
+  );
+
+  loadSavedProcedures();
+
+}
+</script>
+
+</body>
+</html>
