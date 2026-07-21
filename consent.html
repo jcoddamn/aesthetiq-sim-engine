@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>AesthetIQ Consent</title>
+
+  <style>
+    :root {
+      --background: #f7f7f9;
+      --surface: #ffffff;
+      --text: #18181b;
+      --muted: #71717a;
+      --border: #e4e4e7;
+      --accent: #6b46c1;
+      --accent-dark: #5635a0;
+      --danger-soft: #fff7ed;
+      --danger-border: #fed7aa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 520px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 24px 20px 38px;
+    }
+
+    .brand {
+      margin-bottom: 28px;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .intro {
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      margin: 0 0 9px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.08;
+      letter-spacing: -1px;
+    }
+
+    .intro-text {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .notice {
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 1px solid var(--danger-border);
+      border-radius: 16px;
+      background: var(--danger-soft);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .consent-card {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--surface);
+      box-shadow: 0 12px 32px rgba(24, 24, 27, 0.06);
+    }
+
+    .consent-card h2 {
+      margin: 0 0 15px;
+      font-size: 18px;
+    }
+
+    .consent-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .consent-item {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 11px;
+      align-items: start;
+      cursor: pointer;
+    }
+
+    .consent-item input {
+      width: 19px;
+      height: 19px;
+      margin: 2px 0 0;
+      accent-color: var(--accent);
+    }
+
+    .consent-copy {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .consent-copy strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 14px;
+    }
+
+    .consent-copy span {
+      color: var(--muted);
+    }
+
+    .legal-links {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .legal-links a {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .continue-button {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 16px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        background 0.18s ease,
+        opacity 0.18s ease,
+        transform 0.18s ease;
+    }
+
+    .continue-button:hover:not(:disabled) {
+      background: var(--accent-dark);
+    }
+
+    .continue-button:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    .continue-button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      min-height: 20px;
+      margin: 10px 0 0;
+      color: #b91c1c;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .privacy-note {
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (min-width: 700px) {
+      body {
+        padding: 24px 0;
+      }
+
+      .page {
+        min-height: calc(100vh - 48px);
+        border-radius: 30px;
+        background: var(--background);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="brand">Aesthet<span>IQ</span></div>
+
+    <section class="intro">
+      <p class="eyebrow">Before you begin</p>
+
+      <h1>Review and accept the visualization terms.</h1>
+
+      <p class="intro-text">
+        AesthetIQ helps you explore possible cosmetic changes. The results are
+        educational simulations and are not medical advice or guaranteed outcomes.
+      </p>
+    </section>
+
+    <div class="notice">
+      <strong>Important:</strong>
+      AesthetIQ does not diagnose conditions, determine medical eligibility, or
+      replace an evaluation from a licensed healthcare professional.
+    </div>
+
+    <section class="consent-card">
+      <h2>Your consent</h2>
+
+      <div class="consent-list">
+        <label class="consent-item">
+          <input class="required-consent" type="checkbox" />
+
+          <span class="consent-copy">
+            <strong>I understand this is a simulation.</strong>
+            <span>
+              Results may differ from real clinical outcomes and should not be used
+              as a guarantee.
+            </span>
+          </span>
+        </label>
+
+        <label class="consent-item">
+          <input class="required-consent" type="checkbox" />
+
+          <span class="consent-copy">
+            <strong>I understand this is not medical advice.</strong>
+            <span>
+              Treatment decisions should be discussed with a qualified licensed
+              provider.
+            </span>
+          </span>
+        </label>
+
+        <label class="consent-item">
+          <input class="required-consent" type="checkbox" />
+
+          <span class="consent-copy">
+            <strong>I consent to camera and image processing.</strong>
+            <span>
+              Photos or camera frames may be processed to generate the selected
+              visualization.
+            </span>
+          </span>
+        </label>
+
+        <label class="consent-item">
+          <input class="required-consent" type="checkbox" />
+
+          <span class="consent-copy">
+            <strong>I confirm that I am at least 18 years old.</strong>
+            <span>
+              AesthetIQ is currently intended for adult users.
+            </span>
+          </span>
+        </label>
+      </div>
+
+      <p class="legal-links">
+        By continuing, you agree to the
+        <a href="#">Terms of Use</a>
+        and
+        <a href="#">Privacy Policy</a>.
+      </p>
+
+      <button id="continueButton" class="continue-button" disabled>
+        I Accept &amp; Continue
+      </button>
+
+      <p id="errorMessage" class="error-message"></p>
+    </section>
+
+    <p class="privacy-note">
+      Do not upload photos of another person without their permission.
+    </p>
+  </main>
+
+  <script>
+    const consentBoxes =
+      Array.from(document.querySelectorAll(".required-consent"));
+
+    const continueButton =
+      document.getElementById("continueButton");
+
+    const errorMessage =
+      document.getElementById("errorMessage");
+
+    function updateContinueButton() {
+      const allAccepted =
+        consentBoxes.every((checkbox) => checkbox.checked);
+
+      continueButton.disabled = !allAccepted;
+
+      if (allAccepted) {
+        errorMessage.textContent = "";
+      }
+    }
+
+    consentBoxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", updateContinueButton);
+    });
+
+    continueButton.addEventListener("click", () => {
+      const allAccepted =
+        consentBoxes.every((checkbox) => checkbox.checked);
+
+      if (!allAccepted) {
+        errorMessage.textContent =
+          "Please accept every required item before continuing.";
+        return;
+      }
+
+      localStorage.setItem(
+        "aesthetiqConsentAccepted",
+        "true"
+      );
+
+      localStorage.setItem(
+        "aesthetiqConsentDate",
+        new Date().toISOString()
+      );
+
+      window.location.href = "home.html";
+    });
+  </script>
+</body>
+</html>
