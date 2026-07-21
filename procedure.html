@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="description"
+    content="Learn about cosmetic procedures with AesthetIQ."
+  />
+
+  <title>Procedure Details | AesthetIQ</title>
+
+  <style>
+    :root {
+      --background: #f7f6fa;
+      --surface: #ffffff;
+      --surface-soft: #fbfafd;
+
+      --text: #18181b;
+      --muted: #71717a;
+      --border: #e8e5ee;
+
+      --accent: #6d45c6;
+      --accent-dark: #5633a7;
+      --accent-soft: #eee9fb;
+
+      --success-background: #eaf8ef;
+      --success-text: #267749;
+
+      --preview-background: #fff5d9;
+      --preview-text: #8a6511;
+
+      --education-background: #edf3ff;
+      --education-text: #315f9e;
+
+      --danger-soft: #fff1f2;
+      --danger-text: #9f1239;
+
+      --shadow: 0 14px 40px rgba(45, 35, 67, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding-bottom: 118px;
+    }
+
+    .topbar {
+      position: sticky;
+      z-index: 30;
+      top: 0;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      min-height: 70px;
+      padding:
+        env(safe-area-inset-top)
+        18px
+        0;
+      border-bottom: 1px solid rgba(232, 229, 238, 0.85);
+      background: rgba(247, 246, 250, 0.92);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar-button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 24px rgba(45, 35, 67, 0.07);
+      font-size: 18px;
+    }
+
+    .brand {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 850;
+      letter-spacing: -0.7px;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .page-content {
+      padding: 22px 20px 34px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 25px;
+      border-radius: 28px;
+      background:
+        radial-gradient(
+          circle at top right,
+          rgba(255, 255, 255, 0.26),
+          transparent 35%
+        ),
+        linear-gradient(
+          145deg,
+          #7651cc,
+          #5732a8
+        );
+      color: white;
+      box-shadow: 0 20px 48px rgba(88, 52, 165, 0.25);
+    }
+
+    .hero-icon {
+      width: 66px;
+      height: 66px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-radius: 21px;
+      background: rgba(255, 255, 255, 0.16);
+      display: grid;
+      place-items: center;
+      backdrop-filter: blur(12px);
+      font-size: 31px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 9px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.55px;
+      text-transform: uppercase;
+    }
+
+    .hero-meta span + span::before {
+      content: "•";
+      margin-right: 7px;
+    }
+
+    .hero h1 {
+      max-width: 570px;
+      margin: 0;
+      font-size: clamp(31px, 8vw, 47px);
+      line-height: 1.02;
+      letter-spacing: -1.7px;
+    }
+
+    .hero-summary {
+      max-width: 590px;
+      margin: 14px 0 0;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 19px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 31px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      color: white;
+      font-size: 10px;
+      font-weight: 850;
+      backdrop-filter: blur(10px);
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+      margin-top: 15px;
+    }
+
+    .quick-action {
+      min-height: 49px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-action:active {
+      transform: scale(0.98);
+    }
+
+    .section {
+      margin-top: 16px;
+      padding: 21px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 14px;
+    }
+
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border-radius: 13px;
+      background: var(--accent-soft);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: -0.45px;
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .information-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .information-list li {
+      position: relative;
+      padding: 13px 14px 13px 42px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-soft);
+      color: #3f3f46;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .information-list li::before {
+      content: "✓";
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      transform: translateY(-50%);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .risk-list li::before {
+      content: "!";
+      background: var(--danger-soft);
+      color: var(--danger-text);
+    }
+
+    .camera-card {
+      margin-top: 16px;
+      padding: 22px;
+      border: 1px solid rgba(109, 69, 198, 0.2);
+      border-radius: 26px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(238, 233, 251, 0.98),
+          rgba(255, 255, 255, 0.98)
+        );
+      box-shadow: var(--shadow);
+    }
+
+    .camera-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+    }
+
+    .camera-icon {
+      width: 49px;
+      height: 49px;
+      flex-shrink: 0;
+      border-radius: 16px;
+      background: var(--accent);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      box-shadow: 0 12px 25px rgba(109, 69, 198, 0.24);
+    }
+
+    .camera-card h2 {
+      margin: 1px 0 5px;
+      font-size: 20px;
+      letter-spacing: -0.45px;
+    }
+
+    .camera-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 29px;
+      margin-top: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .status-interactive {
+      background: var(--success-background);
+      color: var(--success-text);
+    }
+
+    .status-preview {
+      background: var(--preview-background);
+      color: var(--preview-text);
+    }
+
+    .status-educational {
+      background: var(--education-background);
+      color: var(--education-text);
+    }
+
+    .camera-button {
+      width: 100%;
+      min-height: 54px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 17px;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: 0 14px 30px rgba(109, 69, 198, 0.25);
+    }
+
+    .camera-button:active {
+      transform: scale(0.985);
+    }
+
+    .camera-button.disabled {
+      background: #d8d4df;
+      color: #77717e;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .disclaimer {
+      margin-top: 16px;
+      padding: 17px;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .error-state {
+      margin-top: 40px;
+      padding: 28px 22px;
+      border: 1px solid #fecaca;
+      border-radius: 24px;
+      background: #fff7f7;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .error-state h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .error-state p {
+      margin: 10px auto 18px;
+      color: #7f1d1d;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .error-link {
+      display: inline-flex;
+      min-height: 45px;
+      padding: 0 16px;
+      border-radius: 14px;
+      background: var(--accent);
+      color: white;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .bottom-action-bar {
+      position: fixed;
+      z-index: 35;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding:
+        10px
+        15px
+        calc(10px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(18px);
+    }
+
+    .bottom-action-inner {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 55px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .favorite-button {
+      min-height: 54px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: var(--surface);
+      color: var(--accent);
+      font-size: 22px;
+    }
+
+    .main-bottom-button {
+      min-height: 54px;
+      border: 0;
+      border-radius: 17px;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: 0 13px 28px rgba(109, 69, 198, 0.23);
+    }
+
+    .main-bottom-button.disabled {
+      background: #d8d4df;
+      color: #77717e;
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    @media (min-width: 660px) {
+      .page-content {
+        padding-right: 28px;
+        padding-left: 28px;
+      }
+
+      .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .details-grid .section {
+        margin-top: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a
+        class="topbar-button"
+        href="procedures.html"
+        aria-label="Return to procedure library"
+      >
+        ‹
+      </a>
+
+      <div class="brand">
+        Aesthet<span>IQ</span>
+      </div>
+
+      <button
+        id="topFavoriteButton"
+        class="topbar-button"
+        type="button"
+        aria-label="Save procedure"
+      >
+        ♡
+      </button>
+    </header>
+
+    <div id="pageContent" class="page-content">
+      <p>Loading procedure...</p>
+    </div>
+  </main>
+
+  <div id="bottomActionBar" class="bottom-action-bar" hidden>
+    <div class="bottom-action-inner">
+      <button
+        id="bottomFavoriteButton"
+        class="favorite-button"
+        type="button"
+        aria-label="Save procedure"
+      >
+        ♡
+      </button>
+
+      <a
+        id="bottomCameraButton"
+        class="main-bottom-button"
+        href="simulation.html"
+      >
+        <span>📷</span>
+        <span>Open Camera</span>
+      </a>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      getProcedureById
+    } from "./js/procedureData.js";
+
+    const pageContent =
+      document.getElementById("pageContent");
+
+    const bottomActionBar =
+      document.getElementById("bottomActionBar");
+
+    const topFavoriteButton =
+      document.getElementById("topFavoriteButton");
+
+    const bottomFavoriteButton =
+      document.getElementById("bottomFavoriteButton");
+
+    const bottomCameraButton =
+      document.getElementById("bottomCameraButton");
+
+    const parameters =
+      new URLSearchParams(window.location.search);
+
+    const procedureId =
+      parameters.get("id");
+
+    const procedure =
+      getProcedureById(procedureId);
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getDisplayStatus(item) {
+      const simulation =
+        String(item.simulation || "")
+          .toLowerCase();
+
+      if (
+        simulation.includes("2d available") ||
+        simulation.includes("interactive")
+      ) {
+        return "Interactive";
+      }
+
+      if (
+        simulation.includes("camera preview") ||
+        item.cameraProcedure === null
+      ) {
+        return "Camera Preview";
+      }
+
+      return "Educational";
+    }
+
+    function getStatusClass(status) {
+      if (status === "Interactive") {
+        return "status-interactive";
+      }
+
+      if (status === "Camera Preview") {
+        return "status-preview";
+      }
+
+      return "status-educational";
+    }
+
+    function createList(items, extraClass = "") {
+      if (!Array.isArray(items) || items.length === 0) {
+        return `
+          <p>
+            Additional information will be added as this
+            procedure is reviewed.
+          </p>
+        `;
+      }
+
+      return `
+        <ul class="information-list ${extraClass}">
+          ${items
+            .map(
+              (item) =>
+                `<li>${escapeHtml(item)}</li>`
+            )
+            .join("")}
+        </ul>
+      `;
+    }
+
+    function getCameraInformation(item, status) {
+      if (status === "Interactive") {
+        return {
+          title: "Interactive preview available",
+          description:
+            "Open the AesthetIQ camera to explore a visual preview. Results are educational estimates and are not medical predictions.",
+          buttonText: "Open Interactive Camera",
+          disabled: false
+        };
+      }
+
+      if (status === "Camera Preview") {
+        return {
+          title: "Camera preview available",
+          description:
+            "You can open the camera experience while this procedure's interactive result controls are still being developed.",
+          buttonText: "Open Camera Preview",
+          disabled: false
+        };
+      }
+
+      return {
+        title: "Educational information only",
+        description:
+          "An interactive camera preview has not been added for this procedure yet.",
+        buttonText: "Camera Coming Soon",
+        disabled: true
+      };
+    }
+
+    function buildCameraUrl(item, status) {
+      if (status === "Interactive") {
+        return (
+          "simulation.html?procedure=" +
+          encodeURIComponent(item.cameraProcedure)
+        );
+      }
+
+      if (status === "Camera Preview") {
+        return (
+          "simulation.html?mode=preview" +
+          "&procedure=" +
+          encodeURIComponent(item.id)
+        );
+      }
+
+      return "#";
+    }
+
+    function renderError() {
+      document.title =
+        "Procedure Not Found | AesthetIQ";
+
+      pageContent.innerHTML = `
+        <section class="error-state">
+          <h1>Procedure not found</h1>
+
+          <p>
+            The procedure link may be incomplete or the selected
+            procedure may not exist in the database.
+          </p>
+
+          <a
+            class="error-link"
+            href="procedures.html"
+          >
+            Return to Procedure Library
+          </a>
+        </section>
+      `;
+
+      bottomActionBar.hidden = true;
+    }
+
+    function renderProcedure(item) {
+      const status =
+        getDisplayStatus(item);
+
+      const statusClass =
+        getStatusClass(status);
+
+      const cameraInformation =
+        getCameraInformation(item, status);
+
+      const cameraUrl =
+        buildCameraUrl(item, status);
+
+      document.title =
+        `${item.name} | AesthetIQ`;
+
+      pageContent.innerHTML = `
+        <section class="hero">
+          <div class="hero-icon">
+            ${escapeHtml(item.icon || "✨")}
+          </div>
+
+          <div class="hero-meta">
+            <span>${escapeHtml(item.area)}</span>
+            <span>${escapeHtml(item.type)}</span>
+          </div>
+
+          <h1>
+            ${escapeHtml(item.name)}
+          </h1>
+
+          <p class="hero-summary">
+            ${escapeHtml(item.summary)}
+          </p>
+
+          <div class="hero-badges">
+            <span class="hero-badge">
+              ${escapeHtml(item.category || item.area)}
+            </span>
+
+            <span class="hero-badge">
+              ${escapeHtml(status)}
+            </span>
+          </div>
+        </section>
+
+        <div class="quick-actions">
+          <a
+            class="quick-action"
+            href="#recovery"
+          >
+            <span>⏱</span>
+            <span>Recovery</span>
+          </a>
+
+          <a
+            class="quick-action"
+            href="#risks"
+          >
+            <span>⚠️</span>
+            <span>Risks</span>
+          </a>
+        </div>
+
+        <section class="section">
+          <div class="section-heading">
+            <div class="section-icon">🎯</div>
+            <h2>What it may change</h2>
+          </div>
+
+          ${createList(item.goals)}
+        </section>
+
+        <div class="details-grid">
+          <section
+            id="candidate"
+            class="section"
+          >
+            <div class="section-heading">
+              <div class="section-icon">👤</div>
+              <h2>Potential candidates</h2>
+            </div>
+
+            <p>
+              ${escapeHtml(item.candidate)}
+            </p>
+          </section>
+
+          <section
+            id="recovery"
+            class="section"
+          >
+            <div class="section-heading">
+              <div class="section-icon">⏱</div>
+              <h2>Recovery overview</h2>
+            </div>
+
+            <p>
+              ${escapeHtml(item.recovery)}
+            </p>
+          </section>
+        </div>
+
+        <section
+          id="risks"
+          class="section"
+        >
+          <div class="section-heading">
+            <div class="section-icon">⚠️</div>
+            <h2>Risks and considerations</h2>
+          </div>
+
+          ${createList(item.risks, "risk-list")}
+        </section>
+
+        <section class="camera-card">
+          <div class="camera-header">
+            <div class="camera-icon">
+              📷
+            </div>
+
+            <div>
+              <h2>
+                ${cameraInformation.title}
+              </h2>
+
+              <p class="camera-description">
+                ${cameraInformation.description}
+              </p>
+            </div>
+          </div>
+
+          <span
+            class="status-badge ${statusClass}"
+          >
+            ${status}
+          </span>
+
+          ${
+            cameraInformation.disabled
+              ? `
+                <button
+                  class="camera-button disabled"
+                  type="button"
+                  disabled
+                >
+                  ${cameraInformation.buttonText}
+                </button>
+              `
+              : `
+                <a
+                  class="camera-button"
+                  href="${cameraUrl}"
+                >
+                  <span>📷</span>
+                  <span>
+                    ${cameraInformation.buttonText}
+                  </span>
+                </a>
+              `
+          }
+        </section>
+
+        <aside class="disclaimer">
+          AesthetIQ provides educational information and visual
+          previews only. It does not diagnose medical conditions,
+          recommend treatment, guarantee results, or replace a
+          consultation with a qualified healthcare professional.
+          Actual outcomes, risks, candidacy, and recovery vary.
+        </aside>
+      `;
+
+      bottomActionBar.hidden = false;
+
+      bottomCameraButton.href =
+        cameraUrl;
+
+      bottomCameraButton.innerHTML = `
+        <span>📷</span>
+        <span>${cameraInformation.buttonText}</span>
+      `;
+
+      bottomCameraButton.classList.toggle(
+        "disabled",
+        cameraInformation.disabled
+      );
+
+      if (cameraInformation.disabled) {
+        bottomCameraButton.removeAttribute("href");
+        bottomCameraButton.setAttribute(
+          "aria-disabled",
+          "true"
+        );
+      }
+    }
+
+    function getSavedProcedures() {
+      try {
+        return JSON.parse(
+          localStorage.getItem(
+            "aesthetiqSavedProcedures"
+          ) || "[]"
+        );
+      } catch {
+        return [];
+      }
+    }
+
+    function isSaved() {
+      return getSavedProcedures().includes(
+        procedureId
+      );
+    }
+
+    function updateFavoriteButtons() {
+      const saved = isSaved();
+
+      topFavoriteButton.textContent =
+        saved ? "♥" : "♡";
+
+      bottomFavoriteButton.textContent =
+        saved ? "♥" : "♡";
+
+      topFavoriteButton.setAttribute(
+        "aria-label",
+        saved
+          ? "Remove saved procedure"
+          : "Save procedure"
+      );
+
+      bottomFavoriteButton.setAttribute(
+        "aria-label",
+        saved
+          ? "Remove saved procedure"
+          : "Save procedure"
+      );
+    }
+
+    function toggleFavorite() {
+      if (!procedure) {
+        return;
+      }
+
+      const savedProcedures =
+        getSavedProcedures();
+
+      const existingIndex =
+        savedProcedures.indexOf(procedureId);
+
+      if (existingIndex >= 0) {
+        savedProcedures.splice(
+          existingIndex,
+          1
+        );
+      } else {
+        savedProcedures.push(
+          procedureId
+        );
+      }
+
+      localStorage.setItem(
+        "aesthetiqSavedProcedures",
+        JSON.stringify(savedProcedures)
+      );
+
+      updateFavoriteButtons();
+    }
+
+    topFavoriteButton.addEventListener(
+      "click",
+      toggleFavorite
+    );
+
+    bottomFavoriteButton.addEventListener(
+      "click",
+      toggleFavorite
+    );
+
+    if (!procedureId || !procedure) {
+      renderError();
+    } else {
+      renderProcedure(procedure);
+      updateFavoriteButtons();
+    }
+  </script>
+</body>
+</html>
