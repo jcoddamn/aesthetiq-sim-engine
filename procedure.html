@@ -1684,6 +1684,442 @@ body.sheet-open {
       renderProcedure(procedure);
       updateFavoriteButtons();
     }
+  
+  const procedureOptions = {
+    "lip-filler": {
+      title: "Lip Filler",
+      description:
+        "Choose the filler type or product you would like to preview.",
+      options: [
+        {
+          id: "hyaluronic-acid",
+          name: "Hyaluronic Acid Filler",
+          detail:
+            "A temporary, dissolvable gel commonly used to add shape and volume."
+        },
+        {
+          id: "juvederm",
+          name: "Juvéderm",
+          detail:
+            "A hyaluronic acid filler family with products designed for different levels of softness and volume."
+        },
+        {
+          id: "restylane-kysse",
+          name: "Restylane Kysse",
+          detail:
+            "A flexible hyaluronic acid filler commonly used for natural-looking lip movement."
+        },
+        {
+          id: "rha",
+          name: "RHA Collection",
+          detail:
+            "A resilient hyaluronic acid filler designed for areas with frequent facial movement."
+        }
+      ]
+    },
+
+    "under-eye-filler": {
+      title: "Under-Eye Filler",
+      description:
+        "Choose the treatment type you would like to preview.",
+      options: [
+        {
+          id: "hyaluronic-acid",
+          name: "Hyaluronic Acid Filler",
+          detail:
+            "A temporary gel used to soften the appearance of under-eye hollows."
+        },
+        {
+          id: "prf",
+          name: "PRF",
+          detail:
+            "A treatment prepared from the patient’s own blood and used to support gradual rejuvenation."
+        },
+        {
+          id: "fat-transfer",
+          name: "Fat Transfer",
+          detail:
+            "Uses processed body fat to restore volume beneath the eyes."
+        }
+      ]
+    },
+
+    "lip-flip": {
+      title: "Lip Flip",
+      description:
+        "Choose the neuromodulator product you would like to preview.",
+      options: [
+        {
+          id: "botox",
+          name: "Botox",
+          detail:
+            "A neuromodulator used in small amounts to relax the upper-lip muscles."
+        },
+        {
+          id: "dysport",
+          name: "Dysport",
+          detail:
+            "A neuromodulator with a slightly different formulation and spread pattern."
+        },
+        {
+          id: "xeomin",
+          name: "Xeomin",
+          detail:
+            "A purified neuromodulator formulation without accessory proteins."
+        },
+        {
+          id: "jeuveau",
+          name: "Jeuveau",
+          detail:
+            "A neuromodulator developed specifically for aesthetic treatment."
+        }
+      ]
+    },
+
+    "forehead-botox": {
+      title: "Forehead Lines",
+      description:
+        "Choose the neuromodulator product you would like to preview.",
+      options: [
+        {
+          id: "botox",
+          name: "Botox",
+          detail:
+            "Temporarily relaxes targeted muscles that contribute to forehead lines."
+        },
+        {
+          id: "dysport",
+          name: "Dysport",
+          detail:
+            "A neuromodulator that may spread across a slightly broader treatment area."
+        },
+        {
+          id: "xeomin",
+          name: "Xeomin",
+          detail:
+            "A purified neuromodulator formulation without accessory proteins."
+        },
+        {
+          id: "jeuveau",
+          name: "Jeuveau",
+          detail:
+            "An aesthetic neuromodulator used to temporarily soften expression lines."
+        },
+        {
+          id: "daxxify",
+          name: "Daxxify",
+          detail:
+            "A peptide-formulated neuromodulator designed for temporary wrinkle reduction."
+        }
+      ]
+    },
+
+    "11-lines": {
+      title: "11 Lines",
+      description:
+        "Choose the neuromodulator product you would like to preview.",
+      options: [
+        {
+          id: "botox",
+          name: "Botox",
+          detail:
+            "Temporarily relaxes the muscles between the eyebrows."
+        },
+        {
+          id: "dysport",
+          name: "Dysport",
+          detail:
+            "A neuromodulator commonly used for moderate to severe glabellar lines."
+        },
+        {
+          id: "xeomin",
+          name: "Xeomin",
+          detail:
+            "A purified neuromodulator used to soften frown lines."
+        },
+        {
+          id: "jeuveau",
+          name: "Jeuveau",
+          detail:
+            "An aesthetic neuromodulator used for temporary improvement of frown lines."
+        },
+        {
+          id: "daxxify",
+          name: "Daxxify",
+          detail:
+            "A peptide-formulated option for temporary treatment of glabellar lines."
+        }
+      ]
+    },
+
+    "crows-feet": {
+      title: "Crow’s Feet",
+      description:
+        "Choose the neuromodulator product you would like to preview.",
+      options: [
+        {
+          id: "botox",
+          name: "Botox",
+          detail:
+            "Temporarily softens expression lines around the outer eyes."
+        },
+        {
+          id: "dysport",
+          name: "Dysport",
+          detail:
+            "A neuromodulator used to relax muscles contributing to eye-area wrinkles."
+        },
+        {
+          id: "xeomin",
+          name: "Xeomin",
+          detail:
+            "A purified neuromodulator option for temporary wrinkle reduction."
+        },
+        {
+          id: "jeuveau",
+          name: "Jeuveau",
+          detail:
+            "An aesthetic neuromodulator that may be used around the eye area."
+        }
+      ]
+    },
+
+    "chemical-peel": {
+      title: "Chemical Peel",
+      description:
+        "Choose the peel type you would like to preview.",
+      options: [
+        {
+          id: "glycolic-acid",
+          name: "Glycolic Acid Peel",
+          detail:
+            "An alpha hydroxy acid peel often used for texture, brightness and mild discoloration."
+        },
+        {
+          id: "lactic-acid",
+          name: "Lactic Acid Peel",
+          detail:
+            "A gentler alpha hydroxy acid option often selected for dry or sensitive skin."
+        },
+        {
+          id: "salicylic-acid",
+          name: "Salicylic Acid Peel",
+          detail:
+            "A beta hydroxy acid peel commonly used for oily or acne-prone skin."
+        },
+        {
+          id: "tca",
+          name: "TCA Peel",
+          detail:
+            "A peel available in different strengths for texture, pigmentation and visible skin damage."
+        },
+        {
+          id: "phenol",
+          name: "Phenol Peel",
+          detail:
+            "A deep peel requiring significant medical evaluation, recovery and professional supervision."
+        }
+      ]
+    },
+
+    "chin-augmentation": {
+      title: "Chin Augmentation",
+      description:
+        "Choose the augmentation method you would like to preview.",
+      options: [
+        {
+          id: "hyaluronic-acid",
+          name: "Hyaluronic Acid Filler",
+          detail:
+            "A temporary injectable option for adding chin projection or contour."
+        },
+        {
+          id: "silicone-implant",
+          name: "Silicone Implant",
+          detail:
+            "A solid implant surgically placed to create lasting chin projection."
+        },
+        {
+          id: "porous-polyethylene",
+          name: "Porous Polyethylene Implant",
+          detail:
+            "A firm surgical implant designed to allow tissue integration."
+        },
+        {
+          id: "fat-grafting",
+          name: "Fat Grafting",
+          detail:
+            "Uses processed body fat to add volume and shape."
+        }
+      ]
+    },
+
+    "rhinoplasty": {
+      title: "Rhinoplasty",
+      description:
+        "Choose the graft or implant option you would like to explore.",
+      options: [
+        {
+          id: "septal-cartilage",
+          name: "Septal Cartilage",
+          detail:
+            "Cartilage taken from inside the nose and commonly used for structural support."
+        },
+        {
+          id: "ear-cartilage",
+          name: "Ear Cartilage",
+          detail:
+            "Cartilage taken from the ear and shaped for specific nasal areas."
+        },
+        {
+          id: "rib-cartilage",
+          name: "Rib Cartilage",
+          detail:
+            "Provides a larger amount of structural cartilage for more complex cases."
+        },
+        {
+          id: "silicone-implant",
+          name: "Silicone Implant",
+          detail:
+            "A synthetic nasal implant used in some augmentation procedures."
+        }
+      ]
+    },
+
+    "breast-augmentation": {
+      title: "Breast Augmentation",
+      description:
+        "Choose the augmentation material you would like to preview.",
+      options: [
+        {
+          id: "silicone",
+          name: "Silicone Gel Implant",
+          detail:
+            "An implant filled with cohesive silicone gel."
+        },
+        {
+          id: "saline",
+          name: "Saline Implant",
+          detail:
+            "An implant shell filled with sterile saline after placement."
+        },
+        {
+          id: "fat-transfer",
+          name: "Fat Transfer",
+          detail:
+            "Uses processed fat taken from another area of the patient’s body."
+        }
+      ]
+    },
+
+    "bbl": {
+      title: "Brazilian Butt Lift",
+      description:
+        "Review the material used for this procedure.",
+      options: [
+        {
+          id: "autologous-fat",
+          name: "Your Own Body Fat",
+          detail:
+            "Fat is removed from selected areas, processed and transferred to the buttocks."
+        }
+      ]
+    }
+  };
+
+  const backdrop = document.getElementById("optionSheetBackdrop");
+  const closeButton = document.getElementById("closeOptionSheet");
+  const titleElement = document.getElementById("optionSheetTitle");
+  const descriptionElement = document.getElementById(
+    "optionSheetDescription"
+  );
+  const optionList = document.getElementById("treatmentOptionList");
+  const continueButton = document.getElementById("continueToCamera");
+
+  let selectedProcedure = "";
+  let selectedOption = "";
+
+  function openTreatmentOptions(procedureId) {
+    const procedure = procedureOptions[procedureId];
+
+    if (!procedure) {
+      // Procedures without product choices can go directly to the camera.
+      window.location.href =
+        "camera.html?procedure=" + encodeURIComponent(procedureId);
+      return;
+    }
+
+    selectedProcedure = procedureId;
+    selectedOption = "";
+
+    titleElement.textContent = procedure.title;
+    descriptionElement.textContent = procedure.description;
+    continueButton.disabled = true;
+    optionList.innerHTML = "";
+
+    procedure.options.forEach((option) => {
+      const label = document.createElement("label");
+      label.className = "treatment-option";
+
+      label.innerHTML = `
+        <input
+          type="radio"
+          name="treatmentOption"
+          value="${option.id}"
+        >
+
+        <span class="option-copy">
+          <span class="option-name">${option.name}</span>
+          <span class="option-detail">${option.detail}</span>
+        </span>
+      `;
+
+      const radio = label.querySelector("input");
+
+      radio.addEventListener("change", () => {
+        selectedOption = option.id;
+        continueButton.disabled = false;
+
+        document
+          .querySelectorAll(".treatment-option")
+          .forEach((item) => item.classList.remove("selected"));
+
+        label.classList.add("selected");
+      });
+
+      optionList.appendChild(label);
+    });
+
+    backdrop.classList.add("open");
+    document.body.classList.add("sheet-open");
+  }
+
+  function closeTreatmentOptions() {
+    backdrop.classList.remove("open");
+    document.body.classList.remove("sheet-open");
+  }
+
+  closeButton.addEventListener("click", closeTreatmentOptions);
+
+  backdrop.addEventListener("click", (event) => {
+    if (event.target === backdrop) {
+      closeTreatmentOptions();
+    }
+  });
+
+  continueButton.addEventListener("click", () => {
+    if (!selectedProcedure || !selectedOption) {
+      return;
+    }
+
+    const cameraUrl = new URL("camera.html", window.location.href);
+
+    cameraUrl.searchParams.set("procedure", selectedProcedure);
+    cameraUrl.searchParams.set("option", selectedOption);
+
+    window.location.href = cameraUrl.href;
+  });
+</script>
   </script>
 </body>
 </html>
