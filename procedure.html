@@ -1307,7 +1307,62 @@ body.sheet-open {
       ]
     }
   };
+function getProcedureOptionData(procedureId) {
+  // Use the detailed options whenever they exist.
+  if (procedureOptions[procedureId]) {
+    return procedureOptions[procedureId];
+  }
 
+  const procedure = getProcedureById(procedureId);
+
+  if (!procedure) {
+    return null;
+  }
+
+  const defaultOptions = {
+    Surgical: [
+      {
+        id: "standard-surgical-approach",
+        name: "Standard Surgical Approach",
+        detail:
+          "The exact technique and materials are selected by the surgeon based on your anatomy, goals and medical evaluation."
+      }
+    ],
+
+    "Non-Surgical": [
+      {
+        id: "standard-treatment",
+        name: "Standard Treatment",
+        detail:
+          "The product, device settings and treatment technique are selected by a qualified provider after evaluating your skin and goals."
+      }
+    ],
+
+    Dental: [
+      {
+        id: "custom-dental-treatment",
+        name: "Customized Dental Treatment",
+        detail:
+          "Materials, shade and treatment technique are selected after a dental examination and smile assessment."
+      }
+    ]
+  };
+
+  return {
+    title: procedure.name,
+    description:
+      "Review the common treatment approach used for this procedure.",
+    options:
+      defaultOptions[procedure.type] || [
+        {
+          id: "provider-selected",
+          name: "Provider-Selected Treatment",
+          detail:
+            "Treatment details are customized following an in-person professional evaluation."
+        }
+      ]
+  };
+}
   function escapeHtml(value) {
     return String(value || "")
       .replaceAll("&", "&amp;")
