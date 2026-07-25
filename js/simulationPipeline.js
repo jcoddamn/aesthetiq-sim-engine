@@ -1,9 +1,8 @@
-import {
-  getProcedureMask,
-  normalizeProcedureId
-} from "./procedureMap.js";
+import { getProcedureMask,
+  normalizeProcedureId } from "./procedureMap.js";
 import { createFeatheredMask } from './maskUtils.js';
 import { applyTreatmentEffect } from './treatmentEffects.js';
+import { drawMaskOverlay } from "./maskDebugger.js";
 
 export function imageToCanvas(imageSource) {
   const canvas = document.createElement('canvas');
