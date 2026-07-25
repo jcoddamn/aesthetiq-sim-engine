@@ -22,11 +22,35 @@ export function generateMaskCanvas(procedure, landmarks, width, height, blurPx =
   if (!polygons || polygons.length === 0) return null;
 
   const procedureBlur =
-    procedure === 'glabella' ? 5 :
-    procedure === 'lipFiller' || procedure === 'lipFlip' ? 10 :
-    procedure === 'crowsfeet' ? 12 :
-    procedure === 'foreheadBotox' ? 18 :
-    blurPx;
+  [
+    "glabella",
+    "glabellaBotox",
+    "glabella-neuromodulator"
+  ].includes(procedure)
+    ? 5
+
+    : [
+        "lipFiller",
+        "lip-filler",
+        "lipFlip",
+        "lip-flip"
+      ].includes(procedure)
+    ? 10
+
+    : [
+        "crowsfeet",
+        "crowsFeetBotox",
+        "crows-feet-neuromodulator"
+      ].includes(procedure)
+    ? 12
+
+    : [
+        "foreheadBotox",
+        "forehead-neuromodulator"
+      ].includes(procedure)
+    ? 18
+
+    : blurPx;
 
   return createFeatheredMask(width, height, polygons, procedureBlur);
 }
