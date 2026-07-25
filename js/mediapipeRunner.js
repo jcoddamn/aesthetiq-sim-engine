@@ -1,6 +1,3 @@
-import {
-  drawMaskDebug
-} from "./mediapipeMasks.js";
 let mediaStream = null;
 let rafId = null;
 let faceMesh = null;
