@@ -20,42 +20,58 @@ export function imageToCanvas(imageSource) {
   return canvas;
 }
 
-export function generateMaskCanvas(procedure, landmarks, width, height, blurPx = 18) {
-  const polygons = getProcedureMask(procedure, landmarks, width, height);
-  if (!polygons || polygons.length === 0) return null;
+export function generateMaskCanvas(
+  procedure,
+  landmarks,
+  width,
+  height,
+  blurPx = 18
+) {
+  const normalizedProcedure =
+    normalizeProcedureId(procedure);
+
+  const polygons = getProcedureMask(
+    normalizedProcedure,
+    landmarks,
+    width,
+    height
+  );
+
+  if (!polygons || polygons.length === 0) {
+    console.warn(
+      `[AesthetIQ] No mask polygons generated for: ${normalizedProcedure}`
+    );
+
+    return null;
+  }
 
   const procedureBlur =
-  [
-    "glabella",
-    "glabellaBotox",
+    normalizedProcedure ===
     "glabella-neuromodulator"
-  ].includes(procedure)
-    ? 5
+      ? 5
 
-    : [
-        "lipFiller",
-        "lip-filler",
-        "lipFlip",
-        "lip-flip"
-      ].includes(procedure)
-    ? 10
+      : [
+          "lip-filler",
+          "lip-flip"
+        ].includes(normalizedProcedure)
+      ? 10
 
-    : [
-        "crowsfeet",
-        "crowsFeetBotox",
+      : normalizedProcedure ===
         "crows-feet-neuromodulator"
-      ].includes(procedure)
-    ? 12
+      ? 12
 
-    : [
-        "foreheadBotox",
+      : normalizedProcedure ===
         "forehead-neuromodulator"
-      ].includes(procedure)
-    ? 18
+      ? 18
 
-    : blurPx;
+      : blurPx;
 
-  return createFeatheredMask(width, height, polygons, procedureBlur);
+  return createFeatheredMask(
+    width,
+    height,
+    polygons,
+    procedureBlur
+  );
 }
 
 export function runProcedureSimulation({ procedure, landmarks, sourceCanvas, blurPx = 18 }) {
