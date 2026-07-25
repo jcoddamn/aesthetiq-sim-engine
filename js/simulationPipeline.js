@@ -1,4 +1,7 @@
-import { getProcedureMask } from './mediapipeMasks.js';
+import {
+  getProcedureMask,
+  normalizeProcedureId
+} from "./procedureMap.js";
 import { createFeatheredMask } from './maskUtils.js';
 import { applyTreatmentEffect } from './treatmentEffects.js';
 
