@@ -1,3 +1,6 @@
+import {
+  drawMaskDebug
+} from "./mediapipeMasks.js";
 let mediaStream = null;
 let rafId = null;
 let faceMesh = null;
@@ -29,14 +32,29 @@ export async function startFaceTracking(videoElement, onLandmarks, onStatus) {
     minTrackingConfidence: 0.6
   });
 
-  faceMesh.onResults((results) => {
-    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-      onLandmarks?.(results.multiFaceLandmarks[0], results);
-      onStatus?.('Face detected');
-    } else {
-      onStatus?.('Searching for face…');
-    }
-  });
+ faceMesh.onResults((results) => {
+
+  if (
+    results.multiFaceLandmarks &&
+    results.multiFaceLandmarks.length > 0
+  ) {
+
+    const landmarks =
+      results.multiFaceLandmarks[0];
+
+    console.log("Landmarks:", landmarks.length);
+
+    onLandmarks?.(landmarks, results);
+
+    onStatus?.("Face detected");
+
+  } else {
+
+    onStatus?.("Searching for face…");
+
+  }
+
+}); 
 
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({
