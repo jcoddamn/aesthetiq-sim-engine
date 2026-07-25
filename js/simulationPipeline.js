@@ -84,3 +84,216 @@ export function renderResultsToTargets(results, targets = {}) {
     renderCanvasToElement(results.extremeCanvas, targets.extremeCanvas);
   }
 }
+
+// =========================================================
+// PROCEDURE-TO-MASK MAPPING
+// Supports database IDs and older cameraProcedure IDs.
+// =========================================================
+
+export const PROCEDURE_MASK_MAP = {
+  // Fillers and lip procedures
+  "lip-filler": ["upperLip", "lowerLip"],
+  lipFiller: ["upperLip", "lowerLip"],
+
+  "lip-flip": ["upperLip", "philtrum"],
+  lipFlip: ["upperLip", "philtrum"],
+
+  "under-eye-filler": [
+    "leftUnderEye",
+    "rightUnderEye"
+  ],
+  underEyeFiller: [
+    "leftUnderEye",
+    "rightUnderEye"
+  ],
+
+  "cheek-filler": [
+    "leftCheek",
+    "rightCheek"
+  ],
+  cheekFiller: [
+    "leftCheek",
+    "rightCheek"
+  ],
+
+  "chin-filler": ["chin"],
+  chinFiller: ["chin"],
+
+  "chin-implant": ["chin"],
+  chinImplant: ["chin"],
+
+  "jawline-filler": [
+    "leftJawline",
+    "rightJawline",
+    "chin"
+  ],
+  jawlineFiller: [
+    "leftJawline",
+    "rightJawline",
+    "chin"
+  ],
+
+  "temple-filler": [
+    "leftTemple",
+    "rightTemple"
+  ],
+  templeFiller: [
+    "leftTemple",
+    "rightTemple"
+  ],
+
+  // Nose
+  rhinoplasty: [
+    "noseBridge",
+    "noseTip",
+    "leftNostril",
+    "rightNostril"
+  ],
+
+  "revision-rhinoplasty": [
+    "noseBridge",
+    "noseTip",
+    "leftNostril",
+    "rightNostril"
+  ],
+
+  // Neuromodulators
+  "forehead-neuromodulator": ["forehead"],
+  foreheadBotox: ["forehead"],
+
+  "glabella-neuromodulator": ["glabella"],
+  glabellaBotox: ["glabella"],
+  glabella: ["glabella"],
+
+  "crows-feet-neuromodulator": [
+    "leftCrowsFeet",
+    "rightCrowsFeet"
+  ],
+  crowsFeetBotox: [
+    "leftCrowsFeet",
+    "rightCrowsFeet"
+  ],
+  crowsfeet: [
+    "leftCrowsFeet",
+    "rightCrowsFeet"
+  ],
+
+  // Facial surgery
+  "buccal-fat-removal": [
+    "leftBuccalArea",
+    "rightBuccalArea"
+  ],
+  buccalFatRemoval: [
+    "leftBuccalArea",
+    "rightBuccalArea"
+  ],
+
+  facelift: [
+    "leftCheek",
+    "rightCheek",
+    "leftJawline",
+    "rightJawline",
+    "lowerFace"
+  ],
+
+  "mini-facelift": [
+    "leftCheek",
+    "rightCheek",
+    "leftJawline",
+    "rightJawline"
+  ],
+
+  "brow-lift": [
+    "leftBrow",
+    "rightBrow",
+    "forehead"
+  ],
+  browLift: [
+    "leftBrow",
+    "rightBrow",
+    "forehead"
+  ],
+
+  "upper-blepharoplasty": [
+    "leftUpperEyelid",
+    "rightUpperEyelid"
+  ],
+  upperBlepharoplasty: [
+    "leftUpperEyelid",
+    "rightUpperEyelid"
+  ],
+
+  "lower-blepharoplasty": [
+    "leftUnderEye",
+    "rightUnderEye"
+  ],
+  lowerBlepharoplasty: [
+    "leftUnderEye",
+    "rightUnderEye"
+  ],
+
+  "lip-lift": [
+    "upperLip",
+    "philtrum",
+    "cupidsBow"
+  ],
+  lipLift: [
+    "upperLip",
+    "philtrum",
+    "cupidsBow"
+  ],
+
+  // Skin
+  "chemical-peel": ["fullFace"],
+  chemicalPeel: ["fullFace"],
+
+  "laser-resurfacing": ["fullFace"],
+  microneedling: ["fullFace"],
+  "rf-microneedling": ["fullFace"],
+  ipl: ["fullFace"],
+  "co2-laser": ["fullFace"],
+
+  // Smile
+  veneers: ["teeth"],
+  "dental-bonding": ["teeth"],
+  dentalBonding: ["teeth"],
+
+  "teeth-whitening": ["teeth"],
+  teethWhitening: ["teeth"],
+
+  "gum-contouring": ["gums"],
+  gumContouring: ["gums"]
+};
+
+export function getMaskNamesForProcedure(procedureId) {
+  return PROCEDURE_MASK_MAP[procedureId] || [];
+}
+
+export function getProcedureMask(
+  procedureId,
+  landmarks,
+  canvasWidth,
+  canvasHeight,
+  mirrorX = false
+) {
+  const maskNames =
+    getMaskNamesForProcedure(procedureId);
+
+  if (maskNames.length === 0) {
+    console.warn(
+      `[AesthetIQ] No masks mapped for procedure: ${procedureId}`
+    );
+
+    return [];
+  }
+
+  return maskNames.flatMap((maskName) =>
+    getMaskPolygons(
+      maskName,
+      landmarks,
+      canvasWidth,
+      canvasHeight,
+      mirrorX
+    )
+  );
+}
