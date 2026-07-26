@@ -13,9 +13,9 @@ const video = document.getElementById('camera');
 const cameraPreview = document.getElementById('cameraPreview');
 
 const maskCanvas = document.getElementById('maskPreview');
-const subtleCanvas = document.getElementById('subtleResult');
-const moderateCanvas = document.getElementById('moderateResult');
-const extremeCanvas = document.getElementById('extremeResult');
+const naturalCanvas = document.getElementById('naturalResult');
+const balancedCanvas = document.getElementById('balancedResult');
+const enhancedCanvas = document.getElementById('enhancedResult');
 
 const procedureLabel = document.getElementById('selectedProcedure');
 const trackingStatus = document.getElementById('trackingStatus');
