@@ -1,9 +1,8 @@
-import { startFaceTracking } from './mediapipeRunner.js';
-import { runProcedureSimulationFromImage, renderResultsToTargets } from './simulationPipeline.js';
-import { getProcedureLabel, getViewerProcedure, getProcedureColor } from './procedureMap.js';
-import { getProcedureMask } from './mediapipeMasks.js';
-import { drawPolygonOutline } from './maskUtils.js';
-import { createLandmarkSmoother } from './landmarkSmoothing.js';
+import { startFaceTracking } from "./mediapipeRunner.js";
+import { runProcedureSimulationFromImage, renderResultsToTargets } from "./simulationPipeline.js";
+import { getProcedureLabel, getViewerProcedure, getProcedureColor, getProcedureMask } from "./procedureMap.js";
+import { drawPolygonOutline } from "./maskUtils.js";
+import { createLandmarkSmoother } from "./landmarkSmoothing.js";
 
 let latestLandmarks = null;
 let currentProcedure = 'underEyeFiller';
