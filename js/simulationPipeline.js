@@ -338,13 +338,13 @@ export function runProcedureSimulation({
         debugCanvas ||
         copyCanvas(sourceCanvas),
 
-      subtleCanvas:
+      naturalCanvas:
         copyCanvas(sourceCanvas),
 
-      moderateCanvas:
+      balancedCanvas:
         copyCanvas(sourceCanvas),
 
-      extremeCanvas:
+      enhancedCanvas:
         copyCanvas(sourceCanvas)
     };
   }
@@ -366,28 +366,28 @@ export function runProcedureSimulation({
     maskCanvas,
     debugCanvas,
 
-    subtleCanvas:
+    naturalCanvas:
       applyTreatmentEffect(
         procedure,
         sourceCanvas,
         maskCanvas,
-        "subtle"
+        "natural"
       ),
 
-    moderateCanvas:
+    balancedCanvas:
       applyTreatmentEffect(
         procedure,
         sourceCanvas,
         maskCanvas,
-        "moderate"
+        "balanced"
       ),
 
-    extremeCanvas:
+    enhancedCanvas:
       applyTreatmentEffect(
         procedure,
         sourceCanvas,
         maskCanvas,
-        "extreme"
+        "enhanced"
       )
   };
 }
@@ -487,32 +487,32 @@ export function renderResultsToTargets(
   }
 
   if (
-    targets.subtleCanvas &&
-    results.subtleCanvas
+    targets.naturalCanvas &&
+    results.naturalCanvas
   ) {
     renderCanvasToElement(
-      results.subtleCanvas,
-      targets.subtleCanvas
+      results.naturalCanvas,
+      targets.naturalCanvas
     );
   }
 
   if (
-    targets.moderateCanvas &&
-    results.moderateCanvas
+    targets.balancedCanvas &&
+    results.balancedCanvas
   ) {
     renderCanvasToElement(
-      results.moderateCanvas,
-      targets.moderateCanvas
+      results.balancedCanvas,
+      targets.balancedCanvas
     );
   }
 
   if (
-    targets.extremeCanvas &&
-    results.extremeCanvas
+    targets.enhancedCanvas &&
+    results.enhancedCanvas
   ) {
     renderCanvasToElement(
-      results.extremeCanvas,
-      targets.extremeCanvas
+      results.enhancedCanvas,
+      targets.enhancedCanvas
     );
   }
 }
