@@ -144,20 +144,95 @@ getAffineTransform(
 
     }
 
-    return output;
-
-  }
+    return 
 
   drawTriangle(
-    ctx,
-    sourceCanvas,
-    triangle,
-    original,
-    warped
+  ctx,
+  sourceCanvas,
+  triangle,
+  original,
+  warped
+) {
+  if (
+    !Array.isArray(triangle) ||
+    triangle.length < 3
   ) {
-
-    // We'll build this next.
-
+    return;
   }
 
+  const sourceTriangle =
+    this.triangleToCanvas(
+      triangle,
+      original,
+      sourceCanvas.width,
+      sourceCanvas.height
+    );
+
+  const targetTriangle =
+    this.triangleToCanvas(
+      triangle,
+      warped,
+      sourceCanvas.width,
+      sourceCanvas.height
+    );
+
+  if (
+    sourceTriangle.some(
+      (point) => !point
+    ) ||
+    targetTriangle.some(
+      (point) => !point
+    )
+  ) {
+    return;
+  }
+
+  const transform =
+    this.getAffineTransform(
+      sourceTriangle,
+      targetTriangle
+    );
+
+  if (!transform) {
+    return;
+  }
+
+  ctx.save();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    targetTriangle[0].x,
+    targetTriangle[0].y
+  );
+
+  ctx.lineTo(
+    targetTriangle[1].x,
+    targetTriangle[1].y
+  );
+
+  ctx.lineTo(
+    targetTriangle[2].x,
+    targetTriangle[2].y
+  );
+
+  ctx.closePath();
+  ctx.clip();
+
+  ctx.setTransform(
+    transform.a,
+    transform.b,
+    transform.c,
+    transform.d,
+    transform.e,
+    transform.f
+  );
+
+  ctx.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
+
+  ctx.restore();
 }
