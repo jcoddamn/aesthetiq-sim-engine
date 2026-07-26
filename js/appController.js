@@ -233,7 +233,7 @@ function initApp() {
 }
 
 // =========================================================
-// function updateProcedureInformation() {
+function updateProcedureInformation() {
   const procedureData =
     getProcedureById(currentProcedure);
 
