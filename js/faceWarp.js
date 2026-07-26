@@ -299,55 +299,57 @@ export function warpLipFiller(
   });
 }
 
-  // Upper-lip body
-  moveGroup(
-    upperOuter,
-    -1,
-    0.0105 *
-      upperVolume *
-      levelStrength,
-    0.0048 *
-      horizontalVolume *
-      levelStrength,
-    0.32
-  );
+ // Upper outer lip
+moveGroup(
+  upperOuter,
+  -1,
+  0.009 *
+    upperVolume *
+    levelStrength,
+  0.0032 *
+    horizontalVolume *
+    levelStrength,
+  0.2
+);
 
-  moveGroup(
-    upperInner,
-    -1,
-    0.0028 *
-      upperVolume *
-      levelStrength,
-    0.0015 *
-      horizontalVolume *
-      levelStrength,
-    0.12
-  );
+// Upper inner lip
+moveGroup(
+  upperInner,
+  -1,
+  0.0024 *
+    upperVolume *
+    levelStrength,
+  0.0012 *
+    horizontalVolume *
+    levelStrength,
+  0.08
+);
 
-  // Lower-lip body
-  moveGroup(
-    lowerOuter,
-    1,
-    0.0125 *
-      lowerVolume *
-      levelStrength,
-    0.0052 *
-      horizontalVolume *
-      levelStrength,
-    0.38
-  );
+// Lower outer lip
+moveGroup(
+  lowerOuter,
+  1,
+  0.0105 *
+    lowerVolume *
+    levelStrength,
+  0.0035 *
+    horizontalVolume *
+    levelStrength,
+  0.24
+);
 
-  moveGroup(
-    lowerInner,
-    1,
-    0.0032 *
-      lowerVolume *
-      levelStrength,
-    0.0017 *
-      horizontalVolume *
-      levelStrength,
-    0.14
-  );
+// Lower inner lip
+moveGroup(
+  lowerInner,
+  1,
+  0.0028 *
+    lowerVolume *
+    levelStrength,
+  0.0014 *
+    horizontalVolume *
+    levelStrength,
+  0.1
+);
 
   // Add rounded central projection.
   upperCenterPoints.forEach((index) => {
