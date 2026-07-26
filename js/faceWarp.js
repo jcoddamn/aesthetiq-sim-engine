@@ -212,71 +212,92 @@ export function warpLipFiller(
     );
 
   function moveGroup(
-    indices,
-    verticalDirection,
-    verticalAmount,
-    horizontalAmount,
-    centerBoost = 0
-  ) {
-    indices.forEach((index) => {
-      const point =
-        result[index];
+  indices,
+  verticalDirection,
+  verticalAmount,
+  horizontalAmount,
+  centerBoost = 0
+) {
+  indices.forEach((index) => {
+    const point =
+      result[index];
 
-      if (!point) {
-        return;
-      }
+    if (!point) {
+      return;
+    }
 
-      const horizontalDistance =
+    const normalizedDistance =
+      Math.min(
+        1,
         Math.abs(
           point.x -
           centerX
-        );
+        ) / halfMouthWidth
+      );
 
-      const normalizedDistance =
-        Math.min(
-          1,
-          horizontalDistance /
-            halfMouthWidth
-        );
-
-      const sideDirection =
-        point.x < centerX
-          ? -1
-          : 1;
-
-      // Center receives more vertical fullness.
-      const centerWeight =
+    /*
+     * Center points receive the most fullness.
+     * Corners receive almost none.
+     */
+    const centerWeight =
+      Math.pow(
         1 -
-        normalizedDistance;
+        normalizedDistance,
+        1.35
+      );
 
-      // Sides receive more horizontal expansion.
-      const sideWeight =
-        Math.pow(
-          normalizedDistance,
-          0.8
-        );
+    const edgeWeight =
+      Math.pow(
+        normalizedDistance,
+        1.8
+      );
 
-      result[index] = {
-        ...point,
+    const sideDirection =
+      point.x < centerX
+        ? -1
+        : 1;
 
-        x:
-          point.x +
-          sideDirection *
-          horizontalAmount *
-          sideWeight,
+    /*
+     * Vertical movement builds lip height.
+     * It is strongest near the center and tapers
+     * toward the corners.
+     */
+    const verticalWeight =
+      0.18 +
+      centerWeight *
+      (
+        0.82 +
+        centerBoost
+      );
 
-        y:
-          point.y +
-          verticalDirection *
-          verticalAmount *
-          (
-            1 +
-            centerWeight *
-            centerBoost
-          )
-      };
-    });
-  }
+    /*
+     * Horizontal movement adds rounded projection,
+     * but avoids stretching the mouth corners.
+     */
+    const horizontalWeight =
+      centerWeight *
+      (
+        1 -
+        edgeWeight
+      );
+
+    result[index] = {
+      ...point,
+
+      x:
+        point.x +
+        sideDirection *
+        horizontalAmount *
+        horizontalWeight,
+
+      y:
+        point.y +
+        verticalDirection *
+        verticalAmount *
+        verticalWeight
+    };
+  });
+}
 
   // Upper-lip body
   moveGroup(
