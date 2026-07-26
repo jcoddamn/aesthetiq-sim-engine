@@ -390,6 +390,7 @@ function createSimulationLevel({
         level
       );
 
+    /*
     if (
   normalizedProcedure ===
   "lip-filler"
@@ -408,7 +409,8 @@ function createSimulationLevel({
       workingLandmarks
     );
 }
-
+*/
+    
   const {
     polygons,
     maskCanvas
