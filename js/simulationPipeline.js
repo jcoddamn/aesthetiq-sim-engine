@@ -23,7 +23,8 @@ import {
 import {
   warpLipFiller,
   warpChin,
-  warpCheeks
+  warpCheeks,
+  warpJawline
 } from "./faceWarp.js";
 
 import {
