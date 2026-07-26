@@ -233,23 +233,127 @@ function initApp() {
 }
 
 // =========================================================
-// PROCEDURE INFORMATION
-// =========================================================
+// function updateProcedureInformation() {
+  const procedureData =
+    getProcedureById(currentProcedure);
 
-function updateProcedureInformation() {
   if (selectedProcedureElement) {
     selectedProcedureElement.textContent =
+      procedureData?.name ||
       getProcedureLabel(currentProcedure);
   }
 
   if (selectedTreatmentElement) {
     selectedTreatmentElement.textContent =
-      formatOptionLabel(selectedOption);
+      getSelectedTreatmentLabel(
+        selectedOption
+      );
+  }
+
+  if (selectedRecoveryElement) {
+    selectedRecoveryElement.textContent =
+      procedureData?.recovery ||
+      "Recovery varies depending on the treatment plan.";
   }
 }
 
-function formatOptionLabel(option) {
-  return String(option || "")
+const TREATMENT_OPTION_LABELS = {
+  "hyaluronic-acid":
+    "Hyaluronic Acid Filler",
+
+  juvederm:
+    "Juvéderm",
+
+  "restylane-kysse":
+    "Restylane Kysse",
+
+  rha:
+    "RHA Collection",
+
+  prf:
+    "PRF",
+
+  "fat-transfer":
+    "Fat Transfer",
+
+  "fat-grafting":
+    "Fat Grafting",
+
+  botox:
+    "Botox",
+
+  dysport:
+    "Dysport",
+
+  xeomin:
+    "Xeomin",
+
+  jeuveau:
+    "Jeuveau",
+
+  daxxify:
+    "Daxxify",
+
+  silicone:
+    "Silicone Gel Implant",
+
+  saline:
+    "Saline Implant",
+
+  "silicone-implant":
+    "Silicone Implant",
+
+  "porous-polyethylene":
+    "Porous Polyethylene Implant",
+
+  "septal-cartilage":
+    "Septal Cartilage",
+
+  "ear-cartilage":
+    "Ear Cartilage",
+
+  "rib-cartilage":
+    "Rib Cartilage",
+
+  "glycolic-acid":
+    "Glycolic Acid Peel",
+
+  "lactic-acid":
+    "Lactic Acid Peel",
+
+  "salicylic-acid":
+    "Salicylic Acid Peel",
+
+  tca:
+    "TCA Peel",
+
+  phenol:
+    "Phenol Peel",
+
+  "autologous-fat":
+    "Your Own Body Fat",
+
+  "standard-treatment":
+    "Standard Treatment"
+};
+
+function getSelectedTreatmentLabel(option) {
+  const normalizedOption =
+    String(option || "")
+      .trim()
+      .toLowerCase();
+
+  if (
+    TREATMENT_OPTION_LABELS[
+      normalizedOption
+    ]
+  ) {
+    return TREATMENT_OPTION_LABELS[
+      normalizedOption
+    ];
+  }
+
+  return normalizedOption
     .split("-")
     .filter(Boolean)
     .map(
@@ -259,7 +363,6 @@ function formatOptionLabel(option) {
     )
     .join(" ");
 }
-
 // =========================================================
 // CONTROLS
 // =========================================================
