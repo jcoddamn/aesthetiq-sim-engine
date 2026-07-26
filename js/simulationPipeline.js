@@ -20,16 +20,24 @@ import {
   createMaskDebugCanvas
 } from "./maskDebugger.js";
 
-// Turn this off before production release.
+import {
+  warpLipFiller,
+  warpChin,
+  warpCheeks
+} from "./faceWarp.js";
+
+import {
+  renderWarp
+} from "./warpRenderer.js";
+
+// Keep enabled while testing facial regions.
 let DEBUG_MASKS = true;
 
 // ---------------------------------------------------------
 // DEBUG CONTROL
 // ---------------------------------------------------------
 
-export function setMaskDebugEnabled(
-  enabled
-) {
+export function setMaskDebugEnabled(enabled) {
   DEBUG_MASKS = Boolean(enabled);
 }
 
@@ -38,12 +46,10 @@ export function isMaskDebugEnabled() {
 }
 
 // ---------------------------------------------------------
-// IMAGE → CANVAS
+// IMAGE TO CANVAS
 // ---------------------------------------------------------
 
-export function imageToCanvas(
-  imageSource
-) {
+export function imageToCanvas(imageSource) {
   if (!imageSource) {
     throw new Error(
       "imageToCanvas requires an image or video source."
@@ -77,7 +83,7 @@ export function imageToCanvas(
 
   if (!context) {
     throw new Error(
-      "Could not create a 2D canvas context."
+      "Could not create a canvas context."
     );
   }
 
@@ -93,12 +99,43 @@ export function imageToCanvas(
 }
 
 // ---------------------------------------------------------
+// CANVAS COPY
+// ---------------------------------------------------------
+
+export function copyCanvas(sourceCanvas) {
+  if (!sourceCanvas) {
+    return null;
+  }
+
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width = sourceCanvas.width;
+  canvas.height = sourceCanvas.height;
+
+  const context =
+    canvas.getContext("2d");
+
+  if (!context) {
+    return null;
+  }
+
+  context.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
+
+  return canvas;
+}
+
+// ---------------------------------------------------------
 // PROCEDURE BLUR
 // ---------------------------------------------------------
 
 function getProcedureBlur(
   normalizedProcedure,
-  defaultBlur
+  defaultBlur = 18
 ) {
   if (
     normalizedProcedure ===
@@ -149,7 +186,70 @@ function getProcedureBlur(
     return 16;
   }
 
+  if (
+    [
+      "chin-filler",
+      "chin-implant",
+      "jawline-filler"
+    ].includes(normalizedProcedure)
+  ) {
+    return 14;
+  }
+
   return defaultBlur;
+}
+
+// ---------------------------------------------------------
+// GEOMETRY SUPPORT
+// ---------------------------------------------------------
+
+function usesGeometryWarp(procedure) {
+  return [
+    "lip-filler",
+    "chin-filler",
+    "chin-implant",
+    "cheek-filler",
+    "cheek-implants"
+  ].includes(procedure);
+}
+
+function createWarpedLandmarks(
+  procedure,
+  landmarks,
+  level
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  switch (procedure) {
+    case "lip-filler":
+      return warpLipFiller(
+        landmarks,
+        level
+      );
+
+    case "chin-filler":
+    case "chin-implant":
+      return warpChin(
+        landmarks,
+        level
+      );
+
+    case "cheek-filler":
+    case "cheek-implants":
+      return warpCheeks(
+        landmarks,
+        level
+      );
+
+    default:
+      return landmarks.map(
+        (landmark) => ({
+          ...landmark
+        })
+      );
+  }
 }
 
 // ---------------------------------------------------------
@@ -171,13 +271,14 @@ export function generateMaskData(
   const normalizedProcedure =
     normalizeProcedureId(procedure);
 
-  const polygons = getProcedureMask(
-    normalizedProcedure,
-    landmarks,
-    width,
-    height,
-    mirrorX
-  );
+  const polygons =
+    getProcedureMask(
+      normalizedProcedure,
+      landmarks,
+      width,
+      height,
+      mirrorX
+    );
 
   if (
     !Array.isArray(polygons) ||
@@ -215,8 +316,7 @@ export function generateMaskData(
   };
 }
 
-// Keep this function available for older code that expects
-// generateMaskCanvas() to return only the mask canvas.
+// Compatibility helper for older code.
 export function generateMaskCanvas(
   procedure,
   landmarks,
@@ -241,37 +341,85 @@ export function generateMaskCanvas(
 }
 
 // ---------------------------------------------------------
-// COPY CANVAS
+// CREATE ONE SIMULATION LEVEL
 // ---------------------------------------------------------
 
-function copyCanvas(sourceCanvas) {
-  if (!sourceCanvas) {
-    return null;
+function createSimulationLevel({
+  normalizedProcedure,
+  level,
+  landmarks,
+  sourceCanvas,
+  blurPx,
+  mirrorX
+}) {
+  let workingLandmarks =
+    landmarks;
+
+  let workingCanvas =
+    copyCanvas(sourceCanvas);
+
+  if (
+    usesGeometryWarp(
+      normalizedProcedure
+    )
+  ) {
+    workingLandmarks =
+      createWarpedLandmarks(
+        normalizedProcedure,
+        landmarks,
+        level
+      );
+
+    workingCanvas =
+      renderWarp(
+        sourceCanvas,
+        landmarks,
+        workingLandmarks
+      );
   }
 
-  const copiedCanvas =
-    document.createElement("canvas");
-
-  copiedCanvas.width =
-    sourceCanvas.width;
-
-  copiedCanvas.height =
-    sourceCanvas.height;
-
-  const context =
-    copiedCanvas.getContext("2d");
-
-  if (!context) {
-    return null;
-  }
-
-  context.drawImage(
-    sourceCanvas,
-    0,
-    0
+  const {
+    polygons,
+    maskCanvas
+  } = generateMaskData(
+    normalizedProcedure,
+    workingLandmarks,
+    workingCanvas.width,
+    workingCanvas.height,
+    {
+      blurPx,
+      mirrorX
+    }
   );
 
-  return copiedCanvas;
+  if (!maskCanvas) {
+    return {
+      canvas: workingCanvas,
+      landmarks: workingLandmarks,
+      polygons: [],
+      maskCanvas: null
+    };
+  }
+
+  const resultCanvas =
+    applyTreatmentEffect(
+      normalizedProcedure,
+      workingCanvas,
+      maskCanvas,
+      level
+    );
+
+  return {
+    canvas:
+      resultCanvas ||
+      workingCanvas,
+
+    landmarks:
+      workingLandmarks,
+
+    polygons,
+    maskCanvas
+  };
 }
 
 // ---------------------------------------------------------
@@ -291,51 +439,21 @@ export function runProcedureSimulation({
     );
   }
 
-  const width =
-    sourceCanvas.width;
+  if (
+    !Array.isArray(landmarks) ||
+    landmarks.length < 468
+  ) {
+    console.warn(
+      "[AesthetIQ] Valid MediaPipe face landmarks were not provided."
+    );
 
-  const height =
-    sourceCanvas.height;
-
-  const {
-    normalizedProcedure,
-    polygons,
-    maskCanvas
-  } = generateMaskData(
-    procedure,
-    landmarks,
-    width,
-    height,
-    {
-      blurPx,
-      mirrorX
-    }
-  );
-
-  const debugCanvas =
-    DEBUG_MASKS
-      ? createMaskDebugCanvas(
-          sourceCanvas,
-          polygons,
-          {
-            drawPoints: true,
-            drawFill: true,
-            drawStroke: true
-          }
-        )
-      : null;
-
-  if (!maskCanvas) {
     return {
       procedure:
-        normalizedProcedure,
+        normalizeProcedureId(procedure),
 
       polygons: [],
-
       maskCanvas: null,
-
       debugCanvas:
-        debugCanvas ||
         copyCanvas(sourceCanvas),
 
       naturalCanvas:
@@ -349,51 +467,82 @@ export function runProcedureSimulation({
     };
   }
 
+  const normalizedProcedure =
+    normalizeProcedureId(procedure);
+
+  const naturalResult =
+    createSimulationLevel({
+      normalizedProcedure,
+      level: "natural",
+      landmarks,
+      sourceCanvas,
+      blurPx,
+      mirrorX
+    });
+
+  const balancedResult =
+    createSimulationLevel({
+      normalizedProcedure,
+      level: "balanced",
+      landmarks,
+      sourceCanvas,
+      blurPx,
+      mirrorX
+    });
+
+  const enhancedResult =
+    createSimulationLevel({
+      normalizedProcedure,
+      level: "enhanced",
+      landmarks,
+      sourceCanvas,
+      blurPx,
+      mirrorX
+    });
+
   /*
-   * We still pass the original procedure value into
-   * applyTreatmentEffect for compatibility with your
-   * current treatmentEffects.js file.
-   *
-   * Later, we can standardize treatmentEffects.js to use
-   * only normalized procedure IDs.
+   * The balanced mask is used for the main mask preview
+   * and developer overlay.
    */
+
+  const debugCanvas =
+    DEBUG_MASKS
+      ? createMaskDebugCanvas(
+          sourceCanvas,
+          balancedResult.polygons,
+          {
+            drawPoints: true,
+            drawFill: true,
+            drawStroke: true
+          }
+        )
+      : null;
 
   return {
     procedure:
       normalizedProcedure,
 
-    polygons,
-    maskCanvas,
+    polygons:
+      balancedResult.polygons,
+
+    maskCanvas:
+      balancedResult.maskCanvas,
+
     debugCanvas,
 
     naturalCanvas:
-      applyTreatmentEffect(
-        procedure,
-        sourceCanvas,
-        maskCanvas,
-        "natural"
-      ),
+      naturalResult.canvas,
 
     balancedCanvas:
-      applyTreatmentEffect(
-        procedure,
-        sourceCanvas,
-        maskCanvas,
-        "balanced"
-      ),
+      balancedResult.canvas,
 
     enhancedCanvas:
-      applyTreatmentEffect(
-        procedure,
-        sourceCanvas,
-        maskCanvas,
-        "enhanced"
-      )
+      enhancedResult.canvas
   };
 }
 
 // ---------------------------------------------------------
-// RUN FROM IMAGE OR VIDEO
+// SIMULATE FROM IMAGE OR VIDEO
 // ---------------------------------------------------------
 
 export function runProcedureSimulationFromImage({
@@ -416,7 +565,7 @@ export function runProcedureSimulationFromImage({
 }
 
 // ---------------------------------------------------------
-// CANVAS RENDERING
+// RENDER CANVAS
 // ---------------------------------------------------------
 
 export function renderCanvasToElement(
@@ -455,7 +604,7 @@ export function renderCanvasToElement(
 }
 
 // ---------------------------------------------------------
-// RESULT RENDERING
+// RENDER RESULTS
 // ---------------------------------------------------------
 
 export function renderResultsToTargets(
