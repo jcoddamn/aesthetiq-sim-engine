@@ -3,7 +3,7 @@ import {
 } from "./lipProfiles.js";
 
 import {
-  blendLipSoftTissue
+  applyLipSoftTissue
 } from "./lipSoftTissue.js";
 
 /*
