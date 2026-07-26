@@ -31,6 +31,10 @@ import {
   renderWarp
 } from "./warpRenderer.js";
 
+import {
+  applyLipShading
+} from "./lipShading.js";
+
 // Keep enabled while testing facial regions.
 let DEBUG_MASKS = true;
 
@@ -409,13 +413,26 @@ function createSimulationLevel({
     };
   }
 
-  const resultCanvas =
-    applyTreatmentEffect(
-      normalizedProcedure,
+  let resultCanvas =
+  applyTreatmentEffect(
+    normalizedProcedure,
+    workingCanvas,
+    maskCanvas,
+    level
+  );
+
+if (
+  normalizedProcedure ===
+  "lip-filler"
+) {
+  resultCanvas =
+    applyLipShading(
+      resultCanvas ||
       workingCanvas,
-      maskCanvas,
+      workingLandmarks,
       level
     );
+}
 
   return {
     canvas:
