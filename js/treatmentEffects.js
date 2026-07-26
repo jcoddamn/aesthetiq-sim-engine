@@ -1,3 +1,12 @@
+import { warpLipFiller,
+  warpChin,
+  warpCheeks } from "./faceWarp.js";
+
+// =========================================================
+// AESTHETIQ — TREATMENT EFFECTS
+// File: js/treatmentEffects.js
+// =========================================================
+
 // =========================================================
 // AESTHETIQ — TREATMENT EFFECTS
 // File: js/treatmentEffects.js
