@@ -294,13 +294,13 @@ export function warpLipFiller(
   moveGroup(
     upperInner,
     -1,
-    0.0068 *
+    0.0028 *
       upperVolume *
       levelStrength,
-    0.0032 *
+    0.0015 *
       horizontalVolume *
       levelStrength,
-    0.22
+    0.12
   );
 
   // Lower-lip body
@@ -319,13 +319,13 @@ export function warpLipFiller(
   moveGroup(
     lowerInner,
     1,
-    0.0082 *
+    0.0032 *
       lowerVolume *
       levelStrength,
-    0.0035 *
+    0.0017 *
       horizontalVolume *
       levelStrength,
-    0.28
+    0.14
   );
 
   // Add rounded central projection.
