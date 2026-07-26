@@ -245,6 +245,12 @@ function createWarpedLandmarks(
         level
       );
 
+    case "jawline-filler":
+      return warpJawline(
+        landmarks,
+        level
+      );
+      
     default:
       return landmarks.map(
         (landmark) => ({
