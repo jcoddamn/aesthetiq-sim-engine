@@ -68,7 +68,6 @@ export function mergeWarp(original, warped) {
 Lip Enlargement
 =========================================================
 */
-
 export function warpLipFiller(
   landmarks,
   level = "balanced"
@@ -81,22 +80,59 @@ export function warpLipFiller(
   }
 
   const profile =
-    getLipIntensityProfile(level);
+    getLipIntensityProfile(level) || {};
 
-  const result = landmarks.map(
-    (landmark) => ({
+  const levelStrength =
+    level === "natural"
+      ? 0.72
+      : level === "enhanced"
+      ? 1.35
+      : 1;
+
+  const upperVolume =
+    Number.isFinite(profile.upperVolume)
+      ? profile.upperVolume
+      : 1;
+
+  const lowerVolume =
+    Number.isFinite(profile.lowerVolume)
+      ? profile.lowerVolume
+      : 1;
+
+  const horizontalVolume =
+    Number.isFinite(profile.horizontalVolume)
+      ? profile.horizontalVolume
+      : 1;
+
+  const cupidBowStrength =
+    Number.isFinite(profile.cupidBow)
+      ? profile.cupidBow
+      : 1;
+
+  const borderStrength =
+    Number.isFinite(profile.border)
+      ? profile.border
+      : 1;
+
+  const tubercleStrength =
+    Number.isFinite(profile.centralTubercle)
+      ? profile.centralTubercle
+      : 1;
+
+  const cornerLift =
+    Number.isFinite(profile.cornerLift)
+      ? profile.cornerLift
+      : 0;
+
+  const result =
+    landmarks.map((landmark) => ({
       ...landmark
-    })
-  );
+    }));
 
+  // Outer vermilion borders
   const upperOuter = [
     61, 185, 40, 39, 37,
     0, 267, 269, 270, 409, 291
-  ];
-
-  const upperInner = [
-    78, 191, 80, 81, 82,
-    13, 312, 311, 310, 415, 308
   ];
 
   const lowerOuter = [
@@ -104,40 +140,46 @@ export function warpLipFiller(
     17, 314, 405, 321, 375, 291
   ];
 
+  // Inner wet-line contours
+  const upperInner = [
+    78, 191, 80, 81, 82,
+    13, 312, 311, 310, 415, 308
+  ];
+
   const lowerInner = [
     78, 95, 88, 178, 87,
     14, 317, 402, 318, 324, 308
   ];
 
+  const upperCenterPoints = [
+    39, 37, 0, 267, 269,
+    81, 82, 13, 312, 311
+  ];
+
+  const lowerCenterPoints = [
+    181, 84, 17, 314, 405,
+    178, 87, 14, 317, 402
+  ];
+
   const cupidBow = [
-    37,
-    0,
-    267,
-    13
+    37, 0, 267
   ];
 
   const mouthCorners = [
-    61,
-    291
-  ];
-
-  const centralTubercle = [
-    0,
-    13,
-    14
+    61, 291
   ];
 
   const leftCorner =
-    result[61];
+    landmarks[61];
 
   const rightCorner =
-    result[291];
+    landmarks[291];
 
   const upperCenter =
-    result[13];
+    landmarks[13];
 
   const lowerCenter =
-    result[14];
+    landmarks[14];
 
   if (
     !leftCorner ||
@@ -169,11 +211,12 @@ export function warpLipFiller(
       ) / 2
     );
 
-  function moveLipGroup(
+  function moveGroup(
     indices,
     verticalDirection,
     verticalAmount,
-    horizontalAmount
+    horizontalAmount,
+    centerBoost = 0
   ) {
     indices.forEach((index) => {
       const point =
@@ -183,18 +226,34 @@ export function warpLipFiller(
         return;
       }
 
+      const horizontalDistance =
+        Math.abs(
+          point.x -
+          centerX
+        );
+
+      const normalizedDistance =
+        Math.min(
+          1,
+          horizontalDistance /
+            halfMouthWidth
+        );
+
       const sideDirection =
         point.x < centerX
           ? -1
           : 1;
 
-      const horizontalWeight =
-        Math.min(
-          1,
-          Math.abs(
-            point.x -
-            centerX
-          ) / halfMouthWidth
+      // Center receives more vertical fullness.
+      const centerWeight =
+        1 -
+        normalizedDistance;
+
+      // Sides receive more horizontal expansion.
+      const sideWeight =
+        Math.pow(
+          normalizedDistance,
+          0.8
         );
 
       result[index] = {
@@ -204,44 +263,137 @@ export function warpLipFiller(
           point.x +
           sideDirection *
           horizontalAmount *
-          horizontalWeight,
+          sideWeight,
 
         y:
           point.y +
           verticalDirection *
-          verticalAmount
+          verticalAmount *
+          (
+            1 +
+            centerWeight *
+            centerBoost
+          )
       };
     });
   }
 
-  moveLipGroup(
+  // Upper-lip body
+  moveGroup(
     upperOuter,
     -1,
-    0.009 * profile.upperVolume,
-    0.006 * profile.horizontalVolume
+    0.0105 *
+      upperVolume *
+      levelStrength,
+    0.0048 *
+      horizontalVolume *
+      levelStrength,
+    0.32
   );
 
-  moveLipGroup(
+  moveGroup(
     upperInner,
     -1,
-    0.006 * profile.upperVolume,
-    0.004 * profile.horizontalVolume
+    0.0068 *
+      upperVolume *
+      levelStrength,
+    0.0032 *
+      horizontalVolume *
+      levelStrength,
+    0.22
   );
 
-  moveLipGroup(
+  // Lower-lip body
+  moveGroup(
     lowerOuter,
     1,
-    0.0105 * profile.lowerVolume,
-    0.006 * profile.horizontalVolume
+    0.0125 *
+      lowerVolume *
+      levelStrength,
+    0.0052 *
+      horizontalVolume *
+      levelStrength,
+    0.38
   );
 
-  moveLipGroup(
+  moveGroup(
     lowerInner,
     1,
-    0.007 * profile.lowerVolume,
-    0.004 * profile.horizontalVolume
+    0.0082 *
+      lowerVolume *
+      levelStrength,
+    0.0035 *
+      horizontalVolume *
+      levelStrength,
+    0.28
   );
 
+  // Add rounded central projection.
+  upperCenterPoints.forEach((index) => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const distanceFromCenter =
+      Math.abs(
+        point.x -
+        centerX
+      ) / halfMouthWidth;
+
+    const centerInfluence =
+      Math.max(
+        0,
+        1 -
+        distanceFromCenter
+      );
+
+    result[index] = {
+      ...point,
+      y:
+        point.y -
+        0.0035 *
+        upperVolume *
+        levelStrength *
+        centerInfluence
+    };
+  });
+
+  lowerCenterPoints.forEach((index) => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const distanceFromCenter =
+      Math.abs(
+        point.x -
+        centerX
+      ) / halfMouthWidth;
+
+    const centerInfluence =
+      Math.max(
+        0,
+        1 -
+        distanceFromCenter
+      );
+
+    result[index] = {
+      ...point,
+      y:
+        point.y +
+        0.0042 *
+        lowerVolume *
+        levelStrength *
+        centerInfluence
+    };
+  });
+
+  // Preserve and sharpen Cupid's bow.
   cupidBow.forEach((index) => {
     const point =
       result[index];
@@ -250,15 +402,23 @@ export function warpLipFiller(
       return;
     }
 
+    const centerInfluence =
+      index === 0
+        ? 1
+        : 0.62;
+
     result[index] = {
       ...point,
       y:
         point.y -
-        0.004 *
-        profile.cupidBow
+        0.0028 *
+        cupidBowStrength *
+        levelStrength *
+        centerInfluence
     };
   });
 
+  // Slightly define the outer vermilion border.
   upperOuter.forEach((index) => {
     const point =
       result[index];
@@ -271,8 +431,9 @@ export function warpLipFiller(
       ...point,
       y:
         point.y -
-        0.002 *
-        profile.border
+        0.0012 *
+        borderStrength *
+        levelStrength
     };
   });
 
@@ -288,35 +449,14 @@ export function warpLipFiller(
       ...point,
       y:
         point.y +
-        0.002 *
-        profile.border
+        0.0014 *
+        borderStrength *
+        levelStrength
     };
   });
 
-  centralTubercle.forEach((index) => {
-    const point =
-      result[index];
-
-    if (!point) {
-      return;
-    }
-
-    const direction =
-      index === 14
-        ? 1
-        : -1;
-
-    result[index] = {
-      ...point,
-      y:
-        point.y +
-        direction *
-        0.0035 *
-        profile.centralTubercle
-    };
-  });
-
-    mouthCorners.forEach((index) => {
+  // Central tubercle fullness.
+  [0, 13].forEach((index) => {
     const point =
       result[index];
 
@@ -328,23 +468,68 @@ export function warpLipFiller(
       ...point,
       y:
         point.y -
-        0.0025 *
-        profile.cornerLift
+        0.0024 *
+        tubercleStrength *
+        levelStrength
     };
   });
-  
-  const blendedResult =
-  applyLipSoftTissue(
+
+  const lowerTubercle =
+    result[14];
+
+  if (lowerTubercle) {
+    result[14] = {
+      ...lowerTubercle,
+      y:
+        lowerTubercle.y +
+        0.0028 *
+        tubercleStrength *
+        levelStrength
+    };
+  }
+
+  // Keep the corners controlled instead of widening them too much.
+  mouthCorners.forEach((index) => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const originalPoint =
+      landmarks[index];
+
+    result[index] = {
+      ...point,
+
+      x:
+        originalPoint.x +
+        (
+          point.x -
+          originalPoint.x
+        ) * 0.45,
+
+      y:
+        point.y -
+        0.0015 *
+        cornerLift *
+        levelStrength
+    };
+  });
+
+  const tissueStrength =
+    level === "natural"
+      ? 0.2
+      : level === "enhanced"
+      ? 0.46
+      : 0.32;
+
+  return applyLipSoftTissue(
     landmarks,
     result,
-    level === "natural"
-      ? 0.22
-      : level === "balanced"
-      ? 0.35
-      : 0.48
+    tissueStrength
   );
-
-return blendedResult;
 }
 
 /*
