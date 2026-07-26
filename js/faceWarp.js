@@ -150,6 +150,12 @@ export function warpLipFiller(
       rightCorner.x
     ) / 2;
 
+  const centerY =
+    (
+      upperCenter.y +
+      lowerCenter.y
+    ) / 2;
+
   const halfMouthWidth =
     Math.max(
       0.0001,
@@ -356,64 +362,65 @@ const softTissueStrength =
     : 0.5;
 
 surroundingMouthPoints.forEach((index) => {
-  const originalPoint = landmarks[index];
-  const point = result[index];
+  const originalPoint =
+    landmarks[index];
 
-  if (!originalPoint || !point) {
+  if (!originalPoint) {
     return;
   }
 
-  const deltaX =
-    point.x - centerX;
+  const offsetX =
+    originalPoint.x - centerX;
 
-  const deltaY =
-    point.y - centerY;
+  const offsetY =
+    originalPoint.y - centerY;
 
   const distance =
     Math.sqrt(
-      deltaX * deltaX +
-      deltaY * deltaY
+      offsetX * offsetX +
+      offsetY * offsetY
     );
 
-  const influenceRadius = 0.16;
+  const influenceRadius = 0.14;
 
   const influence =
     Math.max(
       0,
-      1 -
-      distance / influenceRadius
-    ) * softTissueStrength;
+      1 - distance / influenceRadius
+    );
+
+  if (influence <= 0) {
+    return;
+  }
 
   const horizontalDirection =
-    originalPoint.x < centerX
-      ? -1
-      : 1;
+    offsetX < 0 ? -1 : 1;
 
   const verticalDirection =
-    originalPoint.y < centerY
-      ? -1
-      : 1;
+    offsetY < 0 ? -1 : 1;
 
   result[index] = {
-    ...point,
+    ...originalPoint,
 
     x:
       originalPoint.x +
       horizontalDirection *
-        0.003 *
+        0.0018 *
         profile.horizontalVolume *
-        influence,
+        influence *
+        softTissueStrength,
 
     y:
       originalPoint.y +
       verticalDirection *
-        0.0025 *
+        0.0014 *
         (
           profile.upperVolume +
           profile.lowerVolume
         ) *
         0.5 *
-        influence
+        influence *
+        softTissueStrength
   };
 });
   
