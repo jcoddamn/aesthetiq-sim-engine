@@ -76,12 +76,8 @@ export function warpLipFiller(
     return landmarks;
   }
 
-  const strength =
-    level === "natural"
-      ? 0.22
-      : level === "balanced"
-      ? 0.48
-      : 0.78;
+  const profile =
+    getLipIntensityProfile(level);
 
   const result = landmarks.map(
     (landmark) => ({
@@ -109,10 +105,35 @@ export function warpLipFiller(
     14, 317, 402, 318, 324, 308
   ];
 
-  const leftCorner = result[61];
-  const rightCorner = result[291];
-  const upperCenter = result[13];
-  const lowerCenter = result[14];
+  const cupidBow = [
+    37,
+    0,
+    267,
+    13
+  ];
+
+  const mouthCorners = [
+    61,
+    291
+  ];
+
+  const centralTubercle = [
+    0,
+    13,
+    14
+  ];
+
+  const leftCorner =
+    result[61];
+
+  const rightCorner =
+    result[291];
+
+  const upperCenter =
+    result[13];
+
+  const lowerCenter =
+    result[14];
 
   if (
     !leftCorner ||
@@ -124,43 +145,46 @@ export function warpLipFiller(
   }
 
   const centerX =
-    (leftCorner.x + rightCorner.x) / 2;
+    (
+      leftCorner.x +
+      rightCorner.x
+    ) / 2;
 
-  const centerY =
-    (upperCenter.y + lowerCenter.y) / 2;
+  const halfMouthWidth =
+    Math.max(
+      0.0001,
+      Math.abs(
+        rightCorner.x -
+        leftCorner.x
+      ) / 2
+    );
 
-  const verticalExpansion =
-    0.009 * strength;
-
-  const horizontalExpansion =
-    0.006 * strength;
-
-  function moveLipPoints(
+  function moveLipGroup(
     indices,
     verticalDirection,
-    verticalWeight = 1
+    verticalAmount,
+    horizontalAmount
   ) {
     indices.forEach((index) => {
-      const point = result[index];
+      const point =
+        result[index];
 
       if (!point) {
         return;
       }
 
-      const horizontalDirection =
-        point.x < centerX ? -1 : 1;
+      const sideDirection =
+        point.x < centerX
+          ? -1
+          : 1;
 
-      const distanceFromCenter =
+      const horizontalWeight =
         Math.min(
           1,
-          Math.abs(point.x - centerX) /
-            Math.max(
-              0.0001,
-              Math.abs(
-                rightCorner.x -
-                leftCorner.x
-              ) / 2
-            )
+          Math.abs(
+            point.x -
+            centerX
+          ) / halfMouthWidth
         );
 
       result[index] = {
@@ -168,69 +192,135 @@ export function warpLipFiller(
 
         x:
           point.x +
-          horizontalDirection *
-            horizontalExpansion *
-            distanceFromCenter,
+          sideDirection *
+          horizontalAmount *
+          horizontalWeight,
 
         y:
           point.y +
           verticalDirection *
-            verticalExpansion *
-            verticalWeight
+          verticalAmount
       };
     });
   }
 
-  moveLipPoints(
+  moveLipGroup(
     upperOuter,
     -1,
-    1
+    0.009 * profile.upperVolume,
+    0.006 * profile.horizontalVolume
   );
 
-  moveLipPoints(
+  moveLipGroup(
     upperInner,
     -1,
-    0.65
+    0.006 * profile.upperVolume,
+    0.004 * profile.horizontalVolume
   );
 
-  moveLipPoints(
+  moveLipGroup(
     lowerOuter,
     1,
-    1.15
+    0.0105 * profile.lowerVolume,
+    0.006 * profile.horizontalVolume
   );
 
-  moveLipPoints(
+  moveLipGroup(
     lowerInner,
     1,
-    0.72
+    0.007 * profile.lowerVolume,
+    0.004 * profile.horizontalVolume
   );
 
-  // Slight cupid's-bow definition.
-  [0, 13].forEach((index) => {
-    const point = result[index];
+  cupidBow.forEach((index) => {
+    const point =
+      result[index];
 
-    if (point) {
-      result[index] = {
-        ...point,
-        y:
-          point.y -
-          0.0035 * strength
-      };
+    if (!point) {
+      return;
     }
+
+    result[index] = {
+      ...point,
+      y:
+        point.y -
+        0.004 *
+        profile.cupidBow
+    };
   });
 
-  // Keep mouth corners from stretching too far.
-  [61, 291].forEach((index) => {
-    const point = result[index];
+  upperOuter.forEach((index) => {
+    const point =
+      result[index];
 
-    if (point) {
-      result[index] = {
-        ...point,
-        y:
-          point.y -
-          0.0015 * strength
-      };
+    if (!point) {
+      return;
     }
+
+    result[index] = {
+      ...point,
+      y:
+        point.y -
+        0.002 *
+        profile.border
+    };
+  });
+
+  lowerOuter.forEach((index) => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      y:
+        point.y +
+        0.002 *
+        profile.border
+    };
+  });
+
+  centralTubercle.forEach((index) => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const direction =
+      index === 14
+        ? 1
+        : -1;
+
+    result[index] = {
+      ...point,
+      y:
+        point.y +
+        direction *
+        0.0035 *
+        profile.centralTubercle
+    };
+  });
+
+  mouthCorners.forEach((index) => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      y:
+        point.y -
+        0.0025 *
+        profile.cornerLift
+    };
   });
 
   return result;
