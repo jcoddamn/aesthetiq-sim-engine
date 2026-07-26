@@ -323,6 +323,100 @@ export function warpLipFiller(
     };
   });
 
+// ---------------------------------------------------------
+// SOFT TISSUE BLENDING AROUND THE MOUTH
+// ---------------------------------------------------------
+
+const surroundingMouthPoints = [
+  // Upper lip / philtrum area
+  164, 167, 165, 92, 186,
+  57, 43, 106, 182, 83,
+  18, 313, 406, 335, 273,
+  287, 410, 322, 391, 393,
+
+  // Left cheek transition
+  205, 50, 187, 207, 206,
+  203, 129, 202, 214,
+
+  // Right cheek transition
+  425, 280, 411, 427, 426,
+  423, 358, 422, 434,
+
+  // Lower lip / chin transition
+  200, 199, 175, 152,
+  428, 421, 418,
+  208, 201, 194
+];
+
+const softTissueStrength =
+  level === "natural"
+    ? 0.18
+    : level === "balanced"
+    ? 0.34
+    : 0.5;
+
+surroundingMouthPoints.forEach((index) => {
+  const originalPoint = landmarks[index];
+  const point = result[index];
+
+  if (!originalPoint || !point) {
+    return;
+  }
+
+  const deltaX =
+    point.x - centerX;
+
+  const deltaY =
+    point.y - centerY;
+
+  const distance =
+    Math.sqrt(
+      deltaX * deltaX +
+      deltaY * deltaY
+    );
+
+  const influenceRadius = 0.16;
+
+  const influence =
+    Math.max(
+      0,
+      1 -
+      distance / influenceRadius
+    ) * softTissueStrength;
+
+  const horizontalDirection =
+    originalPoint.x < centerX
+      ? -1
+      : 1;
+
+  const verticalDirection =
+    originalPoint.y < centerY
+      ? -1
+      : 1;
+
+  result[index] = {
+    ...point,
+
+    x:
+      originalPoint.x +
+      horizontalDirection *
+        0.003 *
+        profile.horizontalVolume *
+        influence,
+
+    y:
+      originalPoint.y +
+      verticalDirection *
+        0.0025 *
+        (
+          profile.upperVolume +
+          profile.lowerVolume
+        ) *
+        0.5 *
+        influence
+  };
+});
+  
   return result;
 }
 
