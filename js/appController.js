@@ -18,6 +18,10 @@ import {
 } from "./procedureMap.js";
 
 import {
+  getProcedureById
+} from "./procedureData.js";
+
+import {
   drawPolygonOutline
 } from "./maskUtils.js";
 
@@ -87,6 +91,9 @@ const selectedProcedureElement =
 
 const selectedTreatmentElement =
   document.getElementById("selectedTreatment");
+
+const selectedRecoveryElement =
+  document.getElementById("selectedRecovery");
 
 const trackingStatus =
   document.getElementById("trackingStatus");
