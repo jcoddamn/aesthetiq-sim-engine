@@ -28,7 +28,7 @@ import {
 } from "./faceWarp.js";
 
 import {
-  renderWarp
+  renderWarp,
   getFaceTriangles
 } from "./warpRenderer.js";
 
