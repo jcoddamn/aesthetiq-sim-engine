@@ -131,7 +131,7 @@ function buildTrianglesFromEdges(edges) {
 
 let cachedTriangles = null;
 
-function getFaceTriangles() {
+export function getFaceTriangles() {
   if (cachedTriangles) {
     return cachedTriangles;
   }
