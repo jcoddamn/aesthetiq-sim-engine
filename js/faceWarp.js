@@ -354,7 +354,7 @@ export function warpLipFiller(
       ...point,
       y:
         point.y -
-        0.0035 *
+        0.0018 *
         upperVolume *
         levelStrength *
         centerInfluence
@@ -386,7 +386,7 @@ export function warpLipFiller(
       ...point,
       y:
         point.y +
-        0.0042 *
+        0.0022 *
         lowerVolume *
         levelStrength *
         centerInfluence
@@ -520,10 +520,10 @@ export function warpLipFiller(
 
   const tissueStrength =
     level === "natural"
-      ? 0.2
+      ? 0.07
       : level === "enhanced"
-      ? 0.46
-      : 0.32;
+      ? 0.2
+      : 0.13;
 
   return applyLipSoftTissue(
     landmarks,
