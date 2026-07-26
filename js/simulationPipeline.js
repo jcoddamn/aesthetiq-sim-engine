@@ -1,33 +1,173 @@
-import { getProcedureMask,
-  normalizeProcedureId } from "./procedureMap.js";
-import { createFeatheredMask } from './maskUtils.js';
-import { applyTreatmentEffect } from './treatmentEffects.js';
-import { createMaskDebugCanvas } from "./maskDebugger.js";
-  
-const DEBUG_MASKS = true;
+// =========================================================
+// AESTHETIQ — SIMULATION PIPELINE
+// File: js/simulationPipeline.js
+// =========================================================
 
-export function imageToCanvas(imageSource) {
-  const canvas = document.createElement('canvas');
+import {
+  getProcedureMask,
+  normalizeProcedureId
+} from "./procedureMap.js";
 
-  const width = imageSource.videoWidth || imageSource.naturalWidth || imageSource.width;
-  const height = imageSource.videoHeight || imageSource.naturalHeight || imageSource.height;
+import {
+  createFeatheredMask
+} from "./maskUtils.js";
+
+import {
+  applyTreatmentEffect
+} from "./treatmentEffects.js";
+
+import {
+  createMaskDebugCanvas
+} from "./maskDebugger.js";
+
+// Turn this off before production release.
+let DEBUG_MASKS = true;
+
+// ---------------------------------------------------------
+// DEBUG CONTROL
+// ---------------------------------------------------------
+
+export function setMaskDebugEnabled(
+  enabled
+) {
+  DEBUG_MASKS = Boolean(enabled);
+}
+
+export function isMaskDebugEnabled() {
+  return DEBUG_MASKS;
+}
+
+// ---------------------------------------------------------
+// IMAGE → CANVAS
+// ---------------------------------------------------------
+
+export function imageToCanvas(
+  imageSource
+) {
+  if (!imageSource) {
+    throw new Error(
+      "imageToCanvas requires an image or video source."
+    );
+  }
+
+  const width =
+    imageSource.videoWidth ||
+    imageSource.naturalWidth ||
+    imageSource.width;
+
+  const height =
+    imageSource.videoHeight ||
+    imageSource.naturalHeight ||
+    imageSource.height;
+
+  if (!width || !height) {
+    throw new Error(
+      "The image source does not have valid dimensions."
+    );
+  }
+
+  const canvas =
+    document.createElement("canvas");
 
   canvas.width = width;
   canvas.height = height;
 
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(imageSource, 0, 0, width, height);
+  const context =
+    canvas.getContext("2d");
+
+  if (!context) {
+    throw new Error(
+      "Could not create a 2D canvas context."
+    );
+  }
+
+  context.drawImage(
+    imageSource,
+    0,
+    0,
+    width,
+    height
+  );
 
   return canvas;
 }
 
-export function generateMaskCanvas(
+// ---------------------------------------------------------
+// PROCEDURE BLUR
+// ---------------------------------------------------------
+
+function getProcedureBlur(
+  normalizedProcedure,
+  defaultBlur
+) {
+  if (
+    normalizedProcedure ===
+    "glabella-neuromodulator"
+  ) {
+    return 5;
+  }
+
+  if (
+    [
+      "lip-filler",
+      "lip-flip"
+    ].includes(normalizedProcedure)
+  ) {
+    return 10;
+  }
+
+  if (
+    normalizedProcedure ===
+    "crows-feet-neuromodulator"
+  ) {
+    return 12;
+  }
+
+  if (
+    normalizedProcedure ===
+    "forehead-neuromodulator"
+  ) {
+    return 18;
+  }
+
+  if (
+    [
+      "rhinoplasty",
+      "revision-rhinoplasty"
+    ].includes(normalizedProcedure)
+  ) {
+    return 8;
+  }
+
+  if (
+    [
+      "cheek-filler",
+      "cheek-implants",
+      "buccal-fat-removal"
+    ].includes(normalizedProcedure)
+  ) {
+    return 16;
+  }
+
+  return defaultBlur;
+}
+
+// ---------------------------------------------------------
+// MASK DATA
+// ---------------------------------------------------------
+
+export function generateMaskData(
   procedure,
   landmarks,
   width,
   height,
-  blurPx = 18
+  options = {}
 ) {
+  const {
+    blurPx = 18,
+    mirrorX = false
+  } = options;
+
   const normalizedProcedure =
     normalizeProcedureId(procedure);
 
@@ -35,309 +175,344 @@ export function generateMaskCanvas(
     normalizedProcedure,
     landmarks,
     width,
-    height
+    height,
+    mirrorX
   );
 
-  if (!polygons || polygons.length === 0) {
+  if (
+    !Array.isArray(polygons) ||
+    polygons.length === 0
+  ) {
     console.warn(
       `[AesthetIQ] No mask polygons generated for: ${normalizedProcedure}`
     );
 
-    return null;
-  }
-
-  const procedureBlur =
-    normalizedProcedure ===
-    "glabella-neuromodulator"
-      ? 5
-
-      : [
-          "lip-filler",
-          "lip-flip"
-        ].includes(normalizedProcedure)
-      ? 10
-
-      : normalizedProcedure ===
-        "crows-feet-neuromodulator"
-      ? 12
-
-      : normalizedProcedure ===
-        "forehead-neuromodulator"
-      ? 18
-
-      : blurPx;
-
-  return createFeatheredMask(
-    width,
-    height,
-    polygons,
-    procedureBlur
-  );
-}
-
-export function runProcedureSimulation({ procedure, landmarks, sourceCanvas, blurPx = 18 }) {
-  const width = sourceCanvas.width;
-  const height = sourceCanvas.height;
-
-  const maskCanvas = generateMaskCanvas(procedure, landmarks, width, height, blurPx);
-
-  if (!maskCanvas) {
     return {
-      maskCanvas: null,
-      subtleCanvas: sourceCanvas,
-      moderateCanvas: sourceCanvas,
-      extremeCanvas: sourceCanvas
+      normalizedProcedure,
+      polygons: [],
+      maskCanvas: null
     };
   }
 
+  const procedureBlur =
+    getProcedureBlur(
+      normalizedProcedure,
+      blurPx
+    );
+
+  const maskCanvas =
+    createFeatheredMask(
+      width,
+      height,
+      polygons,
+      procedureBlur
+    );
+
   return {
-    maskCanvas,
-    subtleCanvas: applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, 'subtle'),
-    moderateCanvas: applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, 'moderate'),
-    extremeCanvas: applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, 'extreme')
+    normalizedProcedure,
+    polygons,
+    maskCanvas
   };
 }
 
-export function runProcedureSimulationFromImage({ procedure, landmarks, imageSource, blurPx = 18 }) {
-  const sourceCanvas = imageToCanvas(imageSource);
-  return runProcedureSimulation({ procedure, landmarks, sourceCanvas, blurPx });
-}
-
-export function renderCanvasToElement(canvas, targetCanvas) {
-  if (!canvas || !targetCanvas) return;
-
-  targetCanvas.width = canvas.width;
-  targetCanvas.height = canvas.height;
-
-  const ctx = targetCanvas.getContext('2d');
-  ctx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
-  ctx.drawImage(canvas, 0, 0);
-}
-
-export function renderResultsToTargets(results, targets = {}) {
-  if (targets.maskCanvas && results.maskCanvas) {
-    renderCanvasToElement(results.maskCanvas, targets.maskCanvas);
-  }
-  if (targets.subtleCanvas && results.subtleCanvas) {
-    renderCanvasToElement(results.subtleCanvas, targets.subtleCanvas);
-  }
-  if (targets.moderateCanvas && results.moderateCanvas) {
-    renderCanvasToElement(results.moderateCanvas, targets.moderateCanvas);
-  }
-  if (targets.extremeCanvas && results.extremeCanvas) {
-    renderCanvasToElement(results.extremeCanvas, targets.extremeCanvas);
-  }
-}
-
-// =========================================================
-// PROCEDURE-TO-MASK MAPPING
-// Supports database IDs and older cameraProcedure IDs.
-// =========================================================
-
-export const PROCEDURE_MASK_MAP = {
-  // Fillers and lip procedures
-  "lip-filler": ["upperLip", "lowerLip"],
-  lipFiller: ["upperLip", "lowerLip"],
-
-  "lip-flip": ["upperLip", "philtrum"],
-  lipFlip: ["upperLip", "philtrum"],
-
-  "under-eye-filler": [
-    "leftUnderEye",
-    "rightUnderEye"
-  ],
-  underEyeFiller: [
-    "leftUnderEye",
-    "rightUnderEye"
-  ],
-
-  "cheek-filler": [
-    "leftCheek",
-    "rightCheek"
-  ],
-  cheekFiller: [
-    "leftCheek",
-    "rightCheek"
-  ],
-
-  "chin-filler": ["chin"],
-  chinFiller: ["chin"],
-
-  "chin-implant": ["chin"],
-  chinImplant: ["chin"],
-
-  "jawline-filler": [
-    "leftJawline",
-    "rightJawline",
-    "chin"
-  ],
-  jawlineFiller: [
-    "leftJawline",
-    "rightJawline",
-    "chin"
-  ],
-
-  "temple-filler": [
-    "leftTemple",
-    "rightTemple"
-  ],
-  templeFiller: [
-    "leftTemple",
-    "rightTemple"
-  ],
-
-  // Nose
-  rhinoplasty: [
-    "noseBridge",
-    "noseTip",
-    "leftNostril",
-    "rightNostril"
-  ],
-
-  "revision-rhinoplasty": [
-    "noseBridge",
-    "noseTip",
-    "leftNostril",
-    "rightNostril"
-  ],
-
-  // Neuromodulators
-  "forehead-neuromodulator": ["forehead"],
-  foreheadBotox: ["forehead"],
-
-  "glabella-neuromodulator": ["glabella"],
-  glabellaBotox: ["glabella"],
-  glabella: ["glabella"],
-
-  "crows-feet-neuromodulator": [
-    "leftCrowsFeet",
-    "rightCrowsFeet"
-  ],
-  crowsFeetBotox: [
-    "leftCrowsFeet",
-    "rightCrowsFeet"
-  ],
-  crowsfeet: [
-    "leftCrowsFeet",
-    "rightCrowsFeet"
-  ],
-
-  // Facial surgery
-  "buccal-fat-removal": [
-    "leftBuccalArea",
-    "rightBuccalArea"
-  ],
-  buccalFatRemoval: [
-    "leftBuccalArea",
-    "rightBuccalArea"
-  ],
-
-  facelift: [
-    "leftCheek",
-    "rightCheek",
-    "leftJawline",
-    "rightJawline",
-    "lowerFace"
-  ],
-
-  "mini-facelift": [
-    "leftCheek",
-    "rightCheek",
-    "leftJawline",
-    "rightJawline"
-  ],
-
-  "brow-lift": [
-    "leftBrow",
-    "rightBrow",
-    "forehead"
-  ],
-  browLift: [
-    "leftBrow",
-    "rightBrow",
-    "forehead"
-  ],
-
-  "upper-blepharoplasty": [
-    "leftUpperEyelid",
-    "rightUpperEyelid"
-  ],
-  upperBlepharoplasty: [
-    "leftUpperEyelid",
-    "rightUpperEyelid"
-  ],
-
-  "lower-blepharoplasty": [
-    "leftUnderEye",
-    "rightUnderEye"
-  ],
-  lowerBlepharoplasty: [
-    "leftUnderEye",
-    "rightUnderEye"
-  ],
-
-  "lip-lift": [
-    "upperLip",
-    "philtrum",
-    "cupidsBow"
-  ],
-  lipLift: [
-    "upperLip",
-    "philtrum",
-    "cupidsBow"
-  ],
-
-  // Skin
-  "chemical-peel": ["fullFace"],
-  chemicalPeel: ["fullFace"],
-
-  "laser-resurfacing": ["fullFace"],
-  microneedling: ["fullFace"],
-  "rf-microneedling": ["fullFace"],
-  ipl: ["fullFace"],
-  "co2-laser": ["fullFace"],
-
-  // Smile
-  veneers: ["teeth"],
-  "dental-bonding": ["teeth"],
-  dentalBonding: ["teeth"],
-
-  "teeth-whitening": ["teeth"],
-  teethWhitening: ["teeth"],
-
-  "gum-contouring": ["gums"],
-  gumContouring: ["gums"]
-};
-
-export function getMaskNamesForProcedure(procedureId) {
-  return PROCEDURE_MASK_MAP[procedureId] || [];
-}
-
-export function getProcedureMask(
-  procedureId,
+// Keep this function available for older code that expects
+// generateMaskCanvas() to return only the mask canvas.
+export function generateMaskCanvas(
+  procedure,
   landmarks,
-  canvasWidth,
-  canvasHeight,
+  width,
+  height,
+  blurPx = 18,
   mirrorX = false
 ) {
-  const maskNames =
-    getMaskNamesForProcedure(procedureId);
-
-  if (maskNames.length === 0) {
-    console.warn(
-      `[AesthetIQ] No masks mapped for procedure: ${procedureId}`
+  const result =
+    generateMaskData(
+      procedure,
+      landmarks,
+      width,
+      height,
+      {
+        blurPx,
+        mirrorX
+      }
     );
 
-    return [];
+  return result.maskCanvas;
+}
+
+// ---------------------------------------------------------
+// COPY CANVAS
+// ---------------------------------------------------------
+
+function copyCanvas(sourceCanvas) {
+  if (!sourceCanvas) {
+    return null;
   }
 
-  return maskNames.flatMap((maskName) =>
-    getMaskPolygons(
-      maskName,
-      landmarks,
-      canvasWidth,
-      canvasHeight,
-      mirrorX
-    )
+  const copiedCanvas =
+    document.createElement("canvas");
+
+  copiedCanvas.width =
+    sourceCanvas.width;
+
+  copiedCanvas.height =
+    sourceCanvas.height;
+
+  const context =
+    copiedCanvas.getContext("2d");
+
+  if (!context) {
+    return null;
+  }
+
+  context.drawImage(
+    sourceCanvas,
+    0,
+    0
   );
+
+  return copiedCanvas;
+}
+
+// ---------------------------------------------------------
+// MAIN SIMULATION
+// ---------------------------------------------------------
+
+export function runProcedureSimulation({
+  procedure,
+  landmarks,
+  sourceCanvas,
+  blurPx = 18,
+  mirrorX = false
+}) {
+  if (!sourceCanvas) {
+    throw new Error(
+      "runProcedureSimulation requires sourceCanvas."
+    );
+  }
+
+  const width =
+    sourceCanvas.width;
+
+  const height =
+    sourceCanvas.height;
+
+  const {
+    normalizedProcedure,
+    polygons,
+    maskCanvas
+  } = generateMaskData(
+    procedure,
+    landmarks,
+    width,
+    height,
+    {
+      blurPx,
+      mirrorX
+    }
+  );
+
+  const debugCanvas =
+    DEBUG_MASKS
+      ? createMaskDebugCanvas(
+          sourceCanvas,
+          polygons,
+          {
+            drawPoints: true,
+            drawFill: true,
+            drawStroke: true
+          }
+        )
+      : null;
+
+  if (!maskCanvas) {
+    return {
+      procedure:
+        normalizedProcedure,
+
+      polygons: [],
+
+      maskCanvas: null,
+
+      debugCanvas:
+        debugCanvas ||
+        copyCanvas(sourceCanvas),
+
+      subtleCanvas:
+        copyCanvas(sourceCanvas),
+
+      moderateCanvas:
+        copyCanvas(sourceCanvas),
+
+      extremeCanvas:
+        copyCanvas(sourceCanvas)
+    };
+  }
+
+  /*
+   * We still pass the original procedure value into
+   * applyTreatmentEffect for compatibility with your
+   * current treatmentEffects.js file.
+   *
+   * Later, we can standardize treatmentEffects.js to use
+   * only normalized procedure IDs.
+   */
+
+  return {
+    procedure:
+      normalizedProcedure,
+
+    polygons,
+    maskCanvas,
+    debugCanvas,
+
+    subtleCanvas:
+      applyTreatmentEffect(
+        procedure,
+        sourceCanvas,
+        maskCanvas,
+        "subtle"
+      ),
+
+    moderateCanvas:
+      applyTreatmentEffect(
+        procedure,
+        sourceCanvas,
+        maskCanvas,
+        "moderate"
+      ),
+
+    extremeCanvas:
+      applyTreatmentEffect(
+        procedure,
+        sourceCanvas,
+        maskCanvas,
+        "extreme"
+      )
+  };
+}
+
+// ---------------------------------------------------------
+// RUN FROM IMAGE OR VIDEO
+// ---------------------------------------------------------
+
+export function runProcedureSimulationFromImage({
+  procedure,
+  landmarks,
+  imageSource,
+  blurPx = 18,
+  mirrorX = false
+}) {
+  const sourceCanvas =
+    imageToCanvas(imageSource);
+
+  return runProcedureSimulation({
+    procedure,
+    landmarks,
+    sourceCanvas,
+    blurPx,
+    mirrorX
+  });
+}
+
+// ---------------------------------------------------------
+// CANVAS RENDERING
+// ---------------------------------------------------------
+
+export function renderCanvasToElement(
+  canvas,
+  targetCanvas
+) {
+  if (!canvas || !targetCanvas) {
+    return;
+  }
+
+  targetCanvas.width =
+    canvas.width;
+
+  targetCanvas.height =
+    canvas.height;
+
+  const context =
+    targetCanvas.getContext("2d");
+
+  if (!context) {
+    return;
+  }
+
+  context.clearRect(
+    0,
+    0,
+    targetCanvas.width,
+    targetCanvas.height
+  );
+
+  context.drawImage(
+    canvas,
+    0,
+    0
+  );
+}
+
+// ---------------------------------------------------------
+// RESULT RENDERING
+// ---------------------------------------------------------
+
+export function renderResultsToTargets(
+  results,
+  targets = {}
+) {
+  if (!results) {
+    return;
+  }
+
+  if (
+    targets.maskCanvas &&
+    results.maskCanvas
+  ) {
+    renderCanvasToElement(
+      results.maskCanvas,
+      targets.maskCanvas
+    );
+  }
+
+  if (
+    targets.debugCanvas &&
+    results.debugCanvas
+  ) {
+    renderCanvasToElement(
+      results.debugCanvas,
+      targets.debugCanvas
+    );
+  }
+
+  if (
+    targets.subtleCanvas &&
+    results.subtleCanvas
+  ) {
+    renderCanvasToElement(
+      results.subtleCanvas,
+      targets.subtleCanvas
+    );
+  }
+
+  if (
+    targets.moderateCanvas &&
+    results.moderateCanvas
+  ) {
+    renderCanvasToElement(
+      results.moderateCanvas,
+      targets.moderateCanvas
+    );
+  }
+
+  if (
+    targets.extremeCanvas &&
+    results.extremeCanvas
+  ) {
+    renderCanvasToElement(
+      results.extremeCanvas,
+      targets.extremeCanvas
+    );
+  }
 }
