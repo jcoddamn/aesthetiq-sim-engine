@@ -572,6 +572,61 @@
       line-height: 1.55;
     }
 
+    .procedure-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .procedure-meta {
+      margin-top: 15px;
+    }
+
+    .procedure-meta-item {
+      display: grid;
+      gap: 4px;
+    }
+
+    .procedure-meta-label {
+      color: #c4b5fd;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.65px;
+      text-transform: uppercase;
+    }
+
+    .procedure-meta-value {
+      color: #d8def0;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .preview-levels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .preview-level {
+      display: inline-flex;
+      align-items: center;
+      min-height: 29px;
+      padding: 5px 10px;
+      border: 1px solid rgba(167, 139, 250, 0.28);
+      border-radius: 999px;
+      background: rgba(139, 92, 246, 0.1);
+      color: #ddd6fe;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .preview-level::before {
+      content: "✓";
+      margin-right: 5px;
+      color: #4ade80;
+      font-weight: 900;
+    }
+    
     @media (max-width: 620px) {
       .quality-checks {
         grid-template-columns: 1fr;
