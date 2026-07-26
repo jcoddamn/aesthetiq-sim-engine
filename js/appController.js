@@ -838,21 +838,20 @@ function generateSimulation(
       behavior: "smooth",
       block: "start"
     });
-  } catch (error) {
-  console.error(
-    "Simulation failed:",
-    error
-  );
+    } catch (error) {
+    console.error(
+      "Simulation failed:",
+      error
+    );
 
-  const message =
-    error?.message ||
-    String(error);
+    const message =
+      error?.message ||
+      String(error);
 
-  setStatus(
-    `Simulation failed: ${message}`,
-    "error"
-  );
-}
+    setStatus(
+      `Simulation failed: ${message}`,
+      "error"
+    );
   } finally {
     setCaptureLoading(false);
   }
