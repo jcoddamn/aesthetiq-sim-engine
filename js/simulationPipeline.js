@@ -211,6 +211,7 @@ function usesGeometryWarp(procedure) {
     "chin-implant",
     "cheek-filler",
     "cheek-implants"
+    "jawline-filler"
   ].includes(procedure);
 }
 
