@@ -1,3 +1,7 @@
+import {
+  getLipIntensityProfile
+} from "./lipProfiles.js";
+
 /*
 =========================================================
  AesthetIQ Face Warp Engine
