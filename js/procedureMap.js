@@ -523,3 +523,82 @@ export function getProcedureSupportReport() {
     }
   );
 }
+
+// ---------------------------------------------------------
+// UI LABELS
+// ---------------------------------------------------------
+
+const PROCEDURE_LABELS = {
+  "under-eye-filler": "Under-Eye Fillers",
+  "laser-resurfacing": "Laser Resurfacing",
+  "lip-filler": "Lip Fillers",
+  "lip-flip": "Lip Flip",
+  "forehead-neuromodulator": "Forehead Neuromodulator",
+  "glabella-neuromodulator": "11 Lines",
+  "crows-feet-neuromodulator": "Crow’s Feet",
+  "chemical-peel": "Chemical Peel",
+  "chin-filler": "Chin Filler",
+  "chin-implant": "Chin Implant",
+  "cheek-filler": "Cheek Filler",
+  "cheek-implants": "Cheek Implants",
+  "jawline-filler": "Jawline Filler",
+  rhinoplasty: "Rhinoplasty",
+  veneers: "Veneers",
+  "teeth-whitening": "Teeth Whitening"
+};
+
+export function getProcedureLabel(procedureId) {
+  const normalizedId =
+    normalizeProcedureId(procedureId);
+
+  return (
+    PROCEDURE_LABELS[normalizedId] ||
+    normalizedId
+      .split("-")
+      .map(
+        (word) =>
+          word.charAt(0).toUpperCase() +
+          word.slice(1)
+      )
+      .join(" ")
+  );
+}
+
+// ---------------------------------------------------------
+// 3D VIEWER MAPPING
+// ---------------------------------------------------------
+
+export function getViewerProcedure(procedureId) {
+  return normalizeProcedureId(procedureId);
+}
+
+// ---------------------------------------------------------
+// DEBUG REGION COLORS
+// ---------------------------------------------------------
+
+const PROCEDURE_COLORS = {
+  "under-eye-filler": "#38bdf8",
+  "laser-resurfacing": "#f97316",
+  "lip-filler": "#f43f5e",
+  "lip-flip": "#ec4899",
+  "forehead-neuromodulator": "#a78bfa",
+  "glabella-neuromodulator": "#8b5cf6",
+  "crows-feet-neuromodulator": "#22d3ee",
+  "chemical-peel": "#facc15",
+  "chin-filler": "#34d399",
+  "chin-implant": "#10b981",
+  "cheek-filler": "#fb7185",
+  "cheek-implants": "#f472b6",
+  "jawline-filler": "#2dd4bf",
+  rhinoplasty: "#60a5fa"
+};
+
+export function getProcedureColor(procedureId) {
+  const normalizedId =
+    normalizeProcedureId(procedureId);
+
+  return (
+    PROCEDURE_COLORS[normalizedId] ||
+    "#a78bfa"
+  );
+}
