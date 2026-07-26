@@ -144,6 +144,163 @@ export function warpChin(
 
 /*
 =========================================================
+Jawline Definition
+=========================================================
+*/
+
+export function warpJawline(
+  landmarks,
+  intensity = "balanced"
+) {
+  if (
+    !Array.isArray(landmarks) ||
+    landmarks.length < 468
+  ) {
+    return landmarks;
+  }
+
+  const strength =
+    intensity === "natural"
+      ? 0.012
+      : intensity === "balanced"
+      ? 0.022
+      : 0.035;
+
+  const result = landmarks.map(
+    (landmark) => ({
+      ...landmark
+    })
+  );
+
+  /*
+   * MediaPipe face-outline points running from the
+   * left jaw toward the chin and back up the right jaw.
+   */
+  const leftJaw = [
+    234,
+    93,
+    132,
+    58,
+    172,
+    136,
+    150,
+    149,
+    176,
+    148
+  ];
+
+  const rightJaw = [
+    454,
+    323,
+    361,
+    288,
+    397,
+    365,
+    379,
+    378,
+    400,
+    377
+  ];
+
+  /*
+   * Points near the lower chin are moved less than the
+   * outer jaw so the face does not look unnaturally wide.
+   */
+  const leftWeights = [
+    1,
+    0.95,
+    0.9,
+    0.82,
+    0.72,
+    0.62,
+    0.48,
+    0.35,
+    0.2,
+    0.08
+  ];
+
+  const rightWeights = [
+    1,
+    0.95,
+    0.9,
+    0.82,
+    0.72,
+    0.62,
+    0.48,
+    0.35,
+    0.2,
+    0.08
+  ];
+
+  leftJaw.forEach((index, position) => {
+    const landmark = result[index];
+
+    if (!landmark) {
+      return;
+    }
+
+    result[index] = {
+      ...landmark,
+      x:
+        landmark.x -
+        strength * leftWeights[position]
+    };
+  });
+
+  rightJaw.forEach((index, position) => {
+    const landmark = result[index];
+
+    if (!landmark) {
+      return;
+    }
+
+    result[index] = {
+      ...landmark,
+      x:
+        landmark.x +
+        strength * rightWeights[position]
+    };
+  });
+
+  /*
+   * Slightly lower the central chin to create a cleaner
+   * jaw-to-chin transition.
+   */
+  const chinVerticalStrength =
+    intensity === "natural"
+      ? 0.003
+      : intensity === "balanced"
+      ? 0.006
+      : 0.009;
+
+  const chinPoints = [
+    152,
+    148,
+    176,
+    377,
+    400
+  ];
+
+  chinPoints.forEach((index) => {
+    const landmark = result[index];
+
+    if (!landmark) {
+      return;
+    }
+
+    result[index] = {
+      ...landmark,
+      y:
+        landmark.y +
+        chinVerticalStrength
+    };
+  });
+
+  return result;
+}
+
+/*
+=========================================================
 Cheek Volume
 =========================================================
 */
