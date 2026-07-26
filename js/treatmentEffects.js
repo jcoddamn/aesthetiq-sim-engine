@@ -1,322 +1,746 @@
+// =========================================================
+// AESTHETIQ — TREATMENT EFFECTS
+// File: js/treatmentEffects.js
+// =========================================================
+
+// ---------------------------------------------------------
+// INTENSITY LEVELS
+// ---------------------------------------------------------
+
 export function getIntensityValue(level) {
-  if (level === 'natural') return 0.2;
-  if (level === 'balanced') return 0.65;
-  if (level === 'enhanced') return 2.1;
+  if (level === "natural") return 0.3;
+  if (level === "balanced") return 0.65;
+  if (level === "enhanced") return 1;
+
   return 0.65;
 }
 
+// ---------------------------------------------------------
+// CANVAS HELPERS
+// ---------------------------------------------------------
+
 export function cloneCanvas(sourceCanvas) {
-  const canvas = document.createElement('canvas');
+  if (!sourceCanvas) {
+    return null;
+  }
+
+  const canvas = document.createElement("canvas");
+
   canvas.width = sourceCanvas.width;
   canvas.height = sourceCanvas.height;
 
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(sourceCanvas, 0, 0);
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    return null;
+  }
+
+  context.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
 
   return canvas;
 }
 
-export function createEffectLayer(sourceCanvas, filterString) {
-  const canvas = document.createElement('canvas');
+export function createEffectLayer(
+  sourceCanvas,
+  filterString = "none"
+) {
+  if (!sourceCanvas) {
+    return null;
+  }
+
+  const canvas = document.createElement("canvas");
+
   canvas.width = sourceCanvas.width;
   canvas.height = sourceCanvas.height;
 
-  const ctx = canvas.getContext('2d');
-  ctx.filter = filterString;
-  ctx.drawImage(sourceCanvas, 0, 0);
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    return null;
+  }
+
+  context.filter = filterString;
+
+  context.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
+
+  context.filter = "none";
 
   return canvas;
 }
 
-export function applyMaskedLayer(baseCanvas, effectCanvas, maskCanvas, opacity = 1) {
-  const output = document.createElement('canvas');
+export function applyMaskedLayer(
+  baseCanvas,
+  effectCanvas,
+  maskCanvas,
+  opacity = 1
+) {
+  if (
+    !baseCanvas ||
+    !effectCanvas ||
+    !maskCanvas
+  ) {
+    return cloneCanvas(baseCanvas);
+  }
+
+  const output =
+    document.createElement("canvas");
+
   output.width = baseCanvas.width;
   output.height = baseCanvas.height;
 
-  const ctx = output.getContext('2d');
-  ctx.drawImage(baseCanvas, 0, 0);
+  const outputContext =
+    output.getContext("2d");
 
-  const maskedEffect = document.createElement('canvas');
+  if (!outputContext) {
+    return cloneCanvas(baseCanvas);
+  }
+
+  outputContext.drawImage(
+    baseCanvas,
+    0,
+    0
+  );
+
+  const maskedEffect =
+    document.createElement("canvas");
+
   maskedEffect.width = baseCanvas.width;
   maskedEffect.height = baseCanvas.height;
 
-  const mctx = maskedEffect.getContext('2d');
-  mctx.drawImage(effectCanvas, 0, 0);
-  mctx.globalCompositeOperation = 'destination-in';
-  mctx.drawImage(maskCanvas, 0, 0);
+  const maskedContext =
+    maskedEffect.getContext("2d");
 
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.drawImage(maskedEffect, 0, 0);
-  ctx.restore();
+  if (!maskedContext) {
+    return cloneCanvas(baseCanvas);
+  }
+
+  maskedContext.drawImage(
+    effectCanvas,
+    0,
+    0
+  );
+
+  maskedContext.globalCompositeOperation =
+    "destination-in";
+
+  maskedContext.drawImage(
+    maskCanvas,
+    0,
+    0
+  );
+
+  maskedContext.globalCompositeOperation =
+    "source-over";
+
+  outputContext.save();
+
+  outputContext.globalAlpha =
+    Math.max(
+      0,
+      Math.min(1, opacity)
+    );
+
+  outputContext.drawImage(
+    maskedEffect,
+    0,
+    0
+  );
+
+  outputContext.restore();
 
   return output;
 }
 
-export function featherMask(maskCanvas, blur = 25) {
-  const canvas = document.createElement('canvas');
+export function featherMask(
+  maskCanvas,
+  blur = 25
+) {
+  if (!maskCanvas) {
+    return null;
+  }
+
+  const canvas =
+    document.createElement("canvas");
+
   canvas.width = maskCanvas.width;
   canvas.height = maskCanvas.height;
 
-  const ctx = canvas.getContext('2d');
-  ctx.filter = `blur(${blur}px)`;
-  ctx.drawImage(maskCanvas, 0, 0);
+  const context =
+    canvas.getContext("2d");
+
+  if (!context) {
+    return null;
+  }
+
+  context.filter =
+    `blur(${Math.max(0, blur)}px)`;
+
+  context.drawImage(
+    maskCanvas,
+    0,
+    0
+  );
+
+  context.filter = "none";
 
   return canvas;
 }
 
-export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'balanced') {
-  const intensity = getIntensityValue(level);
-  const featheredMask = featherMask(maskCanvas, 18);
+// ---------------------------------------------------------
+// UNDER-EYE FILLER
+// ---------------------------------------------------------
 
-  const brighten = 1 + intensity * 0.22;
-  const contrast = 1 - intensity * 0.12;
-  const blur = 1 + intensity * 3.2;
-  const opacity = Math.min(0.95, 0.72 + intensity * 0.18);
+export function simulateUnderEyeFiller(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
 
-  const effectCanvas = createEffectLayer(
-    sourceCanvas,
-    `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
-  );
+  const featheredMask =
+    featherMask(maskCanvas, 18);
 
-  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
-}
+  const brighten =
+    1 + intensity * 0.16;
 
-export function simulateLaserResurfacing(sourceCanvas, maskCanvas, level = 'balanced') {
-  const intensity = getIntensityValue(level);
-  const featheredMask = featherMask(maskCanvas, 24);
-
-  const brighten = 1 + intensity * 0.12;
-  const contrast = 1 - intensity * 0.1;
-  const saturate = 1 + intensity * 0.08;
-  const blur = 1.5 + intensity * 4.2;
-  const opacity = Math.min(0.96, 0.72 + intensity * 0.2);
-
-  const effectCanvas = createEffectLayer(
-    sourceCanvas,
-    `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
-  );
-
-  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
-}
-
-export function simulateLipFiller(sourceCanvas, maskCanvas, level = 'balanced') {
-  const intensity = getIntensityValue(level);
-  const featheredMask = featherMask(maskCanvas, 10);
-
-  const saturate = 1 + intensity * 0.45;
-  const brighten = 1 + intensity * 0.12;
-  const contrast = 1 + intensity * 0.14;
-  const blur = intensity * 0.5;
-  const opacity = Math.min(0.98, 0.72 + intensity * 0.22);
-
-  const effectCanvas = createEffectLayer(
-    sourceCanvas,
-    `saturate(${saturate}) brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
-  );
-
-  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
-}
-
-export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'balanced') {
-  const intensity = getIntensityValue(level);
-  const featheredMask = featherMask(maskCanvas, 10);
-
-  const brighten = 1 + intensity * 0.08;
-  const saturate = 1 + intensity * 0.22;
-  const contrast = 1 + intensity * 0.08;
-  const blur = intensity * 1.2;
-  const opacity = Math.min(0.92, 0.58 + intensity * 0.18);
-
-  const effectCanvas = createEffectLayer(
-    sourceCanvas,
-    `brightness(${brighten}) saturate(${saturate}) contrast(${contrast}) blur(${blur}px)`
-  );
-
-  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
-}
-
-function applyForeheadBotoxEffect(sourceCanvas, maskCanvas, intensity) {
-  const width = sourceCanvas.width;
-  const height = sourceCanvas.height;
-
-  const output = document.createElement('canvas');
-  output.width = width;
-  output.height = height;
-
-  const octx = output.getContext('2d');
-
-  // ORIGINAL
-  octx.drawImage(sourceCanvas, 0, 0);
-
-  // CREATE STRONG SMOOTH VERSION
-  const smooth = document.createElement('canvas');
-  smooth.width = width;
-  smooth.height = height;
-
-  const sctx = smooth.getContext('2d');
+  const contrast =
+    1 - intensity * 0.09;
 
   const blur =
-    intensity === 'subtle' ? 4 :
-    intensity === 'moderate' ? 8 :
-    14;
+    0.8 + intensity * 2.2;
 
-  sctx.filter = `blur(${blur}px)`;
-  sctx.drawImage(sourceCanvas, 0, 0);
-  sctx.filter = 'none';
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+    );
 
-  // APPLY MASK (THIS IS THE KEY FIX)
-  octx.save();
-
-  // Use mask as alpha
-  octx.globalCompositeOperation = 'destination-in';
-  octx.drawImage(maskCanvas, 0, 0);
-
-  octx.restore();
-
-  // Blend smooth ONLY into masked region
-  const strength =
-    intensity === 'natural' ? 0.35 :
-    intensity === 'balanced' ? 0.65 :
-    0.9;
-
-  octx.globalAlpha = strength;
-  octx.drawImage(smooth, 0, 0);
-  octx.globalAlpha = 1;
-
-  // Overlay original again to preserve non-mask areas
-  octx.globalCompositeOperation = 'destination-over';
-  octx.drawImage(sourceCanvas, 0, 0);
-
-  octx.globalCompositeOperation = 'source-over';
-
-  return output;
-}
-    
-export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'balanced') {
-  const intensity = getIntensityValue(level);
-
-  const featheredMask = featherMask(maskCanvas, 10);
-
-  // Base smoothing for the center brow area
-  const smoothLayer = createEffectLayer(
+  return applyMaskedLayer(
     sourceCanvas,
-    `blur(${1.5 + Math.pow(intensity, 1.6) * 10}px)`
-  );
-
-  // Flatten shadow/contrast in the frown-line zone
-  const flattenLayer = createEffectLayer(
-    sourceCanvas,
-    `contrast(${1 - intensity * 0.45}) brightness(${1 + intensity * 0.05})`
-  );
-
-  // Stronger center-line removal pass
-  const centerKillLayer = createEffectLayer(
-    sourceCanvas,
-    `blur(${3 + intensity * 9}px) contrast(${1 - intensity * 0.55})`
-  );
-
-  // Matte pass so it doesn't look shiny or filtered
-  const matteLayer = createEffectLayer(
-    sourceCanvas,
-    `contrast(${1 - intensity * 0.22}) saturate(${1 - intensity * 0.1})`
-  );
-
-  let result = applyMaskedLayer(
-    sourceCanvas,
-    smoothLayer,
+    effectCanvas,
     featheredMask,
     0.42 + intensity * 0.28
   );
+}
 
-  result = applyMaskedLayer(
-    result,
-    flattenLayer,
-    featheredMask,
-    0.5 + intensity * 0.32
-  );
+// ---------------------------------------------------------
+// LASER RESURFACING
+// ---------------------------------------------------------
 
-  result = applyMaskedLayer(
-    result,
-    matteLayer,
-    featheredMask,
-    0.22 + intensity * 0.18
-  );
+export function simulateLaserResurfacing(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
 
-  if (level !== 'natural') {
-    result = applyMaskedLayer(
-      result,
-      centerKillLayer,
-      featheredMask,
-      level === 'enhanced' ? 0.62 : 0.38
+  const featheredMask =
+    featherMask(maskCanvas, 24);
+
+  const brighten =
+    1 + intensity * 0.1;
+
+  const contrast =
+    1 - intensity * 0.07;
+
+  const saturate =
+    1 + intensity * 0.05;
+
+  const blur =
+    1 + intensity * 3;
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
     );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.48 + intensity * 0.3
+  );
+}
+
+// ---------------------------------------------------------
+// LIP FILLER
+// ---------------------------------------------------------
+
+export function simulateLipFiller(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 10);
+
+  const saturate =
+    1 + intensity * 0.24;
+
+  const brighten =
+    1 + intensity * 0.06;
+
+  const contrast =
+    1 + intensity * 0.08;
+
+  const blur =
+    intensity * 0.35;
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `saturate(${saturate}) brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.46 + intensity * 0.32
+  );
+}
+
+// ---------------------------------------------------------
+// LIP FLIP
+// ---------------------------------------------------------
+
+export function simulateLipFlip(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 10);
+
+  const brighten =
+    1 + intensity * 0.04;
+
+  const saturate =
+    1 + intensity * 0.12;
+
+  const contrast =
+    1 + intensity * 0.04;
+
+  const blur =
+    intensity * 0.7;
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${brighten}) saturate(${saturate}) contrast(${contrast}) blur(${blur}px)`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.32 + intensity * 0.28
+  );
+}
+
+// ---------------------------------------------------------
+// FOREHEAD NEUROMODULATOR
+// ---------------------------------------------------------
+
+export function simulateForeheadBotox(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 18);
+
+  const blurAmount =
+    level === "natural"
+      ? 2.5
+      : level === "balanced"
+      ? 5
+      : 7.5;
+
+  const smoothLayer =
+    createEffectLayer(
+      sourceCanvas,
+      `blur(${blurAmount}px) contrast(${1 - intensity * 0.1})`
+    );
+
+  const matteLayer =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${1 + intensity * 0.03}) contrast(${1 - intensity * 0.06}) saturate(${1 - intensity * 0.03})`
+    );
+
+  let result =
+    applyMaskedLayer(
+      sourceCanvas,
+      smoothLayer,
+      featheredMask,
+      0.26 + intensity * 0.32
+    );
+
+  result =
+    applyMaskedLayer(
+      result,
+      matteLayer,
+      featheredMask,
+      0.12 + intensity * 0.18
+    );
+
+  return result;
+}
+
+// ---------------------------------------------------------
+// GLABELLA NEUROMODULATOR
+// ---------------------------------------------------------
+
+export function simulateGlabellaBotox(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 10);
+
+  const smoothLayer =
+    createEffectLayer(
+      sourceCanvas,
+      `blur(${1.2 + intensity * 5.8}px)`
+    );
+
+  const flattenLayer =
+    createEffectLayer(
+      sourceCanvas,
+      `contrast(${1 - intensity * 0.2}) brightness(${1 + intensity * 0.03})`
+    );
+
+  const centerLayer =
+    createEffectLayer(
+      sourceCanvas,
+      `blur(${2 + intensity * 5}px) contrast(${1 - intensity * 0.25})`
+    );
+
+  const matteLayer =
+    createEffectLayer(
+      sourceCanvas,
+      `contrast(${1 - intensity * 0.1}) saturate(${1 - intensity * 0.05})`
+    );
+
+  let result =
+    applyMaskedLayer(
+      sourceCanvas,
+      smoothLayer,
+      featheredMask,
+      0.3 + intensity * 0.25
+    );
+
+  result =
+    applyMaskedLayer(
+      result,
+      flattenLayer,
+      featheredMask,
+      0.3 + intensity * 0.26
+    );
+
+  result =
+    applyMaskedLayer(
+      result,
+      matteLayer,
+      featheredMask,
+      0.12 + intensity * 0.12
+    );
+
+  if (level !== "natural") {
+    result =
+      applyMaskedLayer(
+        result,
+        centerLayer,
+        featheredMask,
+        level === "enhanced"
+          ? 0.42
+          : 0.24
+      );
   }
 
   return result;
 }
 
-export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'balanced') {
-  const intensity = getIntensityValue(level);
-  const featheredMask = featherMask(maskCanvas, 16);
+// ---------------------------------------------------------
+// CROW'S FEET NEUROMODULATOR
+// ---------------------------------------------------------
 
-  const brighten = 1 + intensity * 0.08;
-  const contrast = 1 - intensity * 0.08;
-  const blur = 1.5 + intensity * 4;
-  const opacity = Math.min(0.95, 0.62 + intensity * 0.2);
+export function simulateCrowsFeetBotox(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
 
-  const effectCanvas = createEffectLayer(
+  const featheredMask =
+    featherMask(maskCanvas, 16);
+
+  const brighten =
+    1 + intensity * 0.04;
+
+  const contrast =
+    1 - intensity * 0.06;
+
+  const blur =
+    1 + intensity * 3;
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+    );
+
+  return applyMaskedLayer(
     sourceCanvas,
-    `brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
+    effectCanvas,
+    featheredMask,
+    0.34 + intensity * 0.3
   );
-
-  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function simulateChemicalPeel(sourceCanvas, maskCanvas, level = 'balanced') {
-  const intensity = getIntensityValue(level);
-  const featheredMask = featherMask(maskCanvas, 28);
+// ---------------------------------------------------------
+// CHEMICAL PEEL
+// ---------------------------------------------------------
 
-  const brighten = 1 + intensity * 0.18;
-  const contrast = 1 - intensity * 0.06;
-  const saturate = 1 + intensity * 0.1;
-  const blur = 2 + intensity * 4.5;
-  const opacity = Math.min(0.98, 0.72 + intensity * 0.2);
+export function simulateChemicalPeel(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
 
-  const effectCanvas = createEffectLayer(
+  const featheredMask =
+    featherMask(maskCanvas, 28);
+
+  const brighten =
+    1 + intensity * 0.1;
+
+  const contrast =
+    1 - intensity * 0.04;
+
+  const saturate =
+    1 + intensity * 0.05;
+
+  const blur =
+    1.2 + intensity * 3;
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
+    );
+
+  return applyMaskedLayer(
     sourceCanvas,
-    `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
+    effectCanvas,
+    featheredMask,
+    0.5 + intensity * 0.28
   );
-
-  return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, level = 'balanced') {
+// ---------------------------------------------------------
+// GENERIC SKIN SMOOTHING
+// ---------------------------------------------------------
+
+export function simulateSkinSmoothing(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 20);
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${1 + intensity * 0.04}) contrast(${1 - intensity * 0.05}) blur(${1 + intensity * 2.4}px)`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.3 + intensity * 0.28
+  );
+}
+
+// ---------------------------------------------------------
+// TEETH WHITENING
+// ---------------------------------------------------------
+
+export function simulateTeethWhitening(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 4);
+
+  const brighten =
+    1 + intensity * 0.28;
+
+  const saturate =
+    1 - intensity * 0.24;
+
+  const contrast =
+    1 + intensity * 0.05;
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${brighten}) saturate(${saturate}) contrast(${contrast})`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.46 + intensity * 0.42
+  );
+}
+
+// ---------------------------------------------------------
+// PROCEDURE ROUTER
+// ---------------------------------------------------------
+
+export function applyTreatmentEffect(
+  procedure,
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
   switch (procedure) {
-    case 'underEyeFiller':
-      return simulateUnderEyeFiller(sourceCanvas, maskCanvas, level);
+    // Under-eye filler
+    case "underEyeFiller":
+    case "under-eye-filler":
+      return simulateUnderEyeFiller(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
-    case 'laserEye':
-      return simulateLaserResurfacing(sourceCanvas, maskCanvas, level);
+    // Laser resurfacing
+    case "laserEye":
+    case "laser-resurfacing":
+    case "co2-laser":
+      return simulateLaserResurfacing(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
-    case 'lipFiller':
-      return simulateLipFiller(sourceCanvas, maskCanvas, level);
+    // Lip filler
+    case "lipFiller":
+    case "lip-filler":
+      return simulateLipFiller(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
-    case 'lipFlip':
-      return simulateLipFlip(sourceCanvas, maskCanvas, level);
+    // Lip flip
+    case "lipFlip":
+    case "lip-flip":
+      return simulateLipFlip(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
-    case 'foreheadBotox':
-      return simulateForeheadBotox(sourceCanvas, maskCanvas, level);
+    // Forehead neuromodulator
+    case "foreheadBotox":
+    case "forehead-neuromodulator":
+      return simulateForeheadBotox(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
-    case 'glabella':
-      return simulateGlabellaBotox(sourceCanvas, maskCanvas, level);
+    // Glabella neuromodulator
+    case "glabella":
+    case "glabellaBotox":
+    case "glabella-neuromodulator":
+      return simulateGlabellaBotox(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
-    case 'crowsfeet':
-      return simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level);
+    // Crow's feet neuromodulator
+    case "crowsfeet":
+    case "crowsFeetBotox":
+    case "crows-feet-neuromodulator":
+      return simulateCrowsFeetBotox(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
-    case 'chemicalPeel':
-      return simulateChemicalPeel(sourceCanvas, maskCanvas, level);
+    // Skin treatments
+    case "chemicalPeel":
+    case "chemical-peel":
+      return simulateChemicalPeel(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
+    case "microneedling":
+    case "rf-microneedling":
+    case "ipl":
+      return simulateSkinSmoothing(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
+    // Teeth whitening
+    case "teethWhitening":
+    case "teeth-whitening":
+      return simulateTeethWhitening(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
 
     default:
+      console.warn(
+        `[AesthetIQ] No treatment effect found for: ${procedure}`
+      );
+
       return cloneCanvas(sourceCanvas);
   }
 }
