@@ -390,27 +390,26 @@ function createSimulationLevel({
         level
       );
 
-    /*
     if (
-  normalizedProcedure ===
-  "lip-filler"
-) {
-  workingCanvas =
-    meshRenderer.render(
-      sourceCanvas,
-      landmarks,
-      workingLandmarks
-    );
-} else {
-  workingCanvas =
-    renderWarp(
-      sourceCanvas,
-      landmarks,
-      workingLandmarks
-    );
-}
-*/
-    
+      normalizedProcedure ===
+      "lip-filler"
+    ) {
+      workingCanvas =
+        meshRenderer.render(
+          sourceCanvas,
+          landmarks,
+          workingLandmarks
+        );
+    } else {
+      workingCanvas =
+        renderWarp(
+          sourceCanvas,
+          landmarks,
+          workingLandmarks
+        );
+    }
+  }
+
   const {
     polygons,
     maskCanvas
@@ -434,26 +433,13 @@ function createSimulationLevel({
     };
   }
 
-  let resultCanvas =
-  applyTreatmentEffect(
-    normalizedProcedure,
-    workingCanvas,
-    maskCanvas,
-    level
-  );
-
-if (
-  normalizedProcedure ===
-  "lip-filler"
-) {
-  resultCanvas =
-    applyLipShading(
-      resultCanvas ||
+  const resultCanvas =
+    applyTreatmentEffect(
+      normalizedProcedure,
       workingCanvas,
-      workingLandmarks,
+      maskCanvas,
       level
     );
-}
 
   return {
     canvas:
