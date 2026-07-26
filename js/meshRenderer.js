@@ -9,6 +9,48 @@ export class MeshRenderer {
     this.triangles = [];
   }
 
+toCanvasPoint(
+  point,
+  width,
+  height
+) {
+
+  if (
+    Math.abs(point.x) <= 1.5 &&
+    Math.abs(point.y) <= 1.5
+  ) {
+
+    return {
+      x: point.x * width,
+      y: point.y * height
+    };
+
+  }
+
+  return {
+    x: point.x,
+    y: point.y
+  };
+
+}
+
+triangleToCanvas(
+  indices,
+  landmarks,
+  width,
+  height
+) {
+
+  return indices.map(index =>
+    this.toCanvasPoint(
+      landmarks[index],
+      width,
+      height
+    )
+  );
+
+} 
+  
   setTriangles(triangles) {
     this.triangles = triangles;
   }
