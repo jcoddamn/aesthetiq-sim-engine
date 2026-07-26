@@ -1,7 +1,7 @@
 export function getIntensityValue(level) {
-  if (level === 'subtle') return 0.2;
-  if (level === 'moderate') return 0.65;
-  if (level === 'extreme') return 2.1;
+  if (level === 'natural') return 0.2;
+  if (level === 'balanced') return 0.65;
+  if (level === 'enhanced') return 2.1;
   return 0.65;
 }
 
