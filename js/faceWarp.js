@@ -334,10 +334,14 @@ export function warpLipFiller(
   });
   
   const blendedResult =
-  blendLipSoftTissue(
+  applyLipSoftTissue(
     landmarks,
     result,
-    profile.softTissue ?? 0.22
+    level === "natural"
+      ? 0.22
+      : level === "balanced"
+      ? 0.35
+      : 0.48
   );
 
 return blendedResult;
