@@ -390,13 +390,24 @@ function createSimulationLevel({
         level
       );
 
-    workingCanvas =
-      renderWarp(
-        sourceCanvas,
-        landmarks,
-        workingLandmarks
-      );
-  }
+    if (
+  normalizedProcedure ===
+  "lip-filler"
+) {
+  workingCanvas =
+    meshRenderer.render(
+      sourceCanvas,
+      landmarks,
+      workingLandmarks
+    );
+} else {
+  workingCanvas =
+    renderWarp(
+      sourceCanvas,
+      landmarks,
+      workingLandmarks
+    );
+}
 
   const {
     polygons,
