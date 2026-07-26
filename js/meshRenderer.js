@@ -50,6 +50,62 @@ triangleToCanvas(
   );
 
 } 
+
+getAffineTransform(
+  source,
+  target
+) {
+
+  const [s0,s1,s2]=source;
+  const [t0,t1,t2]=target;
+
+  const det =
+    s0.x*(s1.y-s2.y)+
+    s1.x*(s2.y-s0.y)+
+    s2.x*(s0.y-s1.y);
+
+  if (Math.abs(det) < 0.00001)
+    return null;
+
+  return {
+
+    a:
+      (
+        t0.x*(s1.y-s2.y)+
+        t1.x*(s2.y-s0.y)+
+        t2.x*(s0.y-s1.y)
+      )/det,
+
+    b:
+      (
+        t0.y*(s1.y-s2.y)+
+        t1.y*(s2.y-s0.y)+
+        t2.y*(s0.y-s1.y)
+      )/det,
+
+    c:
+      (
+        t0.x*(s2.x-s1.x)+
+        t1.x*(s0.x-s2.x)+
+        t2.x*(s1.x-s0.x)
+      )/det,
+
+    d:
+      (
+        t0.y*(s2.x-s1.x)+
+        t1.y*(s0.x-s2.x)+
+        t2.y*(s1.x-s0.x)
+      )/det,
+
+    e:
+      0,
+
+    f:
+      0
+
+  };
+
+}
   
   setTriangles(triangles) {
     this.triangles = triangles;
