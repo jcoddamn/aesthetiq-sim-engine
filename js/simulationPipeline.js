@@ -31,6 +31,13 @@ import {
   renderWarp
 } from "./warpRenderer.js";
 
+import {
+  MeshRenderer
+} from "./meshRenderer.js";
+
+const meshRenderer =
+  new MeshRenderer();
+
 // Keep enabled while testing facial regions.
 let DEBUG_MASKS = true;
 
