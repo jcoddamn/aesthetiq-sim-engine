@@ -333,7 +333,14 @@ export function warpLipFiller(
     };
   });
   
-  return result;
+  const blendedResult =
+  blendLipSoftTissue(
+    landmarks,
+    result,
+    profile.softTissue ?? 0.22
+  );
+
+return blendedResult;
 }
 
 /*
