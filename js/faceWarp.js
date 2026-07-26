@@ -63,42 +63,173 @@ Lip Enlargement
 
 export function warpLipFiller(
   landmarks,
-  intensity = "balanced"
+  level = "balanced"
 ) {
+  if (
+    !Array.isArray(landmarks) ||
+    landmarks.length < 468
+  ) {
+    return landmarks;
+  }
 
-  const amount =
-    intensity === "natural"
-      ? 1.05
-      : intensity === "balanced"
-      ? 1.10
-      : 1.18;
+  const strength =
+    level === "natural"
+      ? 0.22
+      : level === "balanced"
+      ? 0.48
+      : 0.78;
 
-  const upperLip = [
-    61,185,40,39,37,0,267,269,270,409
-  ];
-
-  const lowerLip = [
-    146,91,181,84,17,314,405,321,375,291
-  ];
-
-  const upper =
-    warpRegion(
-      landmarks,
-      upperLip,
-      amount
-    );
-
-  const lower =
-    warpRegion(
-      landmarks,
-      lowerLip,
-      amount
-    );
-
-  return mergeWarp(
-    mergeWarp(landmarks, upper),
-    lower
+  const result = landmarks.map(
+    (landmark) => ({
+      ...landmark
+    })
   );
+
+  const upperOuter = [
+    61, 185, 40, 39, 37,
+    0, 267, 269, 270, 409, 291
+  ];
+
+  const upperInner = [
+    78, 191, 80, 81, 82,
+    13, 312, 311, 310, 415, 308
+  ];
+
+  const lowerOuter = [
+    61, 146, 91, 181, 84,
+    17, 314, 405, 321, 375, 291
+  ];
+
+  const lowerInner = [
+    78, 95, 88, 178, 87,
+    14, 317, 402, 318, 324, 308
+  ];
+
+  const leftCorner = result[61];
+  const rightCorner = result[291];
+  const upperCenter = result[13];
+  const lowerCenter = result[14];
+
+  if (
+    !leftCorner ||
+    !rightCorner ||
+    !upperCenter ||
+    !lowerCenter
+  ) {
+    return result;
+  }
+
+  const centerX =
+    (leftCorner.x + rightCorner.x) / 2;
+
+  const centerY =
+    (upperCenter.y + lowerCenter.y) / 2;
+
+  const verticalExpansion =
+    0.009 * strength;
+
+  const horizontalExpansion =
+    0.006 * strength;
+
+  function moveLipPoints(
+    indices,
+    verticalDirection,
+    verticalWeight = 1
+  ) {
+    indices.forEach((index) => {
+      const point = result[index];
+
+      if (!point) {
+        return;
+      }
+
+      const horizontalDirection =
+        point.x < centerX ? -1 : 1;
+
+      const distanceFromCenter =
+        Math.min(
+          1,
+          Math.abs(point.x - centerX) /
+            Math.max(
+              0.0001,
+              Math.abs(
+                rightCorner.x -
+                leftCorner.x
+              ) / 2
+            )
+        );
+
+      result[index] = {
+        ...point,
+
+        x:
+          point.x +
+          horizontalDirection *
+            horizontalExpansion *
+            distanceFromCenter,
+
+        y:
+          point.y +
+          verticalDirection *
+            verticalExpansion *
+            verticalWeight
+      };
+    });
+  }
+
+  moveLipPoints(
+    upperOuter,
+    -1,
+    1
+  );
+
+  moveLipPoints(
+    upperInner,
+    -1,
+    0.65
+  );
+
+  moveLipPoints(
+    lowerOuter,
+    1,
+    1.15
+  );
+
+  moveLipPoints(
+    lowerInner,
+    1,
+    0.72
+  );
+
+  // Slight cupid's-bow definition.
+  [0, 13].forEach((index) => {
+    const point = result[index];
+
+    if (point) {
+      result[index] = {
+        ...point,
+        y:
+          point.y -
+          0.0035 * strength
+      };
+    }
+  });
+
+  // Keep mouth corners from stretching too far.
+  [61, 291].forEach((index) => {
+    const point = result[index];
+
+    if (point) {
+      result[index] = {
+        ...point,
+        y:
+          point.y -
+          0.0015 * strength
+      };
+    }
+  });
+
+  return result;
 }
 
 /*
