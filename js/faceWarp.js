@@ -84,10 +84,10 @@ export function warpLipFiller(
 
   const levelStrength =
     level === "natural"
-      ? 0.72
+      ? 0.4
       : level === "enhanced"
-      ? 1.35
-      : 1;
+      ? 0.82
+      : 0.6;
 
   const upperVolume =
     Number.isFinite(profile.upperVolume)
