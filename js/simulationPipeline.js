@@ -2,7 +2,7 @@ import { getProcedureMask,
   normalizeProcedureId } from "./procedureMap.js";
 import { createFeatheredMask } from './maskUtils.js';
 import { applyTreatmentEffect } from './treatmentEffects.js';
-import { drawMaskOverlay } from "./maskDebugger.js";
+import { createMaskDebugCanvas } from "./maskDebugger.js";
   
 const DEBUG_MASKS = true;
 
