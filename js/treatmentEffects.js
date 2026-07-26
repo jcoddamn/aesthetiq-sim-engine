@@ -65,7 +65,7 @@ export function featherMask(maskCanvas, blur = 25) {
   return canvas;
 }
 
-export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'balanced') {
   const intensity = getIntensityValue(level);
   const featheredMask = featherMask(maskCanvas, 18);
 
@@ -82,7 +82,7 @@ export function simulateUnderEyeFiller(sourceCanvas, maskCanvas, level = 'modera
   return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function simulateLaserResurfacing(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateLaserResurfacing(sourceCanvas, maskCanvas, level = 'balanced') {
   const intensity = getIntensityValue(level);
   const featheredMask = featherMask(maskCanvas, 24);
 
@@ -100,7 +100,7 @@ export function simulateLaserResurfacing(sourceCanvas, maskCanvas, level = 'mode
   return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function simulateLipFiller(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateLipFiller(sourceCanvas, maskCanvas, level = 'balanced') {
   const intensity = getIntensityValue(level);
   const featheredMask = featherMask(maskCanvas, 10);
 
@@ -118,7 +118,7 @@ export function simulateLipFiller(sourceCanvas, maskCanvas, level = 'moderate') 
   return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateLipFlip(sourceCanvas, maskCanvas, level = 'balanced') {
   const intensity = getIntensityValue(level);
   const featheredMask = featherMask(maskCanvas, 10);
 
@@ -176,8 +176,8 @@ function applyForeheadBotoxEffect(sourceCanvas, maskCanvas, intensity) {
 
   // Blend smooth ONLY into masked region
   const strength =
-    intensity === 'subtle' ? 0.35 :
-    intensity === 'moderate' ? 0.65 :
+    intensity === 'natural' ? 0.35 :
+    intensity === 'balanced' ? 0.65 :
     0.9;
 
   octx.globalAlpha = strength;
@@ -193,7 +193,7 @@ function applyForeheadBotoxEffect(sourceCanvas, maskCanvas, intensity) {
   return output;
 }
     
-export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'balanced') {
   const intensity = getIntensityValue(level);
 
   const featheredMask = featherMask(maskCanvas, 10);
@@ -243,19 +243,19 @@ export function simulateGlabellaBotox(sourceCanvas, maskCanvas, level = 'moderat
     0.22 + intensity * 0.18
   );
 
-  if (level !== 'subtle') {
+  if (level !== 'natural') {
     result = applyMaskedLayer(
       result,
       centerKillLayer,
       featheredMask,
-      level === 'extreme' ? 0.62 : 0.38
+      level === 'enhanced' ? 0.62 : 0.38
     );
   }
 
   return result;
 }
 
-export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'balanced') {
   const intensity = getIntensityValue(level);
   const featheredMask = featherMask(maskCanvas, 16);
 
@@ -272,7 +272,7 @@ export function simulateCrowsFeetBotox(sourceCanvas, maskCanvas, level = 'modera
   return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function simulateChemicalPeel(sourceCanvas, maskCanvas, level = 'moderate') {
+export function simulateChemicalPeel(sourceCanvas, maskCanvas, level = 'balanced') {
   const intensity = getIntensityValue(level);
   const featheredMask = featherMask(maskCanvas, 28);
 
@@ -290,7 +290,7 @@ export function simulateChemicalPeel(sourceCanvas, maskCanvas, level = 'moderate
   return applyMaskedLayer(sourceCanvas, effectCanvas, featheredMask, opacity);
 }
 
-export function applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, level = 'moderate') {
+export function applyTreatmentEffect(procedure, sourceCanvas, maskCanvas, level = 'balanced') {
   switch (procedure) {
     case 'underEyeFiller':
       return simulateUnderEyeFiller(sourceCanvas, maskCanvas, level);
