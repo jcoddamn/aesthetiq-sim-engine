@@ -162,7 +162,7 @@ function drawSelectedProcedureRegion(landmarks) {
 }
 
 function resetPreview() {
-  [maskCanvas, subtleCanvas, moderateCanvas, extremeCanvas].forEach((canvas) => {
+  [maskCanvas, naturalCanvas, balancedCanvas, enhancedCanvas].forEach((canvas) => {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -202,9 +202,9 @@ export function runCurrentSimulation() {
 
     renderResultsToTargets(results, {
       maskCanvas,
-      subtleCanvas,
-      moderateCanvas,
-      extremeCanvas
+      naturalCanvas,
+      balancedCanvas,
+      enhancedCanvas
     });
 
     setStatus('Preview ready');
