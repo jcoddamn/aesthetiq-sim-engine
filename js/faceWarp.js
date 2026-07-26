@@ -2,6 +2,10 @@ import {
   getLipIntensityProfile
 } from "./lipProfiles.js";
 
+import {
+  blendLipSoftTissue
+} from "./lipSoftTissue.js";
+
 /*
 =========================================================
  AesthetIQ Face Warp Engine
