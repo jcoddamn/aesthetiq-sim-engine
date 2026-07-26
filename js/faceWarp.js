@@ -312,7 +312,7 @@ export function warpLipFiller(
     };
   });
 
-  mouthCorners.forEach((index) => {
+    mouthCorners.forEach((index) => {
     const point =
       result[index];
 
@@ -328,101 +328,6 @@ export function warpLipFiller(
         profile.cornerLift
     };
   });
-
-// ---------------------------------------------------------
-// SOFT TISSUE BLENDING AROUND THE MOUTH
-// ---------------------------------------------------------
-
-const surroundingMouthPoints = [
-  // Upper lip / philtrum area
-  164, 167, 165, 92, 186,
-  57, 43, 106, 182, 83,
-  18, 313, 406, 335, 273,
-  287, 410, 322, 391, 393,
-
-  // Left cheek transition
-  205, 50, 187, 207, 206,
-  203, 129, 202, 214,
-
-  // Right cheek transition
-  425, 280, 411, 427, 426,
-  423, 358, 422, 434,
-
-  // Lower lip / chin transition
-  200, 199, 175, 152,
-  428, 421, 418,
-  208, 201, 194
-];
-
-const softTissueStrength =
-  level === "natural"
-    ? 0.18
-    : level === "balanced"
-    ? 0.34
-    : 0.5;
-
-surroundingMouthPoints.forEach((index) => {
-  const originalPoint =
-    landmarks[index];
-
-  if (!originalPoint) {
-    return;
-  }
-
-  const offsetX =
-    originalPoint.x - centerX;
-
-  const offsetY =
-    originalPoint.y - centerY;
-
-  const distance =
-    Math.sqrt(
-      offsetX * offsetX +
-      offsetY * offsetY
-    );
-
-  const influenceRadius = 0.14;
-
-  const influence =
-    Math.max(
-      0,
-      1 - distance / influenceRadius
-    );
-
-  if (influence <= 0) {
-    return;
-  }
-
-  const horizontalDirection =
-    offsetX < 0 ? -1 : 1;
-
-  const verticalDirection =
-    offsetY < 0 ? -1 : 1;
-
-  result[index] = {
-    ...originalPoint,
-
-    x:
-      originalPoint.x +
-      horizontalDirection *
-        0.0018 *
-        profile.horizontalVolume *
-        influence *
-        softTissueStrength,
-
-    y:
-      originalPoint.y +
-      verticalDirection *
-        0.0014 *
-        (
-          profile.upperVolume +
-          profile.lowerVolume
-        ) *
-        0.5 *
-        influence *
-        softTissueStrength
-  };
-});
   
   return result;
 }
