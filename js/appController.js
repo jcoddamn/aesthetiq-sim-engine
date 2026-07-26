@@ -293,4 +293,4 @@ function openRequestedProcedure() {
   });
 }
 
-window.setTimeout(openRequestedProcedure, 250);
+window.setTimeout(openRequestedProcedure, openRequestedProcedure();
