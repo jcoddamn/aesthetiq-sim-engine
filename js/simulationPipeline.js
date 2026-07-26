@@ -29,6 +29,7 @@ import {
 
 import {
   renderWarp
+  getFaceTriangles
 } from "./warpRenderer.js";
 
 import {
@@ -37,6 +38,10 @@ import {
 
 const meshRenderer =
   new MeshRenderer();
+
+meshRenderer.setTriangles(
+  getFaceTriangles()
+);
 
 // Keep enabled while testing facial regions.
 let DEBUG_MASKS = true;
