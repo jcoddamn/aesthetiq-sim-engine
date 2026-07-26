@@ -3,6 +3,8 @@ import { getProcedureMask,
 import { createFeatheredMask } from './maskUtils.js';
 import { applyTreatmentEffect } from './treatmentEffects.js';
 import { drawMaskOverlay } from "./maskDebugger.js";
+  
+const DEBUG_MASKS = true;
 
 export function imageToCanvas(imageSource) {
   const canvas = document.createElement('canvas');
