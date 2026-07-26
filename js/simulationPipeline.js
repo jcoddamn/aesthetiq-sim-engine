@@ -31,10 +31,6 @@ import {
   renderWarp
 } from "./warpRenderer.js";
 
-import {
-  applyLipShading
-} from "./lipShading.js";
-
 // Keep enabled while testing facial regions.
 let DEBUG_MASKS = true;
 
