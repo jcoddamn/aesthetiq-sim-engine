@@ -1,100 +1,350 @@
-import { startFaceTracking } from "./mediapipeRunner.js";
-import { runProcedureSimulationFromImage, renderResultsToTargets } from "./simulationPipeline.js";
-import { getProcedureLabel, getViewerProcedure, getProcedureColor, getProcedureMask } from "./procedureMap.js";
-import { drawPolygonOutline } from "./maskUtils.js";
-import { createLandmarkSmoother } from "./landmarkSmoothing.js";
+import {
+  startFaceTracking,
+  stopFaceTracking
+} from "./mediapipeRunner.js";
+
+import {
+  runProcedureSimulationFromImage,
+  renderCanvasToElement,
+  renderResultsToTargets
+} from "./simulationPipeline.js";
+
+import {
+  getProcedureLabel,
+  getViewerProcedure,
+  getProcedureMask,
+  getProcedureColor,
+  normalizeProcedureId
+} from "./procedureMap.js";
+
+import {
+  drawPolygonOutline
+} from "./maskUtils.js";
+
+import {
+  createLandmarkSmoother
+} from "./landmarkSmoothing.js";
+
+// =========================================================
+// CONFIGURATION
+// =========================================================
+
+const DEBUG_MODE = false;
+
+const params =
+  new URLSearchParams(window.location.search);
+
+const requestedProcedure =
+  params.get("procedure") ||
+  "under-eye-filler";
+
+const selectedOption =
+  params.get("option") ||
+  "standard-treatment";
+
+let currentProcedure =
+  normalizeProcedureId(requestedProcedure);
 
 let latestLandmarks = null;
-let currentProcedure = 'underEyeFiller';
+let capturedCanvas = null;
+let simulationResults = null;
+let selectedLevel = "balanced";
+let viewingOriginal = false;
 
-const smoothLandmarks = createLandmarkSmoother(0.75);
+const smoothLandmarks =
+  createLandmarkSmoother(0.75);
 
-const video = document.getElementById('camera');
-const cameraPreview = document.getElementById('cameraPreview');
+// =========================================================
+// ELEMENTS
+// =========================================================
 
-const maskCanvas = document.getElementById('maskPreview');
-const naturalCanvas = document.getElementById('naturalResult');
-const balancedCanvas = document.getElementById('balancedResult');
-const enhancedCanvas = document.getElementById('enhancedResult');
+const video =
+  document.getElementById("camera");
 
-const procedureLabel = document.getElementById('selectedProcedure');
-const trackingStatus = document.getElementById('trackingStatus');
+const cameraPreview =
+  document.getElementById("cameraPreview");
 
-const simulateButton = document.getElementById('simulateButton');
-const retakeButton = document.getElementById('retakeButton');
+const resultCanvas =
+  document.getElementById("resultCanvas");
 
-const showLandmarksToggle = document.getElementById('showLandmarksToggle');
-const showRegionsToggle = document.getElementById('showRegionsToggle');
+const naturalCanvas =
+  document.getElementById("naturalResult");
+
+const balancedCanvas =
+  document.getElementById("balancedResult");
+
+const enhancedCanvas =
+  document.getElementById("enhancedResult");
+
+const maskCanvas =
+  document.getElementById("maskPreview");
+
+const debugCanvas =
+  document.getElementById("debugPreview");
+
+const selectedProcedureElement =
+  document.getElementById("selectedProcedure");
+
+const selectedTreatmentElement =
+  document.getElementById("selectedTreatment");
+
+const trackingStatus =
+  document.getElementById("trackingStatus");
+
+const statusPill =
+  document.getElementById("statusPill");
+
+const guideMessage =
+  document.getElementById("guideMessage");
+
+const faceCheck =
+  document.getElementById("faceCheck");
+
+const centerCheck =
+  document.getElementById("centerCheck");
+
+const lightingCheck =
+  document.getElementById("lightingCheck");
+
+const captureButton =
+  document.getElementById("captureButton");
+
+const retakeButton =
+  document.getElementById("retakeButton");
+
+const uploadButton =
+  document.getElementById("uploadButton");
+
+const photoUpload =
+  document.getElementById("photoUpload");
+
+const resultsSection =
+  document.getElementById("resultsSection");
+
+const resultLabel =
+  document.getElementById("resultLabel");
+
+const showOriginalButton =
+  document.getElementById("showOriginalButton");
+
+const showSimulationButton =
+  document.getElementById(
+    "showSimulationButton"
+  );
+
+const saveSimulationButton =
+  document.getElementById(
+    "saveSimulationButton"
+  );
+
+const viewerButton =
+  document.getElementById("viewerButton");
+
+const backButton =
+  document.getElementById("backButton");
+
+const changeProcedureButton =
+  document.getElementById(
+    "changeProcedureButton"
+  );
+
+const developmentTools =
+  document.getElementById(
+    "developmentTools"
+  );
+
+// =========================================================
+// INITIALIZATION
+// =========================================================
 
 initApp();
 
 function initApp() {
-  if (!video) {
-    console.error('Camera video element not found');
-    setStatus('Camera element missing');
+  if (!video || !cameraPreview) {
+    setStatus(
+      "Camera elements missing",
+      "error"
+    );
+
     return;
   }
 
-  bindProcedureButtons();
+  updateProcedureInformation();
+  bindControls();
 
-  if (simulateButton) {
-    simulateButton.addEventListener('click', runCurrentSimulation);
+  if (DEBUG_MODE) {
+    developmentTools?.classList.add(
+      "visible"
+    );
   }
 
-  if (retakeButton) {
-    retakeButton.addEventListener('click', resetPreview);
-  }
-
-  updateProcedureLabel();
-
-  if (showLandmarksToggle) showLandmarksToggle.checked = false;
-  if (showRegionsToggle) showRegionsToggle.checked = true;
-
-  setStatus('Starting camera…');
+  setStatus(
+    "Starting camera…",
+    "loading"
+  );
 
   startFaceTracking(
     video,
+
     (landmarks) => {
-      latestLandmarks = smoothLandmarks(landmarks);
+      latestLandmarks =
+        smoothLandmarks(landmarks);
+
+      updateCameraReadiness();
     },
+
     (statusText) => {
-      setStatus(statusText);
+      const normalizedStatus =
+        String(statusText || "");
+
+      if (
+        normalizedStatus
+          .toLowerCase()
+          .includes("denied") ||
+        normalizedStatus
+          .toLowerCase()
+          .includes("error")
+      ) {
+        setStatus(
+          normalizedStatus,
+          "error"
+        );
+
+        return;
+      }
+
+      setStatus(
+        normalizedStatus,
+        latestLandmarks
+          ? "ready"
+          : "loading"
+      );
     }
   );
 
   startPreviewLoop();
 }
 
-function bindProcedureButtons() {
-  document.querySelectorAll('.procedure-button').forEach((button) => {
-    button.addEventListener('click', () => {
-      currentProcedure = button.dataset.procedure;
-      updateProcedureLabel();
-      updateActiveProcedureButtons();
-      setStatus('Procedure selected');
+// =========================================================
+// PROCEDURE INFORMATION
+// =========================================================
+
+function updateProcedureInformation() {
+  if (selectedProcedureElement) {
+    selectedProcedureElement.textContent =
+      getProcedureLabel(currentProcedure);
+  }
+
+  if (selectedTreatmentElement) {
+    selectedTreatmentElement.textContent =
+      formatOptionLabel(selectedOption);
+  }
+}
+
+function formatOptionLabel(option) {
+  return String(option || "")
+    .split("-")
+    .filter(Boolean)
+    .map(
+      (word) =>
+        word.charAt(0).toUpperCase() +
+        word.slice(1)
+    )
+    .join(" ");
+}
+
+// =========================================================
+// CONTROLS
+// =========================================================
+
+function bindControls() {
+  captureButton?.addEventListener(
+    "click",
+    captureAndGenerate
+  );
+
+  retakeButton?.addEventListener(
+    "click",
+    resetSimulation
+  );
+
+  uploadButton?.addEventListener(
+    "click",
+    () => photoUpload?.click()
+  );
+
+  photoUpload?.addEventListener(
+    "change",
+    handlePhotoUpload
+  );
+
+  document
+    .querySelectorAll(
+      ".intensity-button"
+    )
+    .forEach((button) => {
+      button.addEventListener(
+        "click",
+        () => {
+          selectedLevel =
+            button.dataset.level ||
+            "balanced";
+
+          updateIntensityButtons();
+          viewingOriginal = false;
+          updateCompareButtons();
+          renderSelectedResult();
+        }
+      );
     });
-  });
 
-  updateActiveProcedureButtons();
+  showOriginalButton?.addEventListener(
+    "click",
+    () => {
+      viewingOriginal = true;
+      updateCompareButtons();
+      renderSelectedResult();
+    }
+  );
+
+  showSimulationButton?.addEventListener(
+    "click",
+    () => {
+      viewingOriginal = false;
+      updateCompareButtons();
+      renderSelectedResult();
+    }
+  );
+
+  viewerButton?.addEventListener(
+    "click",
+    open3DViewer
+  );
+
+  saveSimulationButton?.addEventListener(
+    "click",
+    saveCurrentSimulation
+  );
+
+  backButton?.addEventListener(
+    "click",
+    () => {
+      history.back();
+    }
+  );
+
+  changeProcedureButton?.addEventListener(
+    "click",
+    () => {
+      window.location.href =
+        "procedures.html";
+    }
+  );
 }
 
-function updateActiveProcedureButtons() {
-  document.querySelectorAll('.procedure-button').forEach((button) => {
-    button.classList.toggle('active', button.dataset.procedure === currentProcedure);
-  });
-}
-
-function updateProcedureLabel() {
-  if (procedureLabel) {
-    procedureLabel.textContent = getProcedureLabel(currentProcedure);
-  }
-}
-
-function setStatus(text) {
-  if (trackingStatus) {
-    trackingStatus.textContent = text;
-  }
-}
+// =========================================================
+// CAMERA PREVIEW
+// =========================================================
 
 function startPreviewLoop() {
   function loop() {
@@ -106,191 +356,701 @@ function startPreviewLoop() {
 }
 
 function drawCameraPreview() {
-  if (!video || !cameraPreview) return;
-  if (!video.videoWidth || !video.videoHeight) return;
-
-  cameraPreview.width = video.videoWidth;
-  cameraPreview.height = video.videoHeight;
-
-  const ctx = cameraPreview.getContext('2d');
-  ctx.clearRect(0, 0, cameraPreview.width, cameraPreview.height);
-  ctx.drawImage(video, 0, 0, cameraPreview.width, cameraPreview.height);
-
-  if (latestLandmarks) {
-    if (showLandmarksToggle?.checked) {
-      drawLandmarks(latestLandmarks);
-    }
-
-    if (showRegionsToggle?.checked) {
-      drawSelectedProcedureRegion(latestLandmarks);
-    }
+  if (
+    !video ||
+    !cameraPreview ||
+    !video.videoWidth ||
+    !video.videoHeight
+  ) {
+    return;
   }
-}
 
-function drawLandmarks(landmarks) {
-  if (!cameraPreview || !landmarks) return;
+  cameraPreview.width =
+    video.videoWidth;
 
-  const ctx = cameraPreview.getContext('2d');
-  ctx.fillStyle = '#00ff88';
+  cameraPreview.height =
+    video.videoHeight;
 
-  for (const point of landmarks) {
-    const x = point.x * cameraPreview.width;
-    const y = point.y * cameraPreview.height;
+  const context =
+    cameraPreview.getContext("2d");
 
-    ctx.beginPath();
-    ctx.arc(x, y, 1.0, 0, Math.PI * 2);
-    ctx.fill();
+  if (!context) {
+    return;
   }
-}
 
-function drawSelectedProcedureRegion(landmarks) {
-  const polygons = getProcedureMask(
-    currentProcedure,
-    landmarks,
+  context.clearRect(
+    0,
+    0,
     cameraPreview.width,
     cameraPreview.height
   );
 
-  if (!polygons || !polygons.length) return;
+  context.save();
 
-  const ctx = cameraPreview.getContext('2d');
-  const color = getProcedureColor(currentProcedure);
+  context.translate(
+    cameraPreview.width,
+    0
+  );
 
-  polygons.forEach((poly) => {
-    drawPolygonOutline(ctx, poly, color, 2);
-  });
+  context.scale(-1, 1);
+
+  context.drawImage(
+    video,
+    0,
+    0,
+    cameraPreview.width,
+    cameraPreview.height
+  );
+
+  context.restore();
+
+  if (
+    DEBUG_MODE &&
+    latestLandmarks
+  ) {
+    drawSelectedProcedureRegion(
+      latestLandmarks
+    );
+  }
 }
 
-function resetPreview() {
-  [maskCanvas, naturalCanvas, balancedCanvas, enhancedCanvas].forEach((canvas) => {
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  });
+function drawSelectedProcedureRegion(
+  landmarks
+) {
+  const polygons =
+    getProcedureMask(
+      currentProcedure,
+      landmarks,
+      cameraPreview.width,
+      cameraPreview.height,
+      true
+    );
 
-  setStatus('Preview reset');
-}
-
-function setGenerateButtonLoading(isLoading) {
-  if (!simulateButton) return;
-
-  simulateButton.disabled = isLoading;
-  simulateButton.textContent = isLoading ? 'Generating…' : 'Generate Preview';
-}
-
-export function runCurrentSimulation() {
-  if (!latestLandmarks) {
-    setStatus('No face detected yet');
+  if (!polygons?.length) {
     return;
   }
 
-  if (!video.videoWidth || !video.videoHeight) {
-    setStatus('Camera not ready');
+  const context =
+    cameraPreview.getContext("2d");
+
+  const color =
+    getProcedureColor(currentProcedure);
+
+  polygons.forEach((polygon) => {
+    drawPolygonOutline(
+      context,
+      polygon,
+      color,
+      2
+    );
+  });
+}
+
+// =========================================================
+// CAMERA READINESS
+// =========================================================
+
+function updateCameraReadiness() {
+  const hasFace =
+    Array.isArray(latestLandmarks) &&
+    latestLandmarks.length >= 468;
+
+  faceCheck?.classList.toggle(
+    "active",
+    hasFace
+  );
+
+  const centered =
+    hasFace &&
+    isFaceCentered(latestLandmarks);
+
+  centerCheck?.classList.toggle(
+    "active",
+    centered
+  );
+
+  const lightingGood =
+    hasFace &&
+    isLightingAcceptable();
+
+  lightingCheck?.classList.toggle(
+    "active",
+    lightingGood
+  );
+
+  if (captureButton) {
+    captureButton.disabled =
+      !hasFace;
+  }
+
+  if (!hasFace) {
+    guideMessage.textContent =
+      "Center your face inside the guide";
+
     return;
+  }
+
+  if (!centered) {
+    guideMessage.textContent =
+      "Move slightly toward the center";
+
+    return;
+  }
+
+  if (!lightingGood) {
+    guideMessage.textContent =
+      "Use brighter, more even lighting";
+
+    return;
+  }
+
+  guideMessage.textContent =
+    "Ready to capture";
+
+  setStatus(
+    "Face ready",
+    "ready"
+  );
+}
+
+function isFaceCentered(landmarks) {
+  const noseTip =
+    landmarks?.[1];
+
+  if (!noseTip) {
+    return false;
+  }
+
+  return (
+    noseTip.x > 0.36 &&
+    noseTip.x < 0.64 &&
+    noseTip.y > 0.24 &&
+    noseTip.y < 0.72
+  );
+}
+
+function isLightingAcceptable() {
+  if (
+    !cameraPreview ||
+    !cameraPreview.width ||
+    !cameraPreview.height
+  ) {
+    return false;
   }
 
   try {
-    setGenerateButtonLoading(true);
-    setStatus('Generating previews…');
+    const context =
+      cameraPreview.getContext("2d");
 
-    const results = runProcedureSimulationFromImage({
-      procedure: currentProcedure,
-      landmarks: latestLandmarks,
-      imageSource: video,
-      blurPx: 18
-    });
+    const sampleWidth =
+      Math.min(
+        60,
+        cameraPreview.width
+      );
 
-    renderResultsToTargets(results, {
-      maskCanvas,
-      naturalCanvas,
-      balancedCanvas,
-      enhancedCanvas
-    });
+    const sampleHeight =
+      Math.min(
+        60,
+        cameraPreview.height
+      );
 
-    setStatus('Preview ready');
+    const sampleX =
+      Math.max(
+        0,
+        Math.floor(
+          cameraPreview.width / 2 -
+          sampleWidth / 2
+        )
+      );
 
-    subtleCanvas?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
+    const sampleY =
+      Math.max(
+        0,
+        Math.floor(
+          cameraPreview.height / 2 -
+          sampleHeight / 2
+        )
+      );
+
+    const pixels =
+      context.getImageData(
+        sampleX,
+        sampleY,
+        sampleWidth,
+        sampleHeight
+      ).data;
+
+    let totalBrightness = 0;
+
+    for (
+      let index = 0;
+      index < pixels.length;
+      index += 4
+    ) {
+      totalBrightness +=
+        (
+          pixels[index] +
+          pixels[index + 1] +
+          pixels[index + 2]
+        ) / 3;
+    }
+
+    const pixelCount =
+      pixels.length / 4;
+
+    const averageBrightness =
+      totalBrightness / pixelCount;
+
+    return (
+      averageBrightness > 45 &&
+      averageBrightness < 230
+    );
   } catch (error) {
-    console.error('Simulation failed:', error);
-    setStatus('Simulation failed');
-  } finally {
-    setGenerateButtonLoading(false);
+    return true;
   }
 }
 
-export function open3DViewer() {
-  const mappedProcedure = getViewerProcedure(currentProcedure);
-  window.location.href = `viewer.html?procedure=${mappedProcedure}`;
-}
-
-window.open3DViewer = open3DViewer;
-
 // =========================================================
-// OPEN SELECTED PROCEDURE FROM PROCEDURE DETAIL PAGE
+// CAPTURE AND SIMULATION
 // =========================================================
 
-const simulationParams =
-  new URLSearchParams(window.location.search);
+function captureAndGenerate() {
+  if (!latestLandmarks) {
+    setStatus(
+      "No face detected",
+      "error"
+    );
 
-const requestedProcedure =
-  simulationParams.get("procedure");
-
-const isPreviewMode =
-  simulationParams.get("mode") === "preview";
-
-const procedureAliases = {
-  underEyeFiller: "underEyeFiller",
-  lipFiller: "lipFiller",
-  lipFlip: "lipFlip",
-  foreheadBotox: "foreheadBotox",
-  glabellaBotox: "glabella",
-  crowsFeetBotox: "crowsfeet",
-  chemicalPeel: "chemicalPeel",
-  laserResurfacing: "laserEye"
-};
-
-function openRequestedProcedure() {
-  if (!requestedProcedure) {
     return;
   }
 
-  const simulationProcedure =
-    procedureAliases[requestedProcedure] ||
-    requestedProcedure;
-
-  const matchingButton =
-    document.querySelector(
-      `.procedure-button[data-procedure="${simulationProcedure}"]`
+  if (
+    !video.videoWidth ||
+    !video.videoHeight
+  ) {
+    setStatus(
+      "Camera not ready",
+      "error"
     );
 
-  if (!matchingButton) {
-    console.warn(
-      `No simulation button was found for: ${requestedProcedure}`
+    return;
+  }
+
+  capturedCanvas =
+    captureCurrentVideoFrame();
+
+  generateSimulation(
+    capturedCanvas,
+    latestLandmarks
+  );
+}
+
+function captureCurrentVideoFrame() {
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width =
+    video.videoWidth;
+
+  canvas.height =
+    video.videoHeight;
+
+  const context =
+    canvas.getContext("2d");
+
+  context.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  return canvas;
+}
+
+function generateSimulation(
+  imageSource,
+  landmarks
+) {
+  try {
+    setCaptureLoading(true);
+
+    setStatus(
+      "Generating preview…",
+      "loading"
     );
 
-    if (isPreviewMode) {
-      const selectedProcedureText =
-        document.getElementById("selectedProcedure");
+    simulationResults =
+      runProcedureSimulationFromImage({
+        procedure:
+          currentProcedure,
 
-      if (selectedProcedureText) {
-        selectedProcedureText.textContent =
-          "Camera Preview";
+        landmarks,
+
+        imageSource,
+
+        blurPx: 18,
+
+        mirrorX: false
+      });
+
+    renderResultsToTargets(
+      simulationResults,
+      {
+        maskCanvas,
+        debugCanvas,
+        naturalCanvas,
+        balancedCanvas,
+        enhancedCanvas
       }
+    );
+
+    resultsSection?.classList.add(
+      "visible"
+    );
+
+    selectedLevel =
+      "balanced";
+
+    viewingOriginal = false;
+
+    updateIntensityButtons();
+    updateCompareButtons();
+    renderSelectedResult();
+
+    setStatus(
+      "Preview ready",
+      "ready"
+    );
+
+    resultsSection?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  } catch (error) {
+    console.error(
+      "Simulation failed:",
+      error
+    );
+
+    setStatus(
+      "Simulation failed",
+      "error"
+    );
+  } finally {
+    setCaptureLoading(false);
+  }
+}
+
+// =========================================================
+// RESULT DISPLAY
+// =========================================================
+
+function renderSelectedResult() {
+  if (
+    !resultCanvas ||
+    !capturedCanvas
+  ) {
+    return;
+  }
+
+  if (viewingOriginal) {
+    renderCanvasToElement(
+      capturedCanvas,
+      resultCanvas
+    );
+
+    if (resultLabel) {
+      resultLabel.textContent =
+        "Original";
     }
 
     return;
   }
 
-  matchingButton.click();
+  const selectedCanvas =
+    getSelectedResultCanvas();
 
-  matchingButton.scrollIntoView({
-    behavior: "smooth",
-    block: "nearest",
-    inline: "center"
-  });
+  if (!selectedCanvas) {
+    return;
+  }
+
+  renderCanvasToElement(
+    selectedCanvas,
+    resultCanvas
+  );
+
+  if (resultLabel) {
+    resultLabel.textContent =
+      capitalize(selectedLevel);
+  }
 }
 
-window.setTimeout(openRequestedProcedure, openRequestedProcedure();
+function getSelectedResultCanvas() {
+  if (!simulationResults) {
+    return null;
+  }
+
+  if (selectedLevel === "natural") {
+    return simulationResults.naturalCanvas;
+  }
+
+  if (selectedLevel === "enhanced") {
+    return simulationResults.enhancedCanvas;
+  }
+
+  return simulationResults.balancedCanvas;
+}
+
+function updateIntensityButtons() {
+  document
+    .querySelectorAll(
+      ".intensity-button"
+    )
+    .forEach((button) => {
+      button.classList.toggle(
+        "active",
+        button.dataset.level ===
+          selectedLevel
+      );
+    });
+}
+
+function updateCompareButtons() {
+  showOriginalButton?.classList.toggle(
+    "active",
+    viewingOriginal
+  );
+
+  showSimulationButton?.classList.toggle(
+    "active",
+    !viewingOriginal
+  );
+}
+
+// =========================================================
+// RESET
+// =========================================================
+
+function resetSimulation() {
+  capturedCanvas = null;
+  simulationResults = null;
+  viewingOriginal = false;
+
+  resultsSection?.classList.remove(
+    "visible"
+  );
+
+  [
+    resultCanvas,
+    maskCanvas,
+    debugCanvas,
+    naturalCanvas,
+    balancedCanvas,
+    enhancedCanvas
+  ].forEach((canvas) => {
+    if (!canvas) {
+      return;
+    }
+
+    const context =
+      canvas.getContext("2d");
+
+    context.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+  });
+
+  setStatus(
+    latestLandmarks
+      ? "Face ready"
+      : "Searching for face…",
+    latestLandmarks
+      ? "ready"
+      : "loading"
+  );
+}
+
+// =========================================================
+// PHOTO UPLOAD
+// =========================================================
+
+function handlePhotoUpload(event) {
+  const file =
+    event.target.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  const image = new Image();
+
+  image.onload = () => {
+    capturedCanvas =
+      document.createElement("canvas");
+
+    capturedCanvas.width =
+      image.naturalWidth;
+
+    capturedCanvas.height =
+      image.naturalHeight;
+
+    const context =
+      capturedCanvas.getContext("2d");
+
+    context.drawImage(
+      image,
+      0,
+      0
+    );
+
+    if (!latestLandmarks) {
+      setStatus(
+        "Face landmarks are needed. Use the live camera first.",
+        "error"
+      );
+
+      return;
+    }
+
+    generateSimulation(
+      capturedCanvas,
+      latestLandmarks
+    );
+
+    URL.revokeObjectURL(
+      image.src
+    );
+  };
+
+  image.src =
+    URL.createObjectURL(file);
+}
+
+// =========================================================
+// SAVE AND VIEWER
+// =========================================================
+
+function saveCurrentSimulation() {
+  const selectedCanvas =
+    viewingOriginal
+      ? capturedCanvas
+      : getSelectedResultCanvas();
+
+  if (!selectedCanvas) {
+    setStatus(
+      "Generate a preview first",
+      "error"
+    );
+
+    return;
+  }
+
+  const link =
+    document.createElement("a");
+
+  const filename =
+    [
+      "aesthetiq",
+      currentProcedure,
+      viewingOriginal
+        ? "original"
+        : selectedLevel
+    ].join("-");
+
+  link.download =
+    `${filename}.png`;
+
+  link.href =
+    selectedCanvas.toDataURL(
+      "image/png"
+    );
+
+  link.click();
+
+  setStatus(
+    "Simulation saved",
+    "ready"
+  );
+}
+
+function open3DViewer() {
+  const mappedProcedure =
+    getViewerProcedure(
+      currentProcedure
+    );
+
+  window.location.href =
+    `viewer.html?procedure=${encodeURIComponent(
+      mappedProcedure
+    )}`;
+}
+
+// =========================================================
+// UI HELPERS
+// =========================================================
+
+function setCaptureLoading(
+  loading
+) {
+  if (!captureButton) {
+    return;
+  }
+
+  captureButton.disabled =
+    loading;
+
+  captureButton.textContent =
+    loading
+      ? "Generating…"
+      : "Capture Photo";
+}
+
+function setStatus(
+  message,
+  state = "loading"
+) {
+  if (trackingStatus) {
+    trackingStatus.textContent =
+      message;
+  }
+
+  statusPill?.classList.remove(
+    "ready",
+    "error"
+  );
+
+  if (state === "ready") {
+    statusPill?.classList.add(
+      "ready"
+    );
+  }
+
+  if (state === "error") {
+    statusPill?.classList.add(
+      "error"
+    );
+  }
+}
+
+function capitalize(value) {
+  const text =
+    String(value || "");
+
+  return (
+    text.charAt(0).toUpperCase() +
+    text.slice(1)
+  );
+}
+
+// Stop camera tracks when leaving the page.
+window.addEventListener(
+  "beforeunload",
+  () => {
+    stopFaceTracking(video);
+  }
+);
