@@ -14,6 +14,10 @@ import {
   applyLipBiomechanics
 } from "./lipBiomechanics.js";
 
+import {
+  getLipProfile
+} from "./lipAnatomy.js";
+
 /*
 =========================================================
  AesthetIQ Face Warp Engine
@@ -90,6 +94,9 @@ export function warpLipFiller(
   const profile =
     getLipIntensityProfile(level) || {};
 
+  const anatomy =
+  getLipProfile(landmarks);
+
   const levelStrength =
     level === "natural"
       ? 0.4
@@ -97,25 +104,76 @@ export function warpLipFiller(
       ? 0.82
       : 0.6;
 
-  const upperVolume =
-    Number.isFinite(profile.upperVolume)
-      ? profile.upperVolume
-      : 1;
+  const baseUpperVolume =
+  Number.isFinite(profile.upperVolume)
+    ? profile.upperVolume
+    : 1;
 
-  const lowerVolume =
-    Number.isFinite(profile.lowerVolume)
-      ? profile.lowerVolume
-      : 1;
+const baseLowerVolume =
+  Number.isFinite(profile.lowerVolume)
+    ? profile.lowerVolume
+    : 1;
+
+const fullness =
+  Number.isFinite(anatomy.fullness)
+    ? anatomy.fullness
+    : 0.18;
+
+const thinLipBoost =
+  Math.max(
+    0,
+    Math.min(
+      0.22,
+      (0.18 - fullness) * 1.4
+    )
+  );
+
+const naturallyFullReduction =
+  Math.max(
+    0,
+    Math.min(
+      0.2,
+      (fullness - 0.24) * 1.2
+    )
+  );
+
+const upperVolume =
+  baseUpperVolume *
+  (
+    1 +
+    thinLipBoost -
+    naturallyFullReduction
+  );
+
+const lowerVolume =
+  baseLowerVolume *
+  (
+    1 +
+    thinLipBoost * 0.8 -
+    naturallyFullReduction
+  );
 
   const horizontalVolume =
     Number.isFinite(profile.horizontalVolume)
       ? profile.horizontalVolume
       : 1;
 
-  const cupidBowStrength =
-    Number.isFinite(profile.cupidBow)
-      ? profile.cupidBow
-      : 1;
+  const baseCupidBowStrength =
+  Number.isFinite(profile.cupidBow)
+    ? profile.cupidBow
+    : 1;
+
+const cupidStrength =
+  Number.isFinite(anatomy.cupidStrength)
+    ? anatomy.cupidStrength
+    : 0.5;
+
+const cupidBowStrength =
+  baseCupidBowStrength *
+  (
+    1.15 -
+    cupidStrength * 0.3
+  );
 
   const borderStrength =
     Number.isFinite(profile.border)
@@ -563,11 +621,30 @@ moveGroup(
     tissueStrength
   );
 
+const philtrumLength =
+  Number.isFinite(anatomy.philtrumLength)
+    ? anatomy.philtrumLength
+    : 0.04;
+
+const anatomyStrength =
+  Math.max(
+    0.82,
+    Math.min(
+      1.18,
+      1 +
+      (
+        philtrumLength -
+        0.04
+      ) * 3
+    )
+  );
+
 const biomechanicalResult =
   applyLipBiomechanics(
     landmarks,
     softTissue,
-    level
+    level,
+    anatomyStrength
   );
 
 const skinStrength =
