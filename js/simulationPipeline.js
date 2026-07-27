@@ -437,26 +437,38 @@ function createSimulationLevel({
     };
   }
 
-  const resultCanvas =
-    applyTreatmentEffect(
-      normalizedProcedure,
-      workingCanvas,
+  let resultCanvas =
+  applyTreatmentEffect(
+    normalizedProcedure,
+    workingCanvas,
+    maskCanvas,
+    level
+  );
+
+if (
+  normalizedProcedure ===
+  "lip-filler"
+) {
+  resultCanvas =
+    applySoftTissueLighting(
+      resultCanvas ||
+        workingCanvas,
       maskCanvas,
       level
     );
-
-  return {
-    canvas:
-      resultCanvas ||
-      workingCanvas,
-
-    landmarks:
-      workingLandmarks,
-
-    polygons,
-    maskCanvas
-  };
 }
+
+return {
+  canvas:
+    resultCanvas ||
+    workingCanvas,
+
+  landmarks:
+    workingLandmarks,
+
+  polygons,
+  maskCanvas
+};
 
 // ---------------------------------------------------------
 // MAIN SIMULATION
