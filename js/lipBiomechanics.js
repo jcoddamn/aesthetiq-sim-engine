@@ -112,7 +112,7 @@ function moveSupportGroup({
 export function applyLipBiomechanics(
   originalLandmarks,
   warpedLandmarks,
-  level = "balanced"
+  level = "balanced",
   anatomyStrength = 1
 ) {
   if (
