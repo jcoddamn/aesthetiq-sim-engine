@@ -10,6 +10,10 @@ import {
   displaceLipSkin
 } from "./lipSkinDisplacement.js";
 
+import {
+  applyLipBiomechanics
+} from "./lipBiomechanics.js";
+
 /*
 =========================================================
  AesthetIQ Face Warp Engine
@@ -559,6 +563,13 @@ moveGroup(
     tissueStrength
   );
 
+const biomechanicalResult =
+  applyLipBiomechanics(
+    landmarks,
+    softTissue,
+    level
+  );
+
 const skinStrength =
   level === "natural"
     ? 0.2
@@ -568,7 +579,7 @@ const skinStrength =
 
 return displaceLipSkin(
   landmarks,
-  softTissue,
+  biomechanicalResult,
   skinStrength
 );
 }
