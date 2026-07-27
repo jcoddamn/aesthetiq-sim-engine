@@ -36,6 +36,10 @@ import {
   MeshRenderer
 } from "./meshRenderer.js";
 
+import {
+  applySoftTissueLighting
+} from "./softTissueLighting.js";
+
 const meshRenderer =
   new MeshRenderer();
 
