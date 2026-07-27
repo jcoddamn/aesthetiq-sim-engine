@@ -523,6 +523,148 @@ precisionScanButton?.addEventListener(
   );
 }
 
+function togglePrecisionScan() {
+  if (
+    precisionCapture.isActive()
+  ) {
+    precisionCapture.stop();
+
+    if (precisionScanButton) {
+      precisionScanButton.textContent =
+        "Start Precision Scan";
+    }
+
+    return;
+  }
+
+  resetSimulation();
+
+  precisionScanPanel?.removeAttribute(
+    "hidden"
+  );
+
+  if (precisionScanButton) {
+    precisionScanButton.textContent =
+      "Stop Precision Scan";
+  }
+
+  precisionCapture.start();
+
+  setStatus(
+    "Precision scan started",
+    "loading"
+  );
+}
+
+function updatePrecisionScanUI(
+  progress
+) {
+  const {
+    currentPose,
+    completedPoses = [],
+    stableFrameCount = 0,
+    stableFrameTarget = 12,
+    instruction = ""
+  } = progress;
+
+  if (precisionInstruction) {
+    precisionInstruction.textContent =
+      instruction;
+  }
+
+  const steps = {
+    straight:
+      straightPoseStep,
+
+    left:
+      leftPoseStep,
+
+    right:
+      rightPoseStep
+  };
+
+  Object.entries(steps).forEach(
+    ([pose, element]) => {
+      element?.classList.toggle(
+        "current",
+        pose === currentPose
+      );
+
+      element?.classList.toggle(
+        "complete",
+        completedPoses.includes(
+          pose
+        )
+      );
+    }
+  );
+
+  const progressPercent =
+    stableFrameTarget > 0
+      ? Math.min(
+          100,
+          (
+            stableFrameCount /
+            stableFrameTarget
+          ) * 100
+        )
+      : 0;
+
+  if (poseHoldProgress) {
+    poseHoldProgress.style.width =
+      `${progressPercent}%`;
+  }
+}
+
+function handlePrecisionScanComplete(
+  captures
+) {
+  if (precisionScanButton) {
+    precisionScanButton.textContent =
+      "Start Precision Scan";
+  }
+
+  if (precisionInstruction) {
+    precisionInstruction.textContent =
+      "Precision scan complete";
+  }
+
+  if (poseHoldProgress) {
+    poseHoldProgress.style.width =
+      "100%";
+  }
+
+  const straightCapture =
+    captures?.straight;
+
+  if (
+    !straightCapture?.imageCanvas ||
+    !straightCapture?.landmarks
+  ) {
+    setStatus(
+      "Precision scan could not be completed",
+      "error"
+    );
+
+    return;
+  }
+
+  /*
+   * For this first integration, the straight capture
+   * drives the existing 2D simulation.
+   *
+   * The next phase will combine straight, left, and
+   * right landmark measurements before simulation.
+   */
+  capturedCanvas =
+    straightCapture.imageCanvas;
+
+  generateSimulation(
+    straightCapture.imageCanvas,
+    straightCapture.landmarks
+  );
+}
+
 // =========================================================
 // CAMERA PREVIEW
 // =========================================================
