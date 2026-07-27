@@ -561,10 +561,10 @@ moveGroup(
 
 const skinStrength =
   level === "natural"
-    ? 0.16
+    ? 0.2
     : level === "enhanced"
-    ? 0.34
-    : 0.24;
+    ? 0.48
+    : 0.33;
 
 return displaceLipSkin(
   landmarks,
