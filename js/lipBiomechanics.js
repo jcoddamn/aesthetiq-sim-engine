@@ -113,6 +113,7 @@ export function applyLipBiomechanics(
   originalLandmarks,
   warpedLandmarks,
   level = "balanced"
+  anatomyStrength = 1
 ) {
   if (
     !Array.isArray(originalLandmarks) ||
@@ -128,8 +129,24 @@ export function applyLipBiomechanics(
       warpedLandmarks
     );
 
-  const config =
-    getLevelConfig(level);
+  const baseConfig =
+  getLevelConfig(level);
+
+const config = {
+  ...baseConfig,
+
+  upperRoll:
+    baseConfig.upperRoll *
+    anatomyStrength,
+
+  centerProjection:
+    baseConfig.centerProjection *
+    anatomyStrength,
+
+  philtrumSupport:
+    baseConfig.philtrumSupport *
+    anatomyStrength
+};
 
   const leftCorner =
     originalLandmarks[61];
