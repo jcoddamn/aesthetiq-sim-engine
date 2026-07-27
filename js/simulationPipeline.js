@@ -469,6 +469,7 @@ return {
   polygons,
   maskCanvas
 };
+}
 
 // ---------------------------------------------------------
 // MAIN SIMULATION
