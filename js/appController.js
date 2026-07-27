@@ -29,6 +29,10 @@ import {
   createLandmarkSmoother
 } from "./landmarkSmoothing.js";
 
+import {
+  createMultiAngleCapture
+} from "./multiAngleCapture.js";
+
 // =========================================================
 // CONFIGURATION
 // =========================================================
@@ -239,6 +243,8 @@ const TREATMENT_OPTION_LABELS = {
   "standard-treatment":
     "Standard Treatment"
 };
+
+
 
 // =========================================================
 // INITIALIZATION
