@@ -276,7 +276,10 @@ const rightPoseStep =
 
 const poseHoldProgress =
   document.getElementById(
-    "const precisionCapture =
+    "poseHoldProgress"
+  );
+
+const precisionCapture =
   createMultiAngleCapture({
     stableFrameTarget: 12,
     minimumConfidence: 0.58,
@@ -452,7 +455,9 @@ function bindControls() {
   );
 
   photoUpload?.addEventListener(
-    "change",
+  "change",
+  handlePhotoUpload
+);
 
 precisionScanButton?.addEventListener(
   "click",
