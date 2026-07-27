@@ -133,11 +133,12 @@ export function applyLipBiomechanics(
   getLevelConfig(level);
 
 const config = {
-  ...baseConfig,
-
   upperRoll:
     baseConfig.upperRoll *
     anatomyStrength,
+
+  lowerRoll:
+    baseConfig.lowerRoll,
 
   centerProjection:
     baseConfig.centerProjection *
@@ -146,6 +147,9 @@ const config = {
   philtrumSupport:
     baseConfig.philtrumSupport *
     anatomyStrength,
+
+  lowerSupport:
+    baseConfig.lowerSupport
 };
 
   const leftCorner =
