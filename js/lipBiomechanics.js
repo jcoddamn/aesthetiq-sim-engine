@@ -145,7 +145,7 @@ const config = {
 
   philtrumSupport:
     baseConfig.philtrumSupport *
-    anatomyStrength
+    anatomyStrength,
 };
 
   const leftCorner =
