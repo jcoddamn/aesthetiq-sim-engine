@@ -6,6 +6,10 @@ import {
   applyLipSoftTissue
 } from "./lipSoftTissue.js";
 
+import {
+  displaceLipSkin
+} from "./lipSkinDisplacement.js";
+
 /*
 =========================================================
  AesthetIQ Face Warp Engine
@@ -548,13 +552,26 @@ moveGroup(
       ? 0.2
       : 0.13;
 
-  return applyLipSoftTissue(
+  const softTissue =
+  applyLipSoftTissue(
     landmarks,
     result,
     tissueStrength
   );
-}
 
+const skinStrength =
+  level === "natural"
+    ? 0.16
+    : level === "enhanced"
+    ? 0.34
+    : 0.24;
+
+return displaceLipSkin(
+  landmarks,
+  softTissue,
+  skinStrength
+);
+}
 /*
 =========================================================
 Chin Projection
