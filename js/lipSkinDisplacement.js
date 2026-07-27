@@ -126,7 +126,7 @@ export function displaceLipSkin(
         0.085,
 
       multiplier:
-        0.82
+        0.95
     },
 
     {
@@ -137,7 +137,7 @@ export function displaceLipSkin(
         0.1,
 
       multiplier:
-        0.46
+        0.38
     },
 
     {
@@ -148,7 +148,7 @@ export function displaceLipSkin(
         0.11,
 
       multiplier:
-        0.58
+        0.72
     }
   ];
 
@@ -252,7 +252,7 @@ export function displaceLipSkin(
             normalizedX *
             strength *
             multiplier *
-            0.55,
+            0.42,
 
           y:
             originalSkinPoint.y +
