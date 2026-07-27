@@ -626,6 +626,88 @@
       color: #4ade80;
       font-weight: 900;
     }
+
+    .precision-scan-panel {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid rgba(167, 139, 250, 0.24);
+  border-radius: 16px;
+  background: rgba(139, 92, 246, 0.08);
+  text-align: left;
+}
+
+.precision-scan-panel[hidden] {
+  display: none;
+}
+
+.precision-instruction {
+  margin: 7px 0 13px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.pose-progress {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.pose-step {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pose-step.current {
+  border-color: rgba(167, 139, 250, 0.68);
+  background: rgba(139, 92, 246, 0.18);
+  color: #ede9fe;
+}
+
+.pose-step.complete {
+  border-color: rgba(74, 222, 128, 0.38);
+  background: rgba(34, 197, 94, 0.12);
+  color: #bbf7d0;
+}
+
+.pose-check {
+  display: none;
+  color: #4ade80;
+}
+
+.pose-step.complete .pose-check {
+  display: inline;
+}
+
+.pose-hold-track {
+  height: 6px;
+  margin-top: 13px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pose-hold-progress {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    #7c3aed,
+    #a78bfa
+  );
+  transition: width 0.12s ease;
+}
     
     @media (max-width: 620px) {
       .quality-checks {
@@ -840,6 +922,64 @@
             accept="image/*"
             hidden
           />
+
+          <button
+  id="precisionScanButton"
+  type="button"
+  class="secondary-button"
+>
+  Start Precision Scan
+</button>
+
+<section
+  class="precision-scan-panel"
+  id="precisionScanPanel"
+  hidden
+>
+  <span class="eyebrow">
+    Precision scan
+  </span>
+
+  <p
+    class="precision-instruction"
+    id="precisionInstruction"
+  >
+    Look straight ahead
+  </p>
+
+  <div class="pose-progress">
+    <div
+      class="pose-step"
+      id="straightPoseStep"
+    >
+      <span class="pose-check">✓</span>
+      Straight
+    </div>
+
+    <div
+      class="pose-step"
+      id="leftPoseStep"
+    >
+      <span class="pose-check">✓</span>
+      Left
+    </div>
+
+    <div
+      class="pose-step"
+      id="rightPoseStep"
+    >
+      <span class="pose-check">✓</span>
+      Right
+    </div>
+  </div>
+
+  <div class="pose-hold-track">
+    <div
+      class="pose-hold-progress"
+      id="poseHoldProgress"
+    ></div>
+  </div>
+</section>
         </div>
       </div>
     </section>
