@@ -244,7 +244,57 @@ const TREATMENT_OPTION_LABELS = {
     "Standard Treatment"
 };
 
+const precisionScanButton =
+  document.getElementById(
+    "precisionScanButton"
+  );
 
+const precisionScanPanel =
+  document.getElementById(
+    "precisionScanPanel"
+  );
+
+const precisionInstruction =
+  document.getElementById(
+    "precisionInstruction"
+  );
+
+const straightPoseStep =
+  document.getElementById(
+    "straightPoseStep"
+  );
+
+const leftPoseStep =
+  document.getElementById(
+    "leftPoseStep"
+  );
+
+const rightPoseStep =
+  document.getElementById(
+    "rightPoseStep"
+  );
+
+const poseHoldProgress =
+  document.getElementById(
+    "const precisionCapture =
+  createMultiAngleCapture({
+    stableFrameTarget: 12,
+    minimumConfidence: 0.58,
+
+    onUpdate:
+      updatePrecisionScanUI,
+
+    onPoseCaptured:
+      ({ pose }) => {
+        setStatus(
+          `${capitalize(pose)} angle captured`,
+          "ready"
+        );
+      },
+
+    onComplete:
+      handlePrecisionScanComplete
+  });
 
 // =========================================================
 // INITIALIZATION
@@ -280,11 +330,23 @@ function initApp() {
     video,
 
     (landmarks) => {
-      latestLandmarks =
-        smoothLandmarks(landmarks);
+  latestLandmarks =
+    smoothLandmarks(landmarks);
 
-      updateCameraReadiness();
-    },
+  updateCameraReadiness();
+
+  if (
+    precisionCapture.isActive()
+  ) {
+    precisionCapture.processFrame({
+      landmarks:
+        latestLandmarks,
+
+      videoElement:
+        video
+    });
+  }
+},
 
     (statusText) => {
       const normalizedStatus =
@@ -391,9 +453,12 @@ function bindControls() {
 
   photoUpload?.addEventListener(
     "change",
-    handlePhotoUpload
-  );
 
+precisionScanButton?.addEventListener(
+  "click",
+  togglePrecisionScan
+);
+    
   document
     .querySelectorAll(
       ".intensity-button"
