@@ -530,6 +530,9 @@ precisionScanButton?.addEventListener(
 
 function togglePrecisionScan() {
   if (
+
+alert("Precision Scan button works!");
+    
     precisionCapture.isActive()
   ) {
     precisionCapture.stop();
