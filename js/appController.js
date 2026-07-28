@@ -46,6 +46,10 @@ import {
   buildTissueModel
 } from "./tissueModel.js";
 
+import {
+  repairLowerLipTexture
+} from "./lipTextureRepair.js";
+
 // =========================================================
 // CONFIGURATION
 // =========================================================
