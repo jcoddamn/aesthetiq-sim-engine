@@ -248,6 +248,7 @@ function createWarpedLandmarks(
         landmarks,
         level,
         anatomyProfile?.anatomyStrength || 1
+        tissueModel
       );
 
     case "chin-filler":
