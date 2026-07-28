@@ -84,6 +84,7 @@ export function warpLipFiller(
   landmarks,
   level = "balanced",
   anatomyStrength = 1
+  tissueModel = null
 ) {
   if (
     !Array.isArray(landmarks) ||
@@ -107,6 +108,50 @@ export function warpLipFiller(
     )
   );
 
+const elasticity =
+  Math.max(
+    0.7,
+    Math.min(
+      1.3,
+      Number(tissueModel?.elasticity) || 1
+    )
+  );
+
+const projectionResistance =
+  Math.max(
+    0.7,
+    Math.min(
+      1.3,
+      Number(
+        tissueModel?.projectionResistance
+      ) || 1
+    )
+  );
+
+const skinMobility =
+  Math.max(
+    0.7,
+    Math.min(
+      1.3,
+      Number(tissueModel?.skinMobility) || 1
+    )
+  );
+
+/*
+ * More elasticity allows slightly more deformation.
+ * More projection resistance reduces forward/fullness
+ * response instead of increasing it.
+ */
+const tissueDeformationStrength =
+  Math.max(
+    0.8,
+    Math.min(
+      1.2,
+      elasticity /
+        projectionResistance
+    )
+  );
+  
 const baseLevelStrength =
   level === "natural"
     ? 0.4
@@ -116,7 +161,8 @@ const baseLevelStrength =
 
 const levelStrength =
   baseLevelStrength *
-  safeAnatomyStrength;
+  safeAnatomyStrength *
+  tissueDeformationStrength;
 
   const baseUpperVolume =
   Number.isFinite(profile.upperVolume)
@@ -633,7 +679,8 @@ moveGroup(
     landmarks,
     result,
     tissueStrength *
-      safeAnatomyStrength
+      safeAnatomyStrength *
+      skinMobility
   );
 
 const philtrumLength =
@@ -682,9 +729,10 @@ const skinStrength =
 return displaceLipSkin(
   landmarks,
   biomechanicalResult,
-  skinStrength
+  skinStrength *
+    safeAnatomyStrength *
+    skinMobility
 );
-}
 /*
 =========================================================
 Chin Projection
