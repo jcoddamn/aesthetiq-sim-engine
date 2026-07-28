@@ -40,6 +40,10 @@ import {
   applySoftTissueLighting
 } from "./softTissueLighting.js";
 
+import {
+  getProcedureConstraints
+} from "./procedureConstraints.js";
+
 const meshRenderer =
   new MeshRenderer();
 
@@ -394,13 +398,28 @@ function createSimulationLevel({
       normalizedProcedure
     )
   ) {
+    const constraints =
+  getProcedureConstraints({
+    procedure:
+      normalizedProcedure,
+
+    level,
+
+    anatomyProfile:
+      anatomyProfile || {},
+
+    tissueModel:
+      tissueModel || {}
+  });
+    
     workingLandmarks =
       createWarpedLandmarks(
         normalizedProcedure,
         landmarks,
         level,
         anatomyProfile,
-        tissueModel
+        tissueModel,
+        constraints
       );
 
     if (
