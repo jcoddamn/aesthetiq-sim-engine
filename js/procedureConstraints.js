@@ -59,40 +59,122 @@ export function getProcedureConstraints({
 
   switch (procedure) {
     case "lip-filler": {
-      const lipHeight =
-        Number(measurements.lipHeight) ||
-        0.03;
+  const lipHeight =
+    Number(measurements.lipHeight) ||
+    0.03;
 
-      const lipSizeFactor =
-        clamp(
-          0.03 / lipHeight,
-          0.82,
-          1.15
-        );
+  const mouthWidth =
+    Number(measurements.mouthWidth) ||
+    0.12;
 
-      return {
-        ...base,
+  const lipProjection =
+    Number(
+      measurements.lipProjection
+    ) || 0.055;
 
-        strengthMultiplier:
-          clamp(
-            levelStrength *
-              lipSizeFactor *
-              elasticity /
-              projectionResistance,
-            0.7,
-            1.2
-          ),
+  /*
+   * Smaller/thinner lips can tolerate a little more
+   * relative visual expansion.
+   *
+   * Naturally fuller/projected lips receive tighter
+   * limits so Enhanced does not become exaggerated.
+   */
+  const lipSizeFactor =
+    clamp(
+      0.03 / lipHeight,
+      0.82,
+      1.15
+    );
 
-        maxHorizontalChange:
-          0.018,
+  const widthFactor =
+    clamp(
+      mouthWidth / 0.12,
+      0.9,
+      1.1
+    );
 
-        maxVerticalChange:
-          0.022,
+  const projectionFactor =
+    clamp(
+      0.055 / lipProjection,
+      0.85,
+      1.12
+    );
 
-        maxProjectionChange:
-          0.02
-      };
-    }
+  const tissueFactor =
+    clamp(
+      elasticity /
+        projectionResistance,
+      0.85,
+      1.15
+    );
+
+  const anatomyFactor =
+    clamp(
+      lipSizeFactor *
+        projectionFactor *
+        tissueFactor,
+      0.8,
+      1.18
+    );
+
+  const verticalBase =
+    level === "natural"
+      ? 0.013
+      : level === "enhanced"
+      ? 0.022
+      : 0.017;
+
+  const horizontalBase =
+    level === "natural"
+      ? 0.010
+      : level === "enhanced"
+      ? 0.018
+      : 0.014;
+
+  const projectionBase =
+    level === "natural"
+      ? 0.011
+      : level === "enhanced"
+      ? 0.020
+      : 0.015;
+
+  return {
+    ...base,
+
+    strengthMultiplier:
+      clamp(
+        levelStrength *
+          anatomyFactor,
+        0.68,
+        1.2
+      ),
+
+    maxHorizontalChange:
+      clamp(
+        horizontalBase *
+          anatomyFactor *
+          widthFactor,
+        0.008,
+        0.021
+      ),
+
+    maxVerticalChange:
+      clamp(
+        verticalBase *
+          anatomyFactor,
+        0.010,
+        0.024
+      ),
+
+    maxProjectionChange:
+      clamp(
+        projectionBase *
+          anatomyFactor,
+        0.009,
+        0.022
+      )
+  };
+}
 
     case "chin-filler":
     case "chin-implant": {
