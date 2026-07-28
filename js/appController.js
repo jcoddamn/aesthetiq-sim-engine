@@ -33,6 +33,10 @@ import {
   createMultiAngleCapture
 } from "./multiAngleCapture.js";
 
+import {
+  analyzeMultiAngleCaptures
+} from "./anatomyFusion.js";
+
 // =========================================================
 // CONFIGURATION
 // =========================================================
@@ -58,6 +62,8 @@ let capturedCanvas = null;
 let simulationResults = null;
 let selectedLevel = "balanced";
 let viewingOriginal = false;
+
+let precisionAnatomy = null;
 
 const smoothLandmarks =
   createLandmarkSmoother(0.75);
@@ -657,6 +663,16 @@ function handlePrecisionScanComplete(
     return;
   }
 
+precisionAnatomy =
+  analyzeMultiAngleCaptures(
+    captures
+  );
+
+console.log(
+  "[AesthetIQ] Precision anatomy:",
+  precisionAnatomy
+);
+  
   /*
    * For this first integration, the straight capture
    * drives the existing 2D simulation.
@@ -669,7 +685,8 @@ function handlePrecisionScanComplete(
 
   generateSimulation(
     straightCapture.imageCanvas,
-    straightCapture.landmarks
+    straightCapture.landmarks,
+    precisionAntomy
   );
 }
 
@@ -1002,7 +1019,8 @@ function captureCurrentVideoFrame() {
 
 function generateSimulation(
   imageSource,
-  landmarks
+  landmarks,
+  anatomyProfile = null
 ) {
   try {
     setCaptureLoading(true);
@@ -1020,6 +1038,8 @@ function generateSimulation(
         landmarks,
 
         imageSource,
+
+        anatomyProfile,
 
         blurPx: 18,
 
