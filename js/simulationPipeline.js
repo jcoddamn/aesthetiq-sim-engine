@@ -44,6 +44,10 @@ import {
   getProcedureConstraints
 } from "./procedureConstraints.js";
 
+import {
+  repairLowerLipTexture
+} from "./lipTextureRepair.js";
+
 const meshRenderer =
   new MeshRenderer();
 
@@ -515,16 +519,24 @@ function createSimulationLevel({
       );
 
     if (
-      normalizedProcedure ===
-      "lip-filler"
-    ) {
-      workingCanvas =
-        meshRenderer.render(
-          sourceCanvas,
-          landmarks,
-          workingLandmarks
-        );
-    } else {
+  normalizedProcedure ===
+  "lip-filler"
+) {
+  workingCanvas =
+    meshRenderer.render(
+      sourceCanvas,
+      landmarks,
+      workingLandmarks
+    );
+
+  workingCanvas =
+    repairLowerLipTexture(
+      workingCanvas,
+      landmarks,
+      workingLandmarks,
+      0.7
+    );
+} else {
       workingCanvas =
         renderWarp(
           sourceCanvas,
