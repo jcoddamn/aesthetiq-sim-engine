@@ -247,7 +247,7 @@ function createWarpedLandmarks(
       return warpLipFiller(
         landmarks,
         level,
-        anatomyProfile?.anatomyStrength || 1
+        anatomyProfile?.anatomyStrength || 1,
         tissueModel
       );
 
