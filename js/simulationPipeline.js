@@ -375,6 +375,7 @@ function createSimulationLevel({
   sourceCanvas,
   blurPx,
   mirrorX
+  anatomyProfile
 }) {
   let workingLandmarks =
     landmarks;
@@ -391,7 +392,8 @@ function createSimulationLevel({
       createWarpedLandmarks(
         normalizedProcedure,
         landmarks,
-        level
+        level,
+        anatomyProfile
       );
 
     if (
@@ -527,6 +529,7 @@ export function runProcedureSimulation({
       sourceCanvas,
       blurPx,
       mirrorX
+      anatomyProfile
     });
 
   const balancedResult =
@@ -537,6 +540,7 @@ export function runProcedureSimulation({
       sourceCanvas,
       blurPx,
       mirrorX
+      anatomyProfile
     });
 
   const enhancedResult =
@@ -547,6 +551,7 @@ export function runProcedureSimulation({
       sourceCanvas,
       blurPx,
       mirrorX
+      anatomyProfile
     });
 
   /*
