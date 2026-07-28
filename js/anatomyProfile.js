@@ -1,45 +1,66 @@
+import {
+  buildFaceMeasurements
+} from "./faceMeasurements.js";
+
 // =========================================================
 // AESTHETIQ ANATOMY PROFILE
 // =========================================================
 
-export function buildAnatomyProfile(captures) {
-  const straight = captures?.straight?.landmarks;
+export function buildAnatomyProfile(
+  captures
+) {
 
-  if (!straight) {
-    return {
-      anatomyStrength: 1,
-      projectionStrength: 1,
-      symmetryStrength: 1,
-      chinStrength: 1
-    };
-  }
+  const measurements =
+    buildFaceMeasurements(
+      captures
+    );
 
-  const leftCheek = straight[234];
-  const rightCheek = straight[454];
-  const nose = straight[1];
-  const chin = straight[152];
-  const forehead = straight[10];
+  const lipFactor =
+    Math.min(
+      1.2,
+      Math.max(
+        0.85,
+        measurements.lipHeight / 0.03
+      )
+    );
 
-  const faceWidth =
-    Math.abs(rightCheek.x - leftCheek.x);
+  const projectionFactor =
+    Math.min(
+      1.2,
+      Math.max(
+        0.85,
+        measurements.lipProjection / 0.055
+      )
+    );
 
-  const faceHeight =
-    Math.abs(chin.y - forehead.y);
+  const chinFactor =
+    Math.min(
+      1.2,
+      Math.max(
+        0.85,
+        measurements.chinProjection / 0.08
+      )
+    );
 
-  const chinLength =
-    Math.abs(chin.y - nose.y);
+  const symmetryFactor =
+    1;
 
   return {
+
+    measurements,
+
     anatomyStrength:
-      Math.min(1.25, faceWidth / 0.35),
+      lipFactor,
 
     projectionStrength:
-      Math.min(1.25, faceHeight / 0.55),
-
-    symmetryStrength:
-      1,
+      projectionFactor,
 
     chinStrength:
-      Math.min(1.25, chinLength / 0.30)
+      chinFactor,
+
+    symmetryStrength:
+      symmetryFactor
+
   };
+
 }
