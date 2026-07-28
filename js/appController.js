@@ -1,6 +1,7 @@
 import {
   startFaceTracking,
-  stopFaceTracking
+  stopFaceTracking,
+  detectFaceLandmarksFromImage
 } from "./mediapipeRunner.js";
 
 import {
