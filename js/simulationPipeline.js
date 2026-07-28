@@ -235,29 +235,7 @@ function usesGeometryWarp(procedure) {
   ].includes(procedure);
 }
 
-function createWarpedLandmarks(
-  procedure,
-  landmarks,
-  level,
-  anatomyProfile,
-  tissueModel,
-  constraints
-) {
-  if (!Array.isArray(landmarks)) {
-    return landmarks;
-  }
-
-  switch (procedure) {
-    case "lip-filler": {
-  const warped =
-    warpLipFiller(
-      landmarks,
-      level,
-      anatomyProfile?.anatomyStrength || 1,
-      tissueModel
-    );
-
-  function applyLandmarkConstraints(
+function applyLandmarkConstraints(
   originalLandmarks,
   warpedLandmarks,
   constraints = {}
@@ -339,6 +317,35 @@ function createWarpedLandmarks(
     }
   );
 }
+
+function createWarpedLandmarks(
+  procedure,
+  landmarks,
+  level,
+  anatomyProfile,
+  tissueModel,
+  constraints
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  switch (procedure) {
+    case "lip-filler": {
+      const warped =
+        warpLipFiller(
+          landmarks,
+          level,
+          anatomyProfile?.anatomyStrength || 1,
+          tissueModel
+        );
+
+      return applyLandmarkConstraints(
+        landmarks,
+        warped,
+        constraints
+      );
+    }
 
     case "chin-filler":
     case "chin-implant":
