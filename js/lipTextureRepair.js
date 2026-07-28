@@ -1,5 +1,5 @@
 // ==========================================================
-// AESTHETIQ — LIP TEXTURE REPAIR V2
+// AESTHETIQ — LIP TEXTURE REPAIR V3
 // File: js/lipTextureRepair.js
 // ==========================================================
 
@@ -18,44 +18,6 @@ function toCanvasPoint(
   };
 }
 
-function getAveragePoint(
-  landmarks,
-  indices,
-  width,
-  height
-) {
-  const points =
-    indices
-      .map((index) =>
-        toCanvasPoint(
-          landmarks[index],
-          width,
-          height
-        )
-      )
-      .filter(Boolean);
-
-  if (!points.length) {
-    return null;
-  }
-
-  return {
-    x:
-      points.reduce(
-        (sum, point) =>
-          sum + point.x,
-        0
-      ) / points.length,
-
-    y:
-      points.reduce(
-        (sum, point) =>
-          sum + point.y,
-        0
-      ) / points.length
-  };
-}
-
 function clamp(
   value,
   min,
@@ -67,12 +29,70 @@ function clamp(
   );
 }
 
-function createFeatherMask(
+function getContourPoints(
+  landmarks,
+  indices,
   width,
   height
 ) {
+  return indices
+    .map((index) =>
+      toCanvasPoint(
+        landmarks[index],
+        width,
+        height
+      )
+    )
+    .filter(Boolean);
+}
+
+function getAverageY(points) {
+  if (!points.length) {
+    return 0;
+  }
+
+  return (
+    points.reduce(
+      (sum, point) =>
+        sum + point.y,
+      0
+    ) / points.length
+  );
+}
+
+function getBounds(points) {
+  if (!points.length) {
+    return null;
+  }
+
+  const xs =
+    points.map(
+      (point) => point.x
+    );
+
+  const ys =
+    points.map(
+      (point) => point.y
+    );
+
+  return {
+    left: Math.min(...xs),
+    right: Math.max(...xs),
+    top: Math.min(...ys),
+    bottom: Math.max(...ys)
+  };
+}
+
+function createRepairMask(
+  width,
+  height,
+  originalContour,
+  warpedContour
+) {
   const mask =
-    document.createElement("canvas");
+    document.createElement(
+      "canvas"
+    );
 
   mask.width = width;
   mask.height = height;
@@ -85,117 +105,106 @@ function createFeatherMask(
   }
 
   /*
-   * Feather vertically.
+   * Build a polygon bounded by the old
+   * lower-lip contour and the new contour.
+   *
+   * This is the exposed region created by
+   * moving the lower lip.
    */
-  const vertical =
-    ctx.createLinearGradient(
-      0,
-      0,
-      0,
-      height
+  ctx.beginPath();
+
+  ctx.moveTo(
+    originalContour[0].x,
+    originalContour[0].y
+  );
+
+  for (
+    let index = 1;
+    index < originalContour.length;
+    index += 1
+  ) {
+    ctx.lineTo(
+      originalContour[index].x,
+      originalContour[index].y
     );
-
-  vertical.addColorStop(
-    0,
-    "rgba(255,255,255,0)"
-  );
-
-  vertical.addColorStop(
-    0.18,
-    "rgba(255,255,255,0.7)"
-  );
-
-  vertical.addColorStop(
-    0.42,
-    "rgba(255,255,255,1)"
-  );
-
-  vertical.addColorStop(
-    0.75,
-    "rgba(255,255,255,0.9)"
-  );
-
-  vertical.addColorStop(
-    1,
-    "rgba(255,255,255,0)"
-  );
-
-  ctx.fillStyle =
-    vertical;
-
-  ctx.fillRect(
-    0,
-    0,
-    width,
-    height
-  );
+  }
 
   /*
-   * Feather horizontally too, so the repair
-   * does not form a visible rectangle.
+   * Travel backwards across the warped
+   * contour to close the region.
    */
-  ctx.globalCompositeOperation =
-    "destination-in";
-
-  const horizontal =
-    ctx.createLinearGradient(
-      0,
-      0,
-      width,
-      0
+  for (
+    let index =
+      warpedContour.length - 1;
+    index >= 0;
+    index -= 1
+  ) {
+    ctx.lineTo(
+      warpedContour[index].x,
+      warpedContour[index].y
     );
+  }
 
-  horizontal.addColorStop(
-    0,
-    "rgba(255,255,255,0)"
-  );
-
-  horizontal.addColorStop(
-    0.12,
-    "rgba(255,255,255,0.8)"
-  );
-
-  horizontal.addColorStop(
-    0.5,
-    "rgba(255,255,255,1)"
-  );
-
-  horizontal.addColorStop(
-    0.88,
-    "rgba(255,255,255,0.8)"
-  );
-
-  horizontal.addColorStop(
-    1,
-    "rgba(255,255,255,0)"
-  );
+  ctx.closePath();
 
   ctx.fillStyle =
-    horizontal;
+    "rgba(255,255,255,1)";
 
-  ctx.fillRect(
-    0,
-    0,
-    width,
-    height
-  );
-
-  ctx.globalCompositeOperation =
-    "source-over";
+  ctx.fill();
 
   return mask;
+}
+
+function softenMask(
+  sourceMask,
+  blurAmount
+) {
+  const output =
+    document.createElement(
+      "canvas"
+    );
+
+  output.width =
+    sourceMask.width;
+
+  output.height =
+    sourceMask.height;
+
+  const ctx =
+    output.getContext("2d");
+
+  if (!ctx) {
+    return sourceMask;
+  }
+
+  ctx.filter =
+    `blur(${blurAmount}px)`;
+
+  ctx.drawImage(
+    sourceMask,
+    0,
+    0
+  );
+
+  ctx.filter = "none";
+
+  return output;
 }
 
 export function repairLowerLipTexture(
   renderedCanvas,
   originalLandmarks,
   warpedLandmarks,
-  strength = 0.72
+  strength = 0.78
 ) {
   if (
     !renderedCanvas ||
-    !Array.isArray(originalLandmarks) ||
-    !Array.isArray(warpedLandmarks) ||
+    !Array.isArray(
+      originalLandmarks
+    ) ||
+    !Array.isArray(
+      warpedLandmarks
+    ) ||
     originalLandmarks.length < 468 ||
     warpedLandmarks.length < 468
   ) {
@@ -208,74 +217,68 @@ export function repairLowerLipTexture(
   const height =
     renderedCanvas.height;
 
-  const output =
-    document.createElement(
-      "canvas"
-    );
-
-  output.width = width;
-  output.height = height;
-
-  const ctx =
-    output.getContext("2d");
-
-  if (!ctx) {
-    return renderedCanvas;
-  }
-
-  ctx.drawImage(
-    renderedCanvas,
-    0,
-    0
-  );
-
-  const lowerOuter = [
-    146, 91, 181, 84,
+  /*
+   * IMPORTANT:
+   *
+   * These points follow the OUTER lower-lip
+   * contour from left toward right.
+   */
+  const lowerContourIndices = [
+    61,
+    146,
+    91,
+    181,
+    84,
     17,
-    314, 405, 321, 375
+    314,
+    405,
+    321,
+    375,
+    291
   ];
 
-  const lowerInner = [
-    95, 88, 178, 87,
-    14,
-    317, 402, 318, 324
-  ];
-
-  const originalOuterCenter =
-    getAveragePoint(
+  const originalContour =
+    getContourPoints(
       originalLandmarks,
-      lowerOuter,
+      lowerContourIndices,
       width,
       height
     );
 
-  const warpedOuterCenter =
-    getAveragePoint(
+  const warpedContour =
+    getContourPoints(
       warpedLandmarks,
-      lowerOuter,
-      width,
-      height
-    );
-
-  const warpedInnerCenter =
-    getAveragePoint(
-      warpedLandmarks,
-      lowerInner,
+      lowerContourIndices,
       width,
       height
     );
 
   if (
-    !originalOuterCenter ||
-    !warpedOuterCenter ||
-    !warpedInnerCenter
+    originalContour.length !==
+      lowerContourIndices.length ||
+    warpedContour.length !==
+      lowerContourIndices.length
   ) {
-    return output;
+    return renderedCanvas;
   }
 
+  /*
+   * Determine whether the lower lip actually
+   * moved enough to require repair.
+   */
+  const originalAverageY =
+    getAverageY(
+      originalContour
+    );
+
+  const warpedAverageY =
+    getAverageY(
+      warpedContour
+    );
+
   const displacementY =
-    warpedOuterCenter.y -
-    originalOuterCenter.y;
+    warpedAverageY -
+    originalAverageY;
 
   if (
     !Number.isFinite(
@@ -285,233 +288,173 @@ export function repairLowerLipTexture(
       displacementY
     ) < 0.75
   ) {
-    return output;
+    return renderedCanvas;
   }
-
-  const left =
-    toCanvasPoint(
-      warpedLandmarks[146],
-      width,
-      height
-    );
-
-  const right =
-    toCanvasPoint(
-      warpedLandmarks[375],
-      width,
-      height
-    );
-
-  if (!left || !right) {
-    return output;
-  }
-
-  const mouthWidth =
-    Math.abs(
-      right.x - left.x
-    );
-
-  const repairWidth =
-    clamp(
-      mouthWidth * 0.76,
-      20,
-      width * 0.34
-    );
 
   /*
-   * Keep this narrow. We want to replace the
-   * old boundary, not the entire lower lip.
+   * This repair is specifically designed for
+   * downward lower-lip displacement.
    */
-  const repairHeight =
+  if (displacementY <= 0) {
+    return renderedCanvas;
+  }
+
+  const combinedBounds =
+    getBounds([
+      ...originalContour,
+      ...warpedContour
+    ]);
+
+  if (!combinedBounds) {
+    return renderedCanvas;
+  }
+
+  const output =
+    document.createElement(
+      "canvas"
+    );
+
+  output.width = width;
+  output.height = height;
+
+  const outputCtx =
+    output.getContext("2d");
+
+  if (!outputCtx) {
+    return renderedCanvas;
+  }
+
+  outputCtx.drawImage(
+    renderedCanvas,
+    0,
+    0
+  );
+
+  /*
+   * Create the exact exposed-region mask.
+   */
+  const rawMask =
+    createRepairMask(
+      width,
+      height,
+      originalContour,
+      warpedContour
+    );
+
+  if (!rawMask) {
+    return output;
+  }
+
+  /*
+   * Feather only a few pixels around the
+   * contour. This prevents a hard repair edge.
+   */
+  const featherAmount =
     clamp(
       Math.abs(
         displacementY
-      ) * 1.35,
-      5,
-      height * 0.028
+      ) * 0.18,
+      1.2,
+      3.5
     );
 
-  const repairX =
-    warpedOuterCenter.x -
-    repairWidth / 2;
+  const repairMask =
+    softenMask(
+      rawMask,
+      featherAmount
+    );
 
   /*
-   * Target the original lower-lip border,
-   * slightly biased toward the new lip.
-   */
-  const repairY =
-    originalOuterCenter.y -
-    repairHeight * 0.35;
-
-  /*
-   * Source texture from inside the lower lip,
-   * between the new inner and outer contours.
+   * Build the replacement texture.
    *
-   * This preserves actual lip texture instead
-   * of sampling chin/skin.
+   * We sample skin immediately BELOW the new
+   * lower-lip contour and shift that texture
+   * upward into the exposed region.
+   *
+   * Unlike V2, we are not copying a horizontal
+   * strip across the visible lip.
    */
-  const lipBandHeight =
-    Math.max(
-      5,
-      Math.abs(
-        warpedOuterCenter.y -
-        warpedInnerCenter.y
-      )
-    );
-
-  const sampleHeight =
-    clamp(
-      lipBandHeight * 0.72,
-      5,
-      repairHeight * 1.4
-    );
-
-  const sampleY =
-    warpedInnerCenter.y +
-    lipBandHeight * 0.16;
-
-  const safeSampleX =
-    clamp(
-      repairX,
-      0,
-      Math.max(
-        0,
-        width - repairWidth
-      )
-    );
-
-  const safeSampleY =
-    clamp(
-      sampleY,
-      0,
-      Math.max(
-        0,
-        height - sampleHeight
-      )
-    );
-
-  const patch =
+  const textureCanvas =
     document.createElement(
       "canvas"
     );
 
-  patch.width =
-    Math.max(
-      1,
-      Math.round(
-        repairWidth
-      )
+  textureCanvas.width =
+    width;
+
+  textureCanvas.height =
+    height;
+
+  const textureCtx =
+    textureCanvas.getContext(
+      "2d"
     );
 
-  patch.height =
-    Math.max(
-      1,
-      Math.round(
-        repairHeight
-      )
-    );
-
-  const patchCtx =
-    patch.getContext("2d");
-
-  if (!patchCtx) {
+  if (!textureCtx) {
     return output;
   }
 
+  const sampleOffset =
+    clamp(
+      displacementY * 0.65,
+      2,
+      12
+    );
+
   /*
-   * Stretch a thin strip of genuine lower-lip
-   * texture into the exposed repair region.
+   * Copy the rendered image upward slightly.
+   *
+   * The mask will ensure that only the tiny
+   * exposed seam receives this texture.
    */
-  patchCtx.drawImage(
+  textureCtx.drawImage(
     renderedCanvas,
-
-    safeSampleX,
-    safeSampleY,
-    repairWidth,
-    sampleHeight,
+    0,
+    sampleOffset,
+    width,
+    height - sampleOffset,
 
     0,
     0,
-    patch.width,
-    patch.height
+    width,
+    height - sampleOffset
   );
 
   /*
-   * Very small blur only to break up a hard
-   * duplicate-texture edge.
-   *
-   * This is intentionally subtle.
+   * Restrict replacement texture to the
+   * contour-shaped exposed region.
    */
-  const softenedPatch =
-    document.createElement(
-      "canvas"
-    );
-
-  softenedPatch.width =
-    patch.width;
-
-  softenedPatch.height =
-    patch.height;
-
-  const softenedCtx =
-    softenedPatch.getContext("2d");
-
-  if (!softenedCtx) {
-    return output;
-  }
-
-  softenedCtx.filter =
-    "blur(0.65px)";
-
-  softenedCtx.drawImage(
-    patch,
-    0,
-    0
-  );
-
-  softenedCtx.filter =
-    "none";
-
-  const featherMask =
-    createFeatherMask(
-      patch.width,
-      patch.height
-    );
-
-  if (!featherMask) {
-    return output;
-  }
-
-  softenedCtx.globalCompositeOperation =
+  textureCtx.globalCompositeOperation =
     "destination-in";
 
-  softenedCtx.drawImage(
-    featherMask,
+  textureCtx.drawImage(
+    repairMask,
     0,
     0
   );
 
-  softenedCtx.globalCompositeOperation =
+  textureCtx.globalCompositeOperation =
     "source-over";
 
-  ctx.save();
+  /*
+   * Composite repaired texture.
+   */
+  outputCtx.save();
 
-  ctx.globalAlpha =
+  outputCtx.globalAlpha =
     clamp(
       strength,
       0,
       1
     );
 
-  ctx.drawImage(
-    softenedPatch,
-    repairX,
-    repairY,
-    repairWidth,
-    repairHeight
+  outputCtx.drawImage(
+    textureCanvas,
+    0,
+    0
   );
 
-  ctx.restore();
+  outputCtx.restore();
 
   return output;
 }
