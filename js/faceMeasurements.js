@@ -32,110 +32,13 @@ function average(points) {
   };
 }
 
+// =========================================================
+// FRONT FACE MEASUREMENTS
+// =========================================================
+
 export function measureFrontFace(
   landmarks
 ) {
-
-  export function measureProfileFace(
-  landmarks
-) {
-
-  const noseTip =
-    landmarks[1];
-
-  const chin =
-    landmarks[152];
-
-  const forehead =
-    landmarks[10];
-
-  const upperLip =
-    landmarks[13];
-
-  const lowerLip =
-    landmarks[14];
-
-  const faceDepth =
-    Math.abs(
-      noseTip.z -
-      chin.z
-    );
-
-  const lipProjection =
-    Math.abs(
-      upperLip.z -
-      chin.z
-    );
-
-  const chinProjection =
-    Math.abs(
-      chin.z -
-      forehead.z
-    );
-
-  const noseProjection =
-    Math.abs(
-      noseTip.z -
-      forehead.z
-    );
-
-  return {
-
-    faceDepth,
-
-    lipProjection,
-
-    chinProjection,
-
-    noseProjection
-
-  };
-
-}
-
-  export function buildFaceMeasurements(
-  captures
-) {
-
-  const front =
-    measureFrontFace(
-      captures.straight.landmarks
-    );
-
-  const left =
-    measureProfileFace(
-      captures.left.landmarks
-    );
-
-  const right =
-    measureProfileFace(
-      captures.right.landmarks
-    );
-
-  return {
-
-    ...front,
-
-    faceDepth:
-      (left.faceDepth +
-       right.faceDepth) / 2,
-
-    lipProjection:
-      (left.lipProjection +
-       right.lipProjection) / 2,
-
-    chinProjection:
-      (left.chinProjection +
-       right.chinProjection) / 2,
-
-    noseProjection:
-      (left.noseProjection +
-       right.noseProjection) / 2
-
-  };
-
-}
-
   const leftCorner =
     landmarks[61];
 
@@ -194,16 +97,112 @@ export function measureFrontFace(
     );
 
   return {
-
     faceHeight,
-
     cheekWidth,
-
     mouthWidth,
-
     lipHeight,
-
     philtrumLength
+  };
+}
 
+// =========================================================
+// PROFILE MEASUREMENTS
+// =========================================================
+
+export function measureProfileFace(
+  landmarks
+) {
+  const noseTip =
+    landmarks[1];
+
+  const chin =
+    landmarks[152];
+
+  const forehead =
+    landmarks[10];
+
+  const upperLip =
+    landmarks[13];
+
+  const faceDepth =
+    Math.abs(
+      noseTip.z -
+      chin.z
+    );
+
+  const lipProjection =
+    Math.abs(
+      upperLip.z -
+      chin.z
+    );
+
+  const chinProjection =
+    Math.abs(
+      chin.z -
+      forehead.z
+    );
+
+  const noseProjection =
+    Math.abs(
+      noseTip.z -
+      forehead.z
+    );
+
+  return {
+    faceDepth,
+    lipProjection,
+    chinProjection,
+    noseProjection
+  };
+}
+
+// =========================================================
+// COMBINE PRECISION SCAN MEASUREMENTS
+// =========================================================
+
+export function buildFaceMeasurements(
+  captures
+) {
+  const front =
+    measureFrontFace(
+      captures.straight.landmarks
+    );
+
+  const left =
+    measureProfileFace(
+      captures.left.landmarks
+    );
+
+  const right =
+    measureProfileFace(
+      captures.right.landmarks
+    );
+
+  return {
+    ...front,
+
+    faceDepth:
+      (
+        left.faceDepth +
+        right.faceDepth
+      ) / 2,
+
+    lipProjection:
+      (
+        left.lipProjection +
+        right.lipProjection
+      ) / 2,
+
+    chinProjection:
+      (
+        left.chinProjection +
+        right.chinProjection
+      ) / 2,
+
+    noseProjection:
+      (
+        left.noseProjection +
+        right.noseProjection
+      ) / 2
   };
 }
