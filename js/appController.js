@@ -41,6 +41,10 @@ import {
   buildAnatomyProfile
 } from "./anatomyProfile.js";
 
+import {
+  buildTissueModel
+} from "./tissueModel.js";
+
 // =========================================================
 // CONFIGURATION
 // =========================================================
@@ -670,6 +674,11 @@ function handlePrecisionScanComplete(
 const anatomyProfile =
   buildAnatomyProfile(
     captures
+  );
+
+  const tissueModel =
+  buildTissueModel(
+    anatomyProfile
   );
   
 precisionAnatomy =
