@@ -733,6 +733,7 @@ return displaceLipSkin(
     safeAnatomyStrength *
     skinMobility
 );
+}
 /*
 =========================================================
 Chin Projection
