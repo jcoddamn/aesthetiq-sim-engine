@@ -94,6 +94,39 @@ export function displaceLipSkin(
    * These points should move subtly, not as much as
    * the actual vermilion.
    */
+
+  /*
+ * Lower-lip drivers specifically used to pull the
+ * skin immediately beneath the vermilion.
+ *
+ * This helps prevent a faint remnant of the original
+ * lower-lip border after enlargement.
+ */
+const lowerLipDrivers = [
+  146, 91, 181, 84,
+  17,
+  314, 405, 321, 375,
+
+  95, 88, 178, 87,
+  14,
+  317, 402, 318, 324
+];
+
+/*
+ * Immediate skin beneath the lower lip.
+ *
+ * These landmarks move more strongly with the lower
+ * lip than the broader chin/skin region.
+ */
+const lowerLipSeamPoints = [
+  83,
+  18,
+  313,
+  201,
+  200,
+  421
+];
+  
   const upperSkinPoints = [
     164, 167, 165, 92, 186,
     57, 43, 106, 182, 83,
@@ -263,6 +296,170 @@ export function displaceLipSkin(
       });
     }
   );
+
+  /*
+=========================================================
+LOWER LIP SEAM CLEANUP
+=========================================================
+
+The regular skin displacement intentionally uses a
+gentle falloff.
+
+For the narrow strip directly beneath the lower lip,
+we transfer more of the lower-lip movement so the
+original vermilion boundary does not remain visible.
+*/
+
+lowerLipSeamPoints.forEach(
+  (skinIndex) => {
+    const originalSkinPoint =
+      originalLandmarks[skinIndex];
+
+    if (!originalSkinPoint) {
+      return;
+    }
+
+    let totalWeight = 0;
+
+    let displacementX = 0;
+    let displacementY = 0;
+    let displacementZ = 0;
+
+    lowerLipDrivers.forEach(
+      (driverIndex) => {
+        const originalDriver =
+          originalLandmarks[
+            driverIndex
+          ];
+
+        const warpedDriver =
+          warpedLandmarks[
+            driverIndex
+          ];
+
+        if (
+          !originalDriver ||
+          !warpedDriver
+        ) {
+          return;
+        }
+
+        const distance =
+          getDistance(
+            originalSkinPoint,
+            originalDriver
+          );
+
+        /*
+         * Small radius intentionally keeps this
+         * correction immediately beneath the lip.
+         */
+        const weight =
+          gaussianWeight(
+            distance,
+            0.055
+          );
+
+        if (weight < 0.003) {
+          return;
+        }
+
+        displacementX +=
+          (
+            warpedDriver.x -
+            originalDriver.x
+          ) *
+          weight;
+
+        displacementY +=
+          (
+            warpedDriver.y -
+            originalDriver.y
+          ) *
+          weight;
+
+        const originalZ =
+          Number(
+            originalDriver.z
+          ) || 0;
+
+        const warpedZ =
+          Number(
+            warpedDriver.z
+          );
+
+        if (
+          Number.isFinite(
+            warpedZ
+          )
+        ) {
+          displacementZ +=
+            (
+              warpedZ -
+              originalZ
+            ) *
+            weight;
+        }
+
+        totalWeight +=
+          weight;
+      }
+    );
+
+    if (totalWeight <= 0) {
+      return;
+    }
+
+    const normalizedX =
+      displacementX /
+      totalWeight;
+
+    const normalizedY =
+      displacementY /
+      totalWeight;
+
+    const normalizedZ =
+      displacementZ /
+      totalWeight;
+
+    /*
+     * Stronger than the broad skin displacement,
+     * but still weaker than the actual lip.
+     */
+    const seamStrength =
+      Math.min(
+        0.78,
+        Math.max(
+          0.42,
+          strength * 1.45
+        )
+      );
+
+    result[skinIndex] = {
+      ...result[skinIndex],
+
+      x:
+        originalSkinPoint.x +
+        normalizedX *
+        seamStrength *
+        0.34,
+
+      y:
+        originalSkinPoint.y +
+        normalizedY *
+        seamStrength,
+
+      z:
+        (
+          Number(
+            originalSkinPoint.z
+          ) || 0
+        ) +
+        normalizedZ *
+        seamStrength
+    };
+  }
+);
 
   /*
    * Keep major facial anchors fixed.
