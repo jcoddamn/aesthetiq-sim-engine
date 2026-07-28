@@ -601,6 +601,15 @@ export function runProcedureSimulationFromImage({
   blurPx = 18,
   mirrorX = false
 }) {
+
+const anatomy =
+  anatomyProfile || {
+    anatomyStrength: 1,
+    projectionStrength: 1,
+    symmetryStrength: 1,
+    chinStrength: 1
+  };
+  
   const sourceCanvas =
     imageToCanvas(imageSource);
 
