@@ -234,7 +234,9 @@ function usesGeometryWarp(procedure) {
 function createWarpedLandmarks(
   procedure,
   landmarks,
-  level
+  level,
+  anatomyProfile,
+  tissueModel
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -244,7 +246,8 @@ function createWarpedLandmarks(
     case "lip-filler":
       return warpLipFiller(
         landmarks,
-        level
+        level,
+        anatomyProfile?.anatomyStrength || 1
       );
 
     case "chin-filler":
@@ -266,10 +269,10 @@ function createWarpedLandmarks(
         landmarks,
         level
       );
-      
+
     default:
       return landmarks.map(
-        (landmark) => ({
+        landmark => ({
           ...landmark
         })
       );
@@ -484,6 +487,8 @@ export function runProcedureSimulation({
   procedure,
   landmarks,
   sourceCanvas,
+  anatomyProfile = null,
+  tissueModel = null,
   blurPx = 18,
   mirrorX = false
 }) {
@@ -507,6 +512,7 @@ export function runProcedureSimulation({
 
       polygons: [],
       maskCanvas: null,
+
       debugCanvas:
         copyCanvas(sourceCanvas),
 
@@ -530,9 +536,10 @@ export function runProcedureSimulation({
       level: "natural",
       landmarks,
       sourceCanvas,
+      anatomyProfile,
+      tissueModel,
       blurPx,
       mirrorX
-      anatomyProfile
     });
 
   const balancedResult =
@@ -541,9 +548,10 @@ export function runProcedureSimulation({
       level: "balanced",
       landmarks,
       sourceCanvas,
+      anatomyProfile,
+      tissueModel,
       blurPx,
       mirrorX
-      anatomyProfile
     });
 
   const enhancedResult =
@@ -552,15 +560,11 @@ export function runProcedureSimulation({
       level: "enhanced",
       landmarks,
       sourceCanvas,
+      anatomyProfile,
+      tissueModel,
       blurPx,
       mirrorX
-      anatomyProfile
     });
-
-  /*
-   * The balanced mask is used for the main mask preview
-   * and developer overlay.
-   */
 
   const debugCanvas =
     DEBUG_MASKS
