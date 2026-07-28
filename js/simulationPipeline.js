@@ -605,6 +605,7 @@ export function runProcedureSimulationFromImage({
   imageSource,
   blurPx = 18,
   mirrorX = false
+  anatomyProfile
 }) {
 
 const anatomy =
