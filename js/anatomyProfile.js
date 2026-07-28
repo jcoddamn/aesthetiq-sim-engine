@@ -2,6 +2,10 @@ import {
   buildFaceMeasurements
 } from "./faceMeasurements.js";
 
+import {
+  calculateFacialSymmetry
+} from "./facialSymmetry.js";
+
 // =========================================================
 // AESTHETIQ ANATOMY PROFILE
 // =========================================================
@@ -13,6 +17,11 @@ export function buildAnatomyProfile(
   const measurements =
     buildFaceMeasurements(
       captures
+    );
+
+  const symmetry =
+    calculateFacialSymmetry(
+      captures.straight.landmarks
     );
 
   const lipFactor =
@@ -42,12 +51,11 @@ export function buildAnatomyProfile(
       )
     );
 
-  const symmetryFactor =
-    1;
-
   return {
 
     measurements,
+
+    symmetry,
 
     anatomyStrength:
       lipFactor,
@@ -59,7 +67,7 @@ export function buildAnatomyProfile(
       chinFactor,
 
     symmetryStrength:
-      symmetryFactor
+      symmetry.symmetryScore
 
   };
 
