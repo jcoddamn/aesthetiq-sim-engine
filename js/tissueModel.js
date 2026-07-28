@@ -4,7 +4,7 @@
 // =========================================================
 
 export function buildTissueModel(
-  anatomyProfile
+  anatomyProfile = {}
 ) {
 
   const measurements =
