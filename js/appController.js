@@ -667,6 +667,11 @@ function handlePrecisionScanComplete(
     return;
   }
 
+const anatomyProfile =
+  buildAnatomyProfile(
+    captures
+  );
+  
 precisionAnatomy =
   analyzeMultiAngleCaptures(
     captures
