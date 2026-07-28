@@ -83,6 +83,7 @@ Lip Enlargement
 export function warpLipFiller(
   landmarks,
   level = "balanced"
+  anatomyStrength = 1
 ) {
   if (
     !Array.isArray(landmarks) ||
@@ -97,12 +98,25 @@ export function warpLipFiller(
   const anatomy =
   getLipProfile(landmarks);
 
-  const levelStrength =
-    level === "natural"
-      ? 0.4
-      : level === "enhanced"
-      ? 0.82
-      : 0.6;
+  const safeAnatomyStrength =
+  Math.max(
+    0.85,
+    Math.min(
+      1.18,
+      Number(anatomyStrength) || 1
+    )
+  );
+
+const baseLevelStrength =
+  level === "natural"
+    ? 0.4
+    : level === "enhanced"
+    ? 0.82
+    : 0.6;
+
+const levelStrength =
+  baseLevelStrength *
+  safeAnatomyStrength;
 
   const baseUpperVolume =
   Number.isFinite(profile.upperVolume)
@@ -618,7 +632,8 @@ moveGroup(
   applyLipSoftTissue(
     landmarks,
     result,
-    tissueStrength
+    tissueStrength *
+      anatomyStrength
   );
 
 const philtrumLength =
