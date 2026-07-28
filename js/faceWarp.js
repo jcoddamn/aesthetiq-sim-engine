@@ -83,7 +83,7 @@ Lip Enlargement
 export function warpLipFiller(
   landmarks,
   level = "balanced",
-  anatomyStrength = 1
+  anatomyStrength = 1,
   tissueModel = null
 ) {
   if (
