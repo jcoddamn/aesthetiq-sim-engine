@@ -702,11 +702,11 @@ console.log(
     straightCapture.imageCanvas;
 
   generateSimulation(
-    straightCapture.imageCanvas,
-    straightCapture.landmarks,
-    precisionAntomy
-  );
-}
+  straightCapture.imageCanvas,
+  straightCapture.landmarks,
+  anatomyProfile,
+  tissueModel
+);
 
 // =========================================================
 // CAMERA PREVIEW
@@ -1039,6 +1039,7 @@ function generateSimulation(
   imageSource,
   landmarks,
   anatomyProfile = null
+  tissueModel = null
 ) {
   try {
     setCaptureLoading(true);
@@ -1058,6 +1059,8 @@ function generateSimulation(
         imageSource,
 
         anatomyProfile,
+
+        tissueModel,
 
         blurPx: 18,
 
