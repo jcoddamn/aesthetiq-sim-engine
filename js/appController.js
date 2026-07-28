@@ -1254,7 +1254,7 @@ function resetSimulation() {
 // PHOTO UPLOAD
 // =========================================================
 
-function handlePhotoUpload(event) {
+async function handlePhotoUpload(event) {
   const file =
     event.target.files?.[0];
 
@@ -1262,48 +1262,135 @@ function handlePhotoUpload(event) {
     return;
   }
 
-  const image = new Image();
+  const image =
+    new Image();
 
-  image.onload = () => {
-    capturedCanvas =
-      document.createElement("canvas");
+  const objectUrl =
+    URL.createObjectURL(file);
 
-    capturedCanvas.width =
-      image.naturalWidth;
+  image.onload =
+    async () => {
+      try {
+        setStatus(
+          "Analyzing uploaded photo…",
+          "loading"
+        );
 
-    capturedCanvas.height =
-      image.naturalHeight;
+        capturedCanvas =
+          document.createElement(
+            "canvas"
+          );
 
-    const context =
-      capturedCanvas.getContext("2d");
+        capturedCanvas.width =
+          image.naturalWidth;
 
-    context.drawImage(
-      image,
-      0,
-      0
-    );
+        capturedCanvas.height =
+          image.naturalHeight;
 
-    if (!latestLandmarks) {
+        const context =
+          capturedCanvas.getContext(
+            "2d"
+          );
+
+        if (!context) {
+          throw new Error(
+            "Could not prepare uploaded photo."
+          );
+        }
+
+        context.drawImage(
+          image,
+          0,
+          0,
+          capturedCanvas.width,
+          capturedCanvas.height
+        );
+
+        /*
+         * IMPORTANT:
+         * Detect landmarks from the uploaded
+         * photo itself.
+         */
+        const uploadedLandmarks =
+          await detectFaceLandmarksFromImage(
+            capturedCanvas
+          );
+
+        if (
+          !Array.isArray(
+            uploadedLandmarks
+          ) ||
+          uploadedLandmarks.length < 468
+        ) {
+          setStatus(
+            "No face detected in uploaded photo",
+            "error"
+          );
+
+          return;
+        }
+
+        setStatus(
+          "Face detected — generating preview…",
+          "loading"
+        );
+
+        /*
+         * Use the uploaded photo's landmarks,
+         * not latestLandmarks from the camera.
+         */
+        generateSimulation(
+          capturedCanvas,
+          uploadedLandmarks
+        );
+
+      } catch (error) {
+        console.error(
+          "Uploaded photo analysis failed:",
+          error
+        );
+
+        setStatus(
+          `Photo analysis failed: ${
+            error?.message ||
+            String(error)
+          }`,
+          "error"
+        );
+
+      } finally {
+        URL.revokeObjectURL(
+          objectUrl
+        );
+
+        /*
+         * Lets the same image be selected
+         * again if the user wants.
+         */
+        if (event.target) {
+          event.target.value = "";
+        }
+      }
+    };
+
+  image.onerror =
+    () => {
+      URL.revokeObjectURL(
+        objectUrl
+      );
+
       setStatus(
-        "Face landmarks are needed. Use the live camera first.",
+        "Could not open uploaded photo",
         "error"
       );
 
-      return;
-    }
-
-    generateSimulation(
-      capturedCanvas,
-      latestLandmarks
-    );
-
-    URL.revokeObjectURL(
-      image.src
-    );
-  };
+      if (event.target) {
+        event.target.value = "";
+      }
+    };
 
   image.src =
-    URL.createObjectURL(file);
+    objectUrl;
 }
 
 // =========================================================
