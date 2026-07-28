@@ -373,9 +373,11 @@ function createSimulationLevel({
   level,
   landmarks,
   sourceCanvas,
+  anatomyProfile,
+  tissueModel,
   blurPx,
   mirrorX
-  anatomyProfile
+  
 }) {
   let workingLandmarks =
     landmarks;
@@ -393,7 +395,8 @@ function createSimulationLevel({
         normalizedProcedure,
         landmarks,
         level,
-        anatomyProfile
+        anatomyProfile,
+        tissueModel
       );
 
     if (
@@ -603,9 +606,11 @@ export function runProcedureSimulationFromImage({
   procedure,
   landmarks,
   imageSource,
+  anatomyProfile = null,
+  tissueModel = null,
   blurPx = 18,
   mirrorX = false
-  anatomyProfile
+  
 }) {
 
 const anatomy =
@@ -623,7 +628,9 @@ const anatomy =
     procedure,
     landmarks,
     sourceCanvas,
-    blurPx,
+    anatomyProfile: anatomy,
+    tissueModel,
+    blurPx, 
     mirrorX
   });
 }
