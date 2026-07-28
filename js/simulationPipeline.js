@@ -240,20 +240,29 @@ function createWarpedLandmarks(
   landmarks,
   level,
   anatomyProfile,
-  tissueModel
+  tissueModel,
+  constraints
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
   }
 
   switch (procedure) {
-    case "lip-filler":
-      return warpLipFiller(
-        landmarks,
-        level,
-        anatomyProfile?.anatomyStrength || 1,
-        tissueModel
-      );
+    case "lip-filler": {
+  const warped =
+    warpLipFiller(
+      landmarks,
+      level,
+      anatomyProfile?.anatomyStrength || 1,
+      tissueModel
+    );
+
+  return applyLandmarkConstraints(
+    landmarks,
+    warped,
+    constraints
+  );
+}
 
     case "chin-filler":
     case "chin-implant":
