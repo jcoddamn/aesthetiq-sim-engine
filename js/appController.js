@@ -544,9 +544,6 @@ precisionScanButton?.addEventListener(
 
 function togglePrecisionScan() {
   if (
-
-alert("Precision Scan button works!");
-    
     precisionCapture.isActive()
   ) {
     precisionCapture.stop();
@@ -707,6 +704,7 @@ console.log(
   anatomyProfile,
   tissueModel
 );
+}
 
 // =========================================================
 // CAMERA PREVIEW
@@ -1038,7 +1036,7 @@ function captureCurrentVideoFrame() {
 function generateSimulation(
   imageSource,
   landmarks,
-  anatomyProfile = null
+  anatomyProfile = null,
   tissueModel = null
 ) {
   try {
