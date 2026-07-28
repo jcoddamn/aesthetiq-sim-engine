@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
 
   <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+/>
 
   <title>AesthetIQ Simulation</title>
 
@@ -738,6 +738,468 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* =====================================================
+   AESTHETIQ MOBILE CAMERA
+   ===================================================== */
+
+@media (max-width: 620px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: #0b1120;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+
+    padding:
+      calc(env(safe-area-inset-top) + 8px)
+      0
+      calc(env(safe-area-inset-bottom) + 24px);
+  }
+
+  /* ---------- TOP BAR ---------- */
+
+  .topbar {
+    min-height: 52px;
+
+    margin: 0;
+
+    padding: 6px 14px 10px;
+
+    background: #0b1120;
+  }
+
+  .back-button {
+    min-width: 70px;
+
+    padding: 9px 4px;
+
+    font-size: 14px;
+  }
+
+  .brand {
+    font-size: 18px;
+  }
+
+  .premium-badge {
+    padding: 6px 8px;
+
+    font-size: 9px;
+  }
+
+  /* ---------- HERO ---------- */
+
+  .hero {
+    margin: 0;
+
+    padding: 8px 16px 14px;
+  }
+
+  .hero h1 {
+    margin-bottom: 5px;
+
+    font-size: 25px;
+
+    letter-spacing: -0.8px;
+  }
+
+  .hero p {
+    font-size: 13px;
+
+    line-height: 1.4;
+  }
+
+  /* ---------- PROCEDURE ---------- */
+
+  .procedure-card {
+    margin: 0 12px 12px;
+
+    padding: 13px 14px;
+
+    border-radius: 17px;
+  }
+
+  .procedure-card h2 {
+    font-size: 18px;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+  }
+
+  .treatment-option {
+    margin-top: 4px;
+
+    font-size: 12px;
+  }
+
+  .procedure-meta {
+    margin-top: 9px;
+  }
+
+  .procedure-meta-value {
+    font-size: 12px;
+  }
+
+  .preview-levels {
+    gap: 5px;
+
+    margin-top: 9px;
+  }
+
+  .preview-level {
+    min-height: 25px;
+
+    padding: 4px 8px;
+
+    font-size: 10px;
+  }
+
+  .change-button {
+    padding: 8px 10px;
+
+    font-size: 12px;
+  }
+
+  /* ============================================
+     CAMERA
+     ============================================ */
+
+  .camera-card {
+    margin: 0;
+
+    border-right: 0;
+    border-left: 0;
+
+    border-radius: 0;
+
+    box-shadow: none;
+  }
+
+  .camera-header {
+    min-height: 50px;
+
+    padding: 10px 14px;
+  }
+
+  .camera-header h2 {
+    font-size: 15px;
+  }
+
+  .status-pill {
+    max-width: 58%;
+
+    padding: 6px 9px;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+  }
+
+  /*
+     Vertical mobile camera window.
+     Prevents camera from taking over entire page.
+  */
+
+  .camera-stage {
+    position: relative;
+
+    width: 100%;
+
+    height: min(58dvh, 560px);
+
+    min-height: 360px;
+
+    aspect-ratio: auto;
+
+    overflow: hidden;
+
+    background: #000;
+  }
+
+  #cameraPreview {
+    position: absolute;
+
+    inset: 0;
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    background: #000;
+  }
+
+  /* ---------- FACE GUIDE ---------- */
+
+  .face-oval {
+    width: min(68vw, 300px);
+
+    height: min(88vw, 390px);
+
+    max-height: 78%;
+
+    border-width: 1.5px;
+  }
+
+  .guide-message {
+    bottom: 13px;
+
+    max-width: calc(100% - 40px);
+
+    padding: 7px 11px;
+
+    font-size: 11px;
+
+    text-align: center;
+  }
+
+  /* ---------- CAMERA QUALITY ---------- */
+
+  .quality-checks {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 5px;
+
+    padding: 9px 10px;
+  }
+
+  .quality-check {
+    min-height: 34px;
+
+    padding: 4px 5px;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    font-size: 9px;
+
+    text-align: center;
+  }
+
+  .check-icon {
+    width: 15px;
+
+    height: 15px;
+
+    flex-shrink: 0;
+
+    font-size: 8px;
+  }
+
+  /* ---------- CAMERA BUTTONS ---------- */
+
+  .camera-actions {
+    padding:
+      11px
+      12px
+      calc(env(safe-area-inset-bottom) + 12px);
+  }
+
+  .primary-button {
+    min-height: 50px;
+
+    border-radius: 14px;
+
+    font-size: 15px;
+  }
+
+  .secondary-actions {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 8px;
+  }
+
+  .secondary-button {
+    min-height: 43px;
+
+    padding: 9px 10px;
+
+    border-radius: 11px;
+
+    font-size: 13px;
+  }
+
+  #precisionScanButton {
+    width: 100%;
+
+    min-height: 44px;
+
+    margin-top: 8px;
+  }
+
+  /* ---------- PRECISION SCAN ---------- */
+
+  .precision-scan-panel {
+    margin-top: 10px;
+
+    padding: 12px;
+
+    border-radius: 13px;
+  }
+
+  .precision-instruction {
+    margin: 5px 0 9px;
+
+    font-size: 13px;
+  }
+
+  .pose-progress {
+    gap: 5px;
+  }
+
+  .pose-step {
+    min-height: 34px;
+
+    padding: 5px 3px;
+
+    font-size: 10px;
+  }
+
+  /* ============================================
+     RESULTS
+     ============================================ */
+
+  .results-section {
+    padding: 15px 12px 0;
+
+    margin-top: 0;
+  }
+
+  .results-header h2 {
+    font-size: 22px;
+  }
+
+  .results-header p {
+    font-size: 13px;
+  }
+
+  .intensity-tabs {
+    position: sticky;
+
+    top: env(safe-area-inset-top);
+
+    z-index: 30;
+
+    gap: 5px;
+
+    padding: 5px;
+  }
+
+  .intensity-button {
+    padding: 10px 4px;
+
+    font-size: 12px;
+  }
+
+  .result-card {
+    border-radius: 17px;
+  }
+
+  .result-canvas-wrap {
+    aspect-ratio: 3 / 4;
+
+    max-height: 68dvh;
+  }
+
+  #resultCanvas {
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+  }
+
+  .compare-controls {
+    gap: 7px;
+
+    padding: 10px;
+  }
+
+  .compare-button {
+    min-height: 44px;
+
+    padding: 9px;
+
+    font-size: 13px;
+  }
+
+  .result-actions {
+    grid-template-columns: 1fr;
+
+    gap: 8px;
+  }
+
+  .save-button,
+  .viewer-button {
+    min-height: 50px;
+  }
+
+  /* ---------- DEBUG ---------- */
+
+  .development-tools {
+    margin: 14px 12px 0;
+  }
+
+  .footer-note {
+    padding: 0 18px;
+
+    margin-top: 18px;
+
+    font-size: 10px;
+  }
+}
+
+
+/* Extra-small phones */
+
+@media (max-width: 380px) {
+
+  .hero h1 {
+    font-size: 22px;
+  }
+
+  .camera-stage {
+    height: 54dvh;
+
+    min-height: 330px;
+  }
+
+  .quality-check {
+    font-size: 8px;
+  }
+
+  .premium-badge {
+    display: none;
+  }
+
+}
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
@@ -987,9 +1449,10 @@
       id="poseHoldProgress"
     ></div>
   </div>
-</section>
-        </div>
-      </div>
+    </section>
+        
+    </div>
+      
     </section>
 
     <section
