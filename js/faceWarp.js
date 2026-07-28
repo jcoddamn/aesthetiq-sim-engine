@@ -82,7 +82,7 @@ Lip Enlargement
 */
 export function warpLipFiller(
   landmarks,
-  level = "balanced"
+  level = "balanced",
   anatomyStrength = 1
 ) {
   if (
@@ -633,7 +633,7 @@ moveGroup(
     landmarks,
     result,
     tissueStrength *
-      anatomyStrength
+      safeAnatomyStrength
   );
 
 const philtrumLength =
@@ -641,7 +641,7 @@ const philtrumLength =
     ? anatomy.philtrumLength
     : 0.04;
 
-const anatomyStrength =
+const philtrumStrength =
   Math.max(
     0.82,
     Math.min(
@@ -654,12 +654,22 @@ const anatomyStrength =
     )
   );
 
+const combinedAnatomyStrength =
+  Math.max(
+    0.82,
+    Math.min(
+      1.18,
+      safeAnatomyStrength *
+        philtrumStrength
+    )
+  );
+
 const biomechanicalResult =
   applyLipBiomechanics(
     landmarks,
     softTissue,
     level,
-    anatomyStrength
+    combinedAnatomyStrength
   );
 
 const skinStrength =
