@@ -667,6 +667,94 @@ moveGroup(
     };
   });
 
+ /*
+=========================================================
+Lip Projection / Depth
+=========================================================
+
+MediaPipe z represents landmark depth.
+
+We add controlled projection primarily to the central
+vermilion while allowing the effect to taper toward
+the mouth corners.
+
+The constraint layer in simulationPipeline.js provides
+the final safety limit.
+*/
+
+const projectionStrength =
+  level === "natural"
+    ? 0.0018
+    : level === "enhanced"
+    ? 0.0048
+    : 0.0032;
+
+const projectionAmount =
+  projectionStrength *
+  safeAnatomyStrength *
+  tissueDeformationStrength;
+
+const projectionPoints = [
+  // Upper lip
+  185, 40, 39, 37,
+  0,
+  267, 269, 270, 409,
+
+  // Upper inner lip
+  191, 80, 81, 82,
+  13,
+  312, 311, 310, 415,
+
+  // Lower lip
+  146, 91, 181, 84,
+  17,
+  314, 405, 321, 375,
+
+  // Lower inner lip
+  95, 88, 178, 87,
+  14,
+  317, 402, 318, 324
+];
+
+projectionPoints.forEach((index) => {
+  const point =
+    result[index];
+
+  if (!point) {
+    return;
+  }
+
+  const normalizedDistance =
+    Math.min(
+      1,
+      Math.abs(
+        point.x - centerX
+      ) / halfMouthWidth
+    );
+
+  /*
+   * Projection is strongest in the central lip
+   * and fades toward the corners.
+   */
+  const centerInfluence =
+    Math.pow(
+      1 - normalizedDistance,
+      1.5
+    );
+
+  const originalZ =
+    Number(point.z) || 0;
+
+  result[index] = {
+    ...point,
+
+    z:
+      originalZ -
+      projectionAmount *
+      centerInfluence
+  };
+}); 
+
   const tissueStrength =
     level === "natural"
       ? 0.07
