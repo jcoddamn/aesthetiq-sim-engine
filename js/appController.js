@@ -547,6 +547,10 @@ function togglePrecisionScan() {
   if (
     precisionCapture.isActive()
   ) {
+    document.body.classList.remove(
+      "precision-active"
+    );
+
     precisionCapture.stop();
 
     if (precisionScanButton) {
@@ -567,6 +571,10 @@ function togglePrecisionScan() {
     precisionScanButton.textContent =
       "Stop Precision Scan";
   }
+
+  document.body.classList.add(
+    "precision-active"
+  );
 
   precisionCapture.start();
 
@@ -639,6 +647,10 @@ function updatePrecisionScanUI(
 function handlePrecisionScanComplete(
   captures
 ) {
+  document.body.classList.remove(
+    "precision-active"
+  );
+  
   if (precisionScanButton) {
     precisionScanButton.textContent =
       "Start Precision Scan";
