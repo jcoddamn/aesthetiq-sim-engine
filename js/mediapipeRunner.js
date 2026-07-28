@@ -1,6 +1,7 @@
 let mediaStream = null;
 let rafId = null;
 let faceMesh = null;
+let imageFaceMesh = null;
 let running = false;
 
 export async function startFaceTracking(videoElement, onLandmarks, onStatus) {
@@ -89,6 +90,81 @@ export async function startFaceTracking(videoElement, onLandmarks, onStatus) {
     console.error('Camera start failed:', error);
     onStatus?.('Camera permission denied');
   }
+}
+
+export async function detectFaceLandmarksFromImage(
+  imageSource
+) {
+  if (!imageSource) {
+    throw new Error(
+      "An image source is required."
+    );
+  }
+
+  if (
+    typeof window.FaceMesh ===
+    "undefined"
+  ) {
+    throw new Error(
+      "FaceMesh is not loaded."
+    );
+  }
+
+  if (!imageFaceMesh) {
+    imageFaceMesh =
+      new window.FaceMesh({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+      });
+
+    imageFaceMesh.setOptions({
+      maxNumFaces: 1,
+      refineLandmarks: true,
+      staticImageMode: true,
+      minDetectionConfidence: 0.6
+    });
+  }
+
+  return new Promise(
+    async (resolve, reject) => {
+      let resolved = false;
+
+      imageFaceMesh.onResults(
+        (results) => {
+          if (resolved) {
+            return;
+          }
+
+          resolved = true;
+
+          if (
+            results.multiFaceLandmarks &&
+            results.multiFaceLandmarks
+              .length > 0
+          ) {
+            resolve(
+              results.multiFaceLandmarks[0]
+            );
+
+            return;
+          }
+
+          resolve(null);
+        }
+      );
+
+      try {
+        await imageFaceMesh.send({
+          image: imageSource
+        });
+      } catch (error) {
+        if (!resolved) {
+          resolved = true;
+          reject(error);
+        }
+      }
+    }
+  );
 }
 
 export function stopFaceTracking(videoElement) {
