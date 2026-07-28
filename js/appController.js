@@ -37,6 +37,10 @@ import {
   analyzeMultiAngleCaptures
 } from "./anatomyFusion.js";
 
+import {
+  buildAnatomyProfile
+} from "./anatomyProfile.js";
+
 // =========================================================
 // CONFIGURATION
 // =========================================================
