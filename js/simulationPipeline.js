@@ -257,10 +257,86 @@ function createWarpedLandmarks(
       tissueModel
     );
 
-  return applyLandmarkConstraints(
-    landmarks,
-    warped,
-    constraints
+  function applyLandmarkConstraints(
+  originalLandmarks,
+  warpedLandmarks,
+  constraints = {}
+) {
+  const maxHorizontalChange =
+    Number(
+      constraints.maxHorizontalChange
+    ) || 0.04;
+
+  const maxVerticalChange =
+    Number(
+      constraints.maxVerticalChange
+    ) || 0.04;
+
+  const maxProjectionChange =
+    Number(
+      constraints.maxProjectionChange
+    ) || 0.04;
+
+  return warpedLandmarks.map(
+    (point, index) => {
+      const original =
+        originalLandmarks[index];
+
+      if (!point || !original) {
+        return point;
+      }
+
+      const deltaX =
+        point.x - original.x;
+
+      const deltaY =
+        point.y - original.y;
+
+      const originalZ =
+        Number(original.z) || 0;
+
+      const pointZ =
+        Number(point.z);
+
+      const deltaZ =
+        Number.isFinite(pointZ)
+          ? pointZ - originalZ
+          : 0;
+
+      return {
+        ...point,
+
+        x:
+          original.x +
+          Math.max(
+            -maxHorizontalChange,
+            Math.min(
+              maxHorizontalChange,
+              deltaX
+            )
+          ),
+
+        y:
+          original.y +
+          Math.max(
+            -maxVerticalChange,
+            Math.min(
+              maxVerticalChange,
+              deltaY
+            )
+          ),
+
+        z:
+          originalZ +
+          Math.max(
+            -maxProjectionChange,
+            Math.min(
+              maxProjectionChange,
+              deltaZ
+            )
+          )
+      };
+    }
   );
 }
 
