@@ -965,6 +965,11 @@ body.sheet-open {
   let confirmationTimer = null;
   let selectedOption = "";
   let selectedCameraUrl = "";
+  let wizardStep = 1;
+
+let selectedStyle = "";
+let selectedProduct = "";
+let selectedIntensity = "";
 
   const procedureOptions = {
     "lip-filler": {
@@ -1307,6 +1312,52 @@ body.sheet-open {
       ]
     }
   };
+
+  const lipProducts = [
+  {
+    id: "provider",
+    name: "Provider Will Decide",
+    detail:
+      "Compare styles without selecting a specific filler."
+  },
+  {
+    id: "juvederm-ultra",
+    name: "Juvéderm Ultra XC",
+    detail:
+      "Designed for fuller lip enhancement."
+  },
+  {
+    id: "volbella",
+    name: "Juvéderm Volbella XC",
+    detail:
+      "Soft, subtle definition."
+  },
+  {
+    id: "kysse",
+    name: "Restylane Kysse",
+    detail:
+      "Natural movement and flexibility."
+  },
+  {
+    id: "silk",
+    name: "Restylane Silk",
+    detail:
+      "Smaller, refined enhancement."
+  },
+  {
+    id: "rha2",
+    name: "RHA 2",
+    detail:
+      "Dynamic movement."
+  },
+  {
+    id: "rha3",
+    name: "RHA 3",
+    detail:
+      "More structure and fullness."
+  }
+];
+  
 function getProcedureOptionData(procedureId) {
   // Use the detailed options whenever they exist.
   if (procedureOptions[procedureId]) {
