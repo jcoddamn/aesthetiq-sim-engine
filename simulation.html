@@ -1739,25 +1739,48 @@
   </main>
 
   <script>
-    window.addEventListener("error", (event) => {
-      const status =
-        document.getElementById("trackingStatus");
-
-      const pill =
-        document.getElementById("statusPill");
-
-      if (status) {
-        status.textContent =
-          `Error: ${event.message}`;
-      }
-
-      pill?.classList.add("error");
-
-      console.error(
-        "Global JavaScript error:",
-        event.error || event.message
+   window.addEventListener(
+  "error",
+  (event) => {
+    const status =
+      document.getElementById(
+        "trackingStatus"
       );
-    });
+
+    const pill =
+      document.getElementById(
+        "statusPill"
+      );
+
+    if (status) {
+      const filename =
+        event.filename
+          ? event.filename
+              .split("/")
+              .pop()
+          : "unknown file";
+
+      const line =
+        event.lineno || "?";
+
+      const column =
+        event.colno || "?";
+
+      status.textContent =
+        `Error: ${event.message} — ${filename}:${line}:${column}`;
+    }
+
+    pill?.classList.add(
+      "error"
+    );
+
+    console.error(
+      "Global JavaScript error:",
+      event.error ||
+      event.message
+    );
+  }
+);     
 
     window.addEventListener(
       "unhandledrejection",
