@@ -349,14 +349,21 @@ export function repairLowerLipTexture(
    * Feather only a few pixels around the
    * contour. This prevents a hard repair edge.
    */
-  const featherAmount =
-    clamp(
-      Math.abs(
-        displacementY
-      ) * 0.18,
-      1.2,
-      3.5
-    );
+  const displacementRatio =
+  clamp(
+    Math.abs(displacementY) /
+      Math.max(1, height * 0.03),
+    0,
+    1
+  );
+
+const featherAmount =
+  clamp(
+    1.1 +
+      displacementRatio * 2.4,
+    1.1,
+    3.5
+  );
 
   const repairMask =
     softenMask(
@@ -441,20 +448,30 @@ export function repairLowerLipTexture(
    */
   outputCtx.save();
 
-  outputCtx.globalAlpha =
-    clamp(
-      strength,
-      0,
-      1
-    );
-
-  outputCtx.drawImage(
-    textureCanvas,
+  const displacementRatio =
+  clamp(
+    Math.abs(displacementY) /
+      Math.max(1, height * 0.03),
     0,
-    0
+    1
   );
 
-  outputCtx.restore();
+/*
+ * Small deformations need very little repair.
+ * Larger deformations get progressively stronger
+ * texture cleanup.
+ */
+const adaptiveStrength =
+  clamp(
+    0.42 +
+      displacementRatio * 0.38,
+    0.42,
+    0.8
+  );
 
-  return output;
-}
+outputCtx.globalAlpha =
+  clamp(
+    adaptiveStrength * strength,
+    0,
+    1
+  );
