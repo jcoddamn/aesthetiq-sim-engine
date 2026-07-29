@@ -2318,13 +2318,17 @@ function getProcedureOptionData(procedureId) {
     }
   );
 
-  document.addEventListener(
-    "keydown",
-    event => {
-      if (
-        event.key === "Escape" &&
-        backdrop.classList.contains("open")
-      ) {
+ document.addEventListener(
+  "keydown",
+  event => {
+    if (
+      event.key === "Escape" &&
+      backdrop.classList.contains("open")
+    ) {
+      closeTreatmentOptions();
+    }
+  }
+);
 
 continueButton.addEventListener(
   "click",
@@ -2358,7 +2362,7 @@ continueButton.addEventListener(
         return;
       }
 
-      // STEP 3 → INTENSITY → CAMERA
+      // STEP 3 → CAMERA
       if (wizardStep === 3) {
         if (
           !selectedIntensity ||
@@ -2420,7 +2424,7 @@ continueButton.addEventListener(
     window.location.href =
       cameraUrl.href;
   }
-);
+); 
 
   window.addEventListener(
     "storage",
