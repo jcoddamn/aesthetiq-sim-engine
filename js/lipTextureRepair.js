@@ -448,14 +448,6 @@ const featherAmount =
    */
   outputCtx.save();
 
-  const displacementRatio =
-  clamp(
-    Math.abs(displacementY) /
-      Math.max(1, height * 0.03),
-    0,
-    1
-  );
-
 /*
  * Small deformations need very little repair.
  * Larger deformations get progressively stronger
@@ -475,3 +467,14 @@ outputCtx.globalAlpha =
     0,
     1
   );
+
+outputCtx.drawImage(
+  textureCanvas,
+  0,
+  0
+);
+
+outputCtx.restore();
+
+return output;
+}
