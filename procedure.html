@@ -1788,6 +1788,7 @@ function getProcedureOptionData(procedureId) {
   }
 
   function openTreatmentOptions() {
+  if (procedureId !== "lip-filler") {
     const treatmentData =
       getProcedureOptionData(procedureId);
 
@@ -1804,6 +1805,9 @@ function getProcedureOptionData(procedureId) {
 
     descriptionElement.textContent =
       treatmentData.description;
+
+    continueButton.textContent =
+      "Continue to camera";
 
     continueButton.disabled = true;
     optionList.innerHTML = "";
@@ -1868,8 +1872,194 @@ function getProcedureOptionData(procedureId) {
     document.body.classList.add(
       "sheet-open"
     );
+
+    return;
   }
 
+  wizardStep = 1;
+  selectedStyle = "";
+  selectedProduct = "";
+  selectedIntensity = "";
+
+  renderLipWizardStep();
+
+  backdrop.classList.add("open");
+  document.body.classList.add(
+    "sheet-open"
+  );
+}
+
+  function renderLipWizardStep() {
+  optionList.innerHTML = "";
+  continueButton.disabled = true;
+
+  if (wizardStep === 1) {
+    titleElement.textContent =
+      "Choose Your Desired Look";
+
+    descriptionElement.textContent =
+      "Step 1 of 3 — Select the lip shape and aesthetic you want to preview.";
+
+    continueButton.textContent =
+      "Choose filler product";
+
+    const styles =
+      procedureOptions["lip-filler"].options;
+
+    styles.forEach(option => {
+      createWizardOption(
+        option,
+        "lipStyle",
+        selectedStyle,
+        value => {
+          selectedStyle = value;
+        }
+      );
+    });
+
+    return;
+  }
+
+  if (wizardStep === 2) {
+    titleElement.textContent =
+      "Choose Filler Product";
+
+    descriptionElement.textContent =
+      "Step 2 of 3 — Select a filler product, or let the provider decide.";
+
+    continueButton.textContent =
+      "Choose intensity";
+
+    lipProducts.forEach(option => {
+      createWizardOption(
+        option,
+        "lipProduct",
+        selectedProduct,
+        value => {
+          selectedProduct = value;
+        }
+      );
+    });
+
+    return;
+  }
+
+  titleElement.textContent =
+    "Choose Simulation Intensity";
+
+  descriptionElement.textContent =
+    "Step 3 of 3 — Select how subtle or noticeable you want the educational preview to appear.";
+
+  continueButton.textContent =
+    "Continue to camera";
+
+  const intensities = [
+    {
+      id: "natural",
+      name: "Natural",
+      detail:
+        "A subtle enhancement with conservative volume."
+    },
+    {
+      id: "balanced",
+      name: "Balanced",
+      detail:
+        "Moderate fullness while maintaining natural proportions."
+    },
+    {
+      id: "enhanced",
+      name: "Enhanced",
+      detail:
+        "A more noticeable preview with stronger volume and projection."
+    }
+  ];
+
+  intensities.forEach(option => {
+    createWizardOption(
+      option,
+      "lipIntensity",
+      selectedIntensity,
+      value => {
+        selectedIntensity = value;
+      }
+    );
+  });
+}
+
+ function createWizardOption(
+  option,
+  radioName,
+  currentValue,
+  onSelect
+) {
+  const label =
+    document.createElement("label");
+
+  label.className =
+    "treatment-option";
+
+  if (currentValue === option.id) {
+    label.classList.add("selected");
+  }
+
+  label.innerHTML = `
+    <input
+      type="radio"
+      name="${escapeHtml(radioName)}"
+      value="${escapeHtml(option.id)}"
+      ${
+        currentValue === option.id
+          ? "checked"
+          : ""
+      }
+    />
+
+    <span class="option-copy">
+      <span class="option-name">
+        ${escapeHtml(option.name)}
+      </span>
+
+      <span class="option-detail">
+        ${escapeHtml(option.detail)}
+      </span>
+    </span>
+  `;
+
+  const radio =
+    label.querySelector("input");
+
+  radio.addEventListener(
+    "change",
+    () => {
+      onSelect(option.id);
+
+      continueButton.disabled =
+        false;
+
+      optionList
+        .querySelectorAll(
+          ".treatment-option"
+        )
+        .forEach(item => {
+          item.classList.remove(
+            "selected"
+          );
+        });
+
+      label.classList.add(
+        "selected"
+      );
+    }
+  );
+
+  optionList.appendChild(label);
+
+  if (currentValue === option.id) {
+    continueButton.disabled =
+      false;
+  }
+} 
+  
   function closeTreatmentOptions() {
     backdrop.classList.remove("open");
 
