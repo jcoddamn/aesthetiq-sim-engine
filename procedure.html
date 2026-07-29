@@ -2306,36 +2306,102 @@ function getProcedureOptionData(procedureId) {
         event.key === "Escape" &&
         backdrop.classList.contains("open")
       ) {
-        closeTreatmentOptions();
-      }
-    }
-  );
 
-  continueButton.addEventListener(
-    "click",
-    () => {
-      if (
-        !selectedOption ||
-        !selectedCameraUrl
-      ) {
+continueButton.addEventListener(
+  "click",
+  () => {
+
+    // ------------------------------------------
+    // LIP FILLER 3-STEP WIZARD
+    // ------------------------------------------
+
+    if (procedureId === "lip-filler") {
+
+      // STEP 1 → STYLE
+      if (wizardStep === 1) {
+        if (!selectedStyle) {
+          return;
+        }
+
+        wizardStep = 2;
+        renderLipWizardStep();
         return;
       }
 
-      const cameraUrl =
-        new URL(
-          selectedCameraUrl,
-          window.location.href
+      // STEP 2 → PRODUCT
+      if (wizardStep === 2) {
+        if (!selectedProduct) {
+          return;
+        }
+
+        wizardStep = 3;
+        renderLipWizardStep();
+        return;
+      }
+
+      // STEP 3 → INTENSITY → CAMERA
+      if (wizardStep === 3) {
+        if (
+          !selectedIntensity ||
+          !selectedCameraUrl
+        ) {
+          return;
+        }
+
+        const cameraUrl =
+          new URL(
+            selectedCameraUrl,
+            window.location.href
+          );
+
+        cameraUrl.searchParams.set(
+          "style",
+          selectedStyle
         );
 
-      cameraUrl.searchParams.set(
-        "option",
-        selectedOption
+        cameraUrl.searchParams.set(
+          "product",
+          selectedProduct
+        );
+
+        cameraUrl.searchParams.set(
+          "intensity",
+          selectedIntensity
+        );
+
+        window.location.href =
+          cameraUrl.href;
+
+        return;
+      }
+    }
+
+    // ------------------------------------------
+    // ALL OTHER PROCEDURES
+    // ------------------------------------------
+
+    if (
+      !selectedOption ||
+      !selectedCameraUrl
+    ) {
+      return;
+    }
+
+    const cameraUrl =
+      new URL(
+        selectedCameraUrl,
+        window.location.href
       );
 
-      window.location.href =
-        cameraUrl.href;
-    }
-  );
+    cameraUrl.searchParams.set(
+      "option",
+      selectedOption
+    );
+
+    window.location.href =
+      cameraUrl.href;
+  }
+);
 
   window.addEventListener(
     "storage",
