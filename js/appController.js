@@ -64,6 +64,18 @@ const selectedOption =
   params.get("option") ||
   "standard-treatment";
 
+const selectedLipStyle =
+  params.get("style") ||
+  "classic";
+
+const selectedLipProduct =
+  params.get("product") ||
+  "provider";
+
+const selectedLipIntensity =
+  params.get("intensity") ||
+  "balanced";
+
 let currentProcedure =
   normalizeProcedureId(requestedProcedure);
 
@@ -1094,8 +1106,10 @@ function generateSimulation(
       "visible"
     );
 
-    selectedLevel =
-      "balanced";
+    let selectedLevel =
+  currentProcedure === "lip-filler"
+    ? selectedLipIntensity
+    : "balanced";
 
     viewingOriginal = false;
 
