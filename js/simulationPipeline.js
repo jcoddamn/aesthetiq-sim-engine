@@ -613,6 +613,10 @@ export function runProcedureSimulation({
   sourceCanvas,
   anatomyProfile = null,
   tissueModel = null,
+
+  lipStyle = "classic",
+  lipProduct = "provider",
+
   blurPx = 18,
   mirrorX = false
 }) {
@@ -655,40 +659,52 @@ export function runProcedureSimulation({
     normalizeProcedureId(procedure);
 
   const naturalResult =
-    createSimulationLevel({
-      normalizedProcedure,
-      level: "natural",
-      landmarks,
-      sourceCanvas,
-      anatomyProfile,
-      tissueModel,
-      blurPx,
-      mirrorX
-    });
+  createSimulationLevel({
+    normalizedProcedure,
+    level: "natural",
+    landmarks,
+    sourceCanvas,
+    anatomyProfile,
+    tissueModel,
+
+    lipStyle,
+    lipProduct,
+
+    blurPx,
+    mirrorX
+  });
 
   const balancedResult =
-    createSimulationLevel({
-      normalizedProcedure,
-      level: "balanced",
-      landmarks,
-      sourceCanvas,
-      anatomyProfile,
-      tissueModel,
-      blurPx,
-      mirrorX
-    });
+  createSimulationLevel({
+    normalizedProcedure,
+    level: "balanced",
+    landmarks,
+    sourceCanvas,
+    anatomyProfile,
+    tissueModel,
+
+    lipStyle,
+    lipProduct,
+
+    blurPx,
+    mirrorX
+  });
 
   const enhancedResult =
-    createSimulationLevel({
-      normalizedProcedure,
-      level: "enhanced",
-      landmarks,
-      sourceCanvas,
-      anatomyProfile,
-      tissueModel,
-      blurPx,
-      mirrorX
-    });
+  createSimulationLevel({
+    normalizedProcedure,
+    level: "enhanced",
+    landmarks,
+    sourceCanvas,
+    anatomyProfile,
+    tissueModel,
+
+    lipStyle,
+    lipProduct,
+
+    blurPx,
+    mirrorX
+  });
 
   const debugCanvas =
     DEBUG_MASKS
@@ -736,9 +752,12 @@ export function runProcedureSimulationFromImage({
   imageSource,
   anatomyProfile = null,
   tissueModel = null,
+
+  lipStyle = "classic",
+  lipProduct = "provider",
+
   blurPx = 18,
   mirrorX = false
-  
 }) {
 
 const anatomy =
@@ -752,16 +771,19 @@ const anatomy =
   const sourceCanvas =
     imageToCanvas(imageSource);
 
-  return runProcedureSimulation({
-    procedure,
-    landmarks,
-    sourceCanvas,
-    anatomyProfile: anatomy,
-    tissueModel,
-    blurPx, 
-    mirrorX
-  });
-}
+return runProcedureSimulation({
+  procedure,
+  landmarks,
+  sourceCanvas,
+  anatomyProfile: anatomy,
+  tissueModel,
+
+  lipStyle,
+  lipProduct,
+
+  blurPx,
+  mirrorX
+});  
 
 // ---------------------------------------------------------
 // RENDER CANVAS
