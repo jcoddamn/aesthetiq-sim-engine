@@ -1074,22 +1074,31 @@ function generateSimulation(
     );
 
     simulationResults =
-      runProcedureSimulationFromImage({
-        procedure:
-          currentProcedure,
+  runProcedureSimulationFromLandmarks({
+    procedure:
+      currentProcedure,
 
-        landmarks,
+    landmarks,
 
-        imageSource,
+    imageSource,
 
-        anatomyProfile,
+    anatomyProfile,
 
-        tissueModel,
+    tissueModel,
 
-        blurPx: 18,
+    lipStyle:
+      selectedLipStyle,
 
-        mirrorX: false
-      });
+    lipProduct:
+      selectedLipProduct,
+
+    intensity:
+      selectedLevel,
+
+    blurPx: 18,
+
+    mirrorX: false
+  });
 
     renderResultsToTargets(
       simulationResults,
