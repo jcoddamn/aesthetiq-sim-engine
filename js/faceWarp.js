@@ -418,24 +418,33 @@ const cupidBowStrength =
      * It is strongest near the center and tapers
      * toward the corners.
      */
-    const verticalWeight =
-      0.18 +
-      centerWeight *
-      (
-        0.82 +
-        centerBoost
-      );
+    const anatomicalWeight =
+  UPPER_LIP_WEIGHTS[index] ??
+  LOWER_LIP_WEIGHTS[index] ??
+  0.5;
+
+const verticalWeight =
+  (
+    0.12 +
+    centerWeight *
+    (
+      0.88 +
+      centerBoost
+    )
+  ) *
+  anatomicalWeight;
 
     /*
      * Horizontal movement adds rounded projection,
      * but avoids stretching the mouth corners.
      */
     const horizontalWeight =
-      centerWeight *
-      (
-        1 -
-        edgeWeight
-      );
+  centerWeight *
+  (
+    1 -
+    edgeWeight
+  ) *
+  anatomicalWeight;
 
     result[index] = {
       ...point,
