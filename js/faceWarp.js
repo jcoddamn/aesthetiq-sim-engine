@@ -1,5 +1,6 @@
 import {
-  getLipIntensityProfile
+  getLipIntensityProfile,
+  getLipStyleProfile
 } from "./lipProfiles.js";
 
 import {
