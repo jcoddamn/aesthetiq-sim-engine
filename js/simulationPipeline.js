@@ -382,6 +382,7 @@ function createWarpedLandmarks(
       })
     );
 }
+}
 
 // ---------------------------------------------------------
 // MASK DATA
@@ -515,17 +516,17 @@ function createSimulationLevel({
       tissueModel || {}
   });
     
-    workingLandmarks =
-  function createWarpedLandmarks(
-  procedure,
-  landmarks,
-  level,
-  anatomyProfile,
-  tissueModel,
-  constraints,
-  lipStyle = "classic",
-  lipProduct = "provider"
-) {
+   workingLandmarks =
+  createWarpedLandmarks(
+    normalizedProcedure,
+    landmarks,
+    level,
+    anatomyProfile,
+    tissueModel,
+    constraints,
+    lipStyle,
+    lipProduct
+  ); 
 
     if (
   normalizedProcedure ===
