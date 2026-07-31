@@ -724,6 +724,32 @@ console.log(
   capturedCanvas =
     straightCapture.imageCanvas;
 
+  console.log(
+  "[AesthetIQ] PRECISION SCAN -> SIMULATION",
+  {
+    hasCanvas:
+      !!straightCapture.imageCanvas,
+
+    canvasWidth:
+      straightCapture.imageCanvas?.width,
+
+    canvasHeight:
+      straightCapture.imageCanvas?.height,
+
+    landmarksIsArray:
+      Array.isArray(
+        straightCapture.landmarks
+      ),
+
+    landmarkCount:
+      straightCapture.landmarks?.length,
+
+    anatomyProfile,
+
+    tissueModel
+  }
+);
+
   generateSimulation(
   straightCapture.imageCanvas,
   straightCapture.landmarks,
