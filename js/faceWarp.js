@@ -114,7 +114,9 @@ export function warpLipFiller(
   landmarks,
   level = "balanced",
   anatomyStrength = 1,
-  tissueModel = null
+  tissueModel = null,
+  lipStyle = "classic",
+  lipProduct = "provider"
 ) {
   if (
     !Array.isArray(landmarks) ||
@@ -125,6 +127,9 @@ export function warpLipFiller(
 
   const profile =
     getLipIntensityProfile(level) || {};
+
+  const styleProfile =
+  getLipStyleProfile(lipStyle) || {};
 
   const anatomy =
   getLipProfile(landmarks);
@@ -194,15 +199,29 @@ const levelStrength =
   safeAnatomyStrength *
   tissueDeformationStrength;
 
-  const baseUpperVolume =
-  Number.isFinite(profile.upperVolume)
-    ? profile.upperVolume
-    : 1;
+ const baseUpperVolume =
+  (
+    Number.isFinite(profile.upperVolume)
+      ? profile.upperVolume
+      : 1
+  ) *
+  (
+    Number.isFinite(styleProfile.upperVolume)
+      ? styleProfile.upperVolume
+      : 1
+  );
 
 const baseLowerVolume =
-  Number.isFinite(profile.lowerVolume)
-    ? profile.lowerVolume
-    : 1;
+  (
+    Number.isFinite(profile.lowerVolume)
+      ? profile.lowerVolume
+      : 1
+  ) *
+  (
+    Number.isFinite(styleProfile.lowerVolume)
+      ? styleProfile.lowerVolume
+      : 1
+  ); 
 
 const fullness =
   Number.isFinite(anatomy.fullness)
@@ -244,14 +263,28 @@ const lowerVolume =
   );
 
   const horizontalVolume =
+  (
     Number.isFinite(profile.horizontalVolume)
       ? profile.horizontalVolume
-      : 1;
+      : 1
+  ) *
+  (
+    Number.isFinite(styleProfile.horizontalVolume)
+      ? styleProfile.horizontalVolume
+      : 1
+  );
 
-  const baseCupidBowStrength =
-  Number.isFinite(profile.cupidBow)
-    ? profile.cupidBow
-    : 1;
+ const baseCupidBowStrength =
+  (
+    Number.isFinite(profile.cupidBow)
+      ? profile.cupidBow
+      : 1
+  ) *
+  (
+    Number.isFinite(styleProfile.cupidBow)
+      ? styleProfile.cupidBow
+      : 1
+  ); 
 
 const cupidStrength =
   Number.isFinite(anatomy.cupidStrength)
@@ -266,19 +299,50 @@ const cupidBowStrength =
   );
 
   const borderStrength =
+  (
     Number.isFinite(profile.border)
       ? profile.border
-      : 1;
+      : 1
+  ) *
+  (
+    Number.isFinite(styleProfile.borderDefinition)
+      ? styleProfile.borderDefinition
+      : 1
+  );
 
   const tubercleStrength =
+  (
     Number.isFinite(profile.centralTubercle)
       ? profile.centralTubercle
-      : 1;
+      : 1
+  ) *
+  (
+    Number.isFinite(styleProfile.centralTubercle)
+      ? styleProfile.centralTubercle
+      : 1
+  );
 
   const cornerLift =
+  (
     Number.isFinite(profile.cornerLift)
       ? profile.cornerLift
-      : 0;
+      : 1
+  ) *
+  (
+    Number.isFinite(styleProfile.cornerLift)
+      ? styleProfile.cornerLift
+      : 1
+  );
+
+  const verticalLift =
+  Number.isFinite(styleProfile.verticalLift)
+    ? styleProfile.verticalLift
+    : 1;
+
+const styleProjection =
+  Number.isFinite(styleProfile.projection)
+    ? styleProfile.projection
+    : 1;
 
   const result =
     landmarks.map((landmark) => ({
@@ -470,6 +534,7 @@ moveGroup(
   -1,
   0.009 *
     upperVolume *
+    verticalLift *
     levelStrength,
   0.0032 *
     horizontalVolume *
@@ -483,6 +548,7 @@ moveGroup(
   -1,
   0.0024 *
     upperVolume *
+    verticalLift *
     levelStrength,
   0.0012 *
     horizontalVolume *
@@ -496,6 +562,7 @@ moveGroup(
   1,
   0.0105 *
     lowerVolume *
+    verticalLift *
     levelStrength,
   0.0035 *
     horizontalVolume *
@@ -676,6 +743,102 @@ moveGroup(
     };
   }
 
+  // =========================================================
+// KEYHOLE LIP STYLE
+// =========================================================
+//
+// Preserve a small central separation between the upper
+// and lower inner lip while keeping fullness around it.
+// The effect remains subtle so it does not create an
+// artificial-looking gap.
+//
+
+if (lipStyle === "keyhole") {
+  const upperInnerCenter =
+    result[13];
+
+  const lowerInnerCenter =
+    result[14];
+
+  if (
+    upperInnerCenter &&
+    lowerInnerCenter
+  ) {
+    const keyholeStrength =
+      level === "natural"
+        ? 0.00035
+        : level === "enhanced"
+        ? 0.0008
+        : 0.00055;
+
+    result[13] = {
+      ...upperInnerCenter,
+
+      y:
+        upperInnerCenter.y -
+        keyholeStrength *
+        safeAnatomyStrength
+    };
+
+    result[14] = {
+      ...lowerInnerCenter,
+
+      y:
+        lowerInnerCenter.y +
+        keyholeStrength *
+        safeAnatomyStrength
+    };
+  }
+
+  // Add fullness immediately beside the center rather
+  // than stretching the entire mouth opening.
+  const upperKeyholeSides = [
+    82,
+    312
+  ];
+
+  const lowerKeyholeSides = [
+    87,
+    317
+  ];
+
+  upperKeyholeSides.forEach(index => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      y:
+        point.y -
+        0.00065 *
+        levelStrength
+    };
+  });
+
+  lowerKeyholeSides.forEach(index => {
+    const point =
+      result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      y:
+        point.y +
+        0.00065 *
+        levelStrength
+    };
+  });
+}
+
   // Keep the corners controlled instead of widening them too much.
   mouthCorners.forEach((index) => {
     const point =
@@ -730,6 +893,7 @@ const projectionStrength =
 
 const projectionAmount =
   projectionStrength *
+  styleProjection *
   safeAnatomyStrength *
   tissueDeformationStrength;
 
