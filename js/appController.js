@@ -663,7 +663,7 @@ function handlePrecisionScanComplete(
   document.body.classList.remove(
     "precision-active"
   );
-  
+
   if (precisionScanButton) {
     precisionScanButton.textContent =
       "Start Precision Scan";
@@ -687,75 +687,35 @@ function handlePrecisionScanComplete(
     !straightCapture?.landmarks
   ) {
     setStatus(
-      "Precision scan could not be completed",
+      "Scan failed — straight capture missing",
       "error"
     );
 
     return;
   }
 
-const anatomyProfile =
-  buildAnatomyProfile(
-    captures
+  setStatus(
+    `Scan captured ${
+      straightCapture.landmarks.length
+    } landmarks`,
+    "ready"
   );
 
-  const tissueModel =
-  buildTissueModel(
-    anatomyProfile
-  );
-  
-precisionAnatomy =
-  analyzeMultiAngleCaptures(
-    captures
-  );
-
-console.log(
-  "[AesthetIQ] Precision anatomy:",
-  precisionAnatomy
-);
-  
   /*
-   * For this first integration, the straight capture
-   * drives the existing 2D simulation.
-   *
-   * The next phase will combine straight, left, and
-   * right landmark measurements before simulation.
+   * TEMPORARY TEST:
+   * Skip anatomy analysis so we can verify
+   * that the simulation pipeline itself works.
    */
+
   capturedCanvas =
     straightCapture.imageCanvas;
 
-  console.log(
-  "[AesthetIQ] PRECISION SCAN -> SIMULATION",
-  {
-    hasCanvas:
-      !!straightCapture.imageCanvas,
-
-    canvasWidth:
-      straightCapture.imageCanvas?.width,
-
-    canvasHeight:
-      straightCapture.imageCanvas?.height,
-
-    landmarksIsArray:
-      Array.isArray(
-        straightCapture.landmarks
-      ),
-
-    landmarkCount:
-      straightCapture.landmarks?.length,
-
-    anatomyProfile,
-
-    tissueModel
-  }
-);
-
   generateSimulation(
-  straightCapture.imageCanvas,
-  straightCapture.landmarks,
-  anatomyProfile,
-  tissueModel
-);
+    straightCapture.imageCanvas,
+    straightCapture.landmarks,
+    null,
+    null
+  );
 }
 
 // =========================================================
