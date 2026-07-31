@@ -200,7 +200,7 @@ export function getLipStyleProfile(
 
 export function combineLipProfiles(
   intensityLevel = "balanced",
-  style = "classic-volume"
+  style = "classic"
 ) {
   const intensity =
     getLipIntensityProfile(
@@ -225,7 +225,7 @@ export function combineLipProfiles(
 
     border:
       intensity.border *
-      styleProfile.border,
+      styleProfile.borderDefinition,
 
     horizontalVolume:
       intensity.horizontalVolume *
@@ -237,7 +237,13 @@ export function combineLipProfiles(
 
     cornerLift:
       intensity.cornerLift *
-      styleProfile.cornerLift
+      styleProfile.cornerLift,
+
+    verticalLift:
+      styleProfile.verticalLift,
+
+    projection:
+      styleProfile.projection
   };
 }
 
