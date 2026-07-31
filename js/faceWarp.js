@@ -577,6 +577,7 @@ moveGroup(
   1,
   0.0028 *
     lowerVolume *
+    berticalLift *
     levelStrength,
   0.0014 *
     horizontalVolume *
