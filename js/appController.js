@@ -6,6 +6,7 @@ import {
 
 import {
   runProcedureSimulationFromImage,
+  runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
 } from "./simulationPipeline.js";
