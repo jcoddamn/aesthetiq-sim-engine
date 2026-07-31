@@ -328,21 +328,24 @@ function createWarpedLandmarks(
   level,
   anatomyProfile,
   tissueModel,
-  constraints
+  constraints,
+  lipStyle = "classic",
+  lipProduct = "provider"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
   }
 
   switch (procedure) {
-    case "lip-filler": {
-      const warped =
-        warpLipFiller(
-          landmarks,
-          level,
-          anatomyProfile?.anatomyStrength || 1,
-          tissueModel
-        );
+    const warped =
+  warpLipFiller(
+    landmarks,
+    level,
+    anatomyProfile?.anatomyStrength || 1,
+    tissueModel,
+    lipStyle,
+    lipProduct
+  );
 
       return applyLandmarkConstraints(
         landmarks,
@@ -479,10 +482,14 @@ function createSimulationLevel({
   sourceCanvas,
   anatomyProfile,
   tissueModel,
+
+  lipStyle = "classic",
+  lipProduct = "provider",
+
   blurPx,
   mirrorX
-  
 }) {
+  
   let workingLandmarks =
     landmarks;
 
@@ -509,14 +516,16 @@ function createSimulationLevel({
   });
     
     workingLandmarks =
-      createWarpedLandmarks(
-        normalizedProcedure,
-        landmarks,
-        level,
-        anatomyProfile,
-        tissueModel,
-        constraints
-      );
+  createWarpedLandmarks(
+    normalizedProcedure,
+    landmarks,
+    level,
+    anatomyProfile,
+    tissueModel,
+    constraints,
+    lipStyle,
+    lipProduct
+  );
 
     if (
   normalizedProcedure ===
@@ -759,31 +768,62 @@ export function runProcedureSimulationFromImage({
   blurPx = 18,
   mirrorX = false
 }) {
+  const anatomy =
+    anatomyProfile || {
+      anatomyStrength: 1,
+      projectionStrength: 1,
+      symmetryStrength: 1,
+      chinStrength: 1
+    };
 
-const anatomy =
-  anatomyProfile || {
-    anatomyStrength: 1,
-    projectionStrength: 1,
-    symmetryStrength: 1,
-    chinStrength: 1
-  };
-  
   const sourceCanvas =
     imageToCanvas(imageSource);
 
-return runProcedureSimulation({
+  return runProcedureSimulation({
+    procedure,
+    landmarks,
+    sourceCanvas,
+    anatomyProfile: anatomy,
+    tissueModel,
+
+    lipStyle,
+    lipProduct,
+
+    blurPx,
+    mirrorX
+  });
+}
+
+export function runProcedureSimulationFromLandmarks({
   procedure,
   landmarks,
-  sourceCanvas,
-  anatomyProfile: anatomy,
-  tissueModel,
+  imageSource,
+  anatomyProfile = null,
+  tissueModel = null,
 
-  lipStyle,
-  lipProduct,
+  lipStyle = "classic",
+  lipProduct = "provider",
 
-  blurPx,
-  mirrorX
-});  
+  blurPx = 18,
+  mirrorX = false
+}) {
+  const sourceCanvas =
+    imageToCanvas(imageSource);
+
+  return runProcedureSimulation({
+    procedure,
+    landmarks,
+    sourceCanvas,
+    anatomyProfile,
+    tissueModel,
+
+    lipStyle,
+    lipProduct,
+
+    blurPx,
+    mirrorX
+  });
+}  
 
 // ---------------------------------------------------------
 // RENDER CANVAS
