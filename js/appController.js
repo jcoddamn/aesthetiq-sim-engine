@@ -1073,32 +1073,80 @@ function generateSimulation(
       "loading"
     );
 
+    // Set the ACTIVE result level before
+    // running or rendering the simulation.
+    selectedLevel =
+      currentProcedure === "lip-filler"
+        ? selectedLipIntensity
+        : "balanced";
+
+    console.log(
+      "[AesthetIQ] Generating simulation",
+      {
+        procedure: currentProcedure,
+        selectedLevel,
+        landmarkCount:
+          landmarks?.length,
+        landmarksValid:
+          Array.isArray(landmarks),
+        hasImage:
+          !!imageSource,
+        anatomyProfile,
+        tissueModel
+      }
+    );
+
     simulationResults =
-  runProcedureSimulationFromLandmarks({
-    procedure:
-      currentProcedure,
+      runProcedureSimulationFromLandmarks({
+        procedure:
+          currentProcedure,
 
-    landmarks,
+        landmarks,
 
-    imageSource,
+        imageSource,
 
-    anatomyProfile,
+        anatomyProfile,
 
-    tissueModel,
+        tissueModel,
 
-    lipStyle:
-      selectedLipStyle,
+        lipStyle:
+          selectedLipStyle,
 
-    lipProduct:
-      selectedLipProduct,
+        lipProduct:
+          selectedLipProduct,
 
-    intensity:
-      selectedLevel,
+        blurPx: 18,
 
-    blurPx: 18,
+        mirrorX: false
+      });
 
-    mirrorX: false
-  });
+    console.log(
+      "[AesthetIQ] Simulation results",
+      {
+        hasResults:
+          !!simulationResults,
+
+        natural:
+          !!simulationResults
+            ?.naturalCanvas,
+
+        balanced:
+          !!simulationResults
+            ?.balancedCanvas,
+
+        enhanced:
+          !!simulationResults
+            ?.enhancedCanvas,
+
+        mask:
+          !!simulationResults
+            ?.maskCanvas,
+
+        polygons:
+          simulationResults
+            ?.polygons?.length
+      }
+    );
 
     renderResultsToTargets(
       simulationResults,
@@ -1115,11 +1163,6 @@ function generateSimulation(
       "visible"
     );
 
-    let selectedLevel =
-  currentProcedure === "lip-filler"
-    ? selectedLipIntensity
-    : "balanced";
-
     viewingOriginal = false;
 
     updateIntensityButtons();
@@ -1135,9 +1178,10 @@ function generateSimulation(
       behavior: "smooth",
       block: "start"
     });
-    } catch (error) {
+
+  } catch (error) {
     console.error(
-      "Simulation failed:",
+      "[AesthetIQ] Simulation failed:",
       error
     );
 
