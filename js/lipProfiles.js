@@ -49,82 +49,125 @@ export const LIP_PROFILES = {
 // ---------------------------------------------------------
 
 export const LIP_STYLE_PROFILES = {
-  "natural-enhancement": {
-    id: "natural-enhancement",
-    name: "Natural Enhancement",
-
-    cupidBow: 0.22,
-    upperVolume: 0.32,
-    lowerVolume: 0.38,
-    border: 0.16,
-    horizontalVolume: 0.18,
-    centralTubercle: 0.2,
-    cornerLift: 0.03
-  },
-
-  "classic-volume": {
-    id: "classic-volume",
-    name: "Classic Volume",
-
-    cupidBow: 0.42,
-    upperVolume: 0.58,
-    lowerVolume: 0.64,
-    border: 0.3,
-    horizontalVolume: 0.36,
-    centralTubercle: 0.38,
-    cornerLift: 0.05
-  },
-
-  "defined-border": {
-    id: "defined-border",
-    name: "Defined Border",
-
-    cupidBow: 0.48,
-    upperVolume: 0.42,
-    lowerVolume: 0.46,
-    border: 0.62,
-    horizontalVolume: 0.2,
-    centralTubercle: 0.28,
-    cornerLift: 0.04
-  },
-
-  "heart-shape": {
-    id: "heart-shape",
-    name: "Heart Shape",
-
-    cupidBow: 0.78,
-    upperVolume: 0.66,
-    lowerVolume: 0.56,
-    border: 0.34,
-    horizontalVolume: 0.26,
-    centralTubercle: 0.58,
-    cornerLift: 0.1
-  },
-
-  "russian-style": {
-    id: "russian-style",
-    name: "Russian Style",
-
-    cupidBow: 0.95,
-    upperVolume: 0.78,
-    lowerVolume: 0.34,
-    border: 0.58,
-    horizontalVolume: 0.14,
-    centralTubercle: 0.7,
-    cornerLift: 0.02
-  },
-
   hydration: {
     id: "hydration",
-    name: "Hydration",
+    name: "Natural Hydration",
 
-    cupidBow: 0.12,
-    upperVolume: 0.18,
-    lowerVolume: 0.22,
-    border: 0.12,
-    horizontalVolume: 0.08,
-    centralTubercle: 0.12,
-    cornerLift: 0.02
+    upperVolume: 0.48,
+    lowerVolume: 0.52,
+
+    verticalLift: 0.55,
+    horizontalVolume: 0.5,
+    projection: 0.35,
+
+    cupidBow: 0.95,
+    centralTubercle: 0.55,
+    borderDefinition: 0.72,
+    cornerLift: 0.85
+  },
+
+  classic: {
+    id: "classic",
+    name: "Classic Volume",
+
+    upperVolume: 1,
+    lowerVolume: 1,
+
+    verticalLift: 1,
+    horizontalVolume: 1,
+    projection: 1,
+
+    cupidBow: 1,
+    centralTubercle: 1,
+    borderDefinition: 1,
+    cornerLift: 1
+  },
+
+  russian: {
+    id: "russian",
+    name: "Russian Lips",
+
+    upperVolume: 1.18,
+    lowerVolume: 0.88,
+
+    verticalLift: 1.32,
+    horizontalVolume: 0.68,
+    projection: 0.66,
+
+    cupidBow: 1.38,
+    centralTubercle: 1.18,
+    borderDefinition: 1.2,
+    cornerLift: 0.72
+  },
+
+  heart: {
+    id: "heart",
+    name: "Heart Lips",
+
+    upperVolume: 1.16,
+    lowerVolume: 0.92,
+
+    verticalLift: 1.12,
+    horizontalVolume: 0.78,
+    projection: 0.92,
+
+    cupidBow: 1.5,
+    centralTubercle: 1.35,
+    borderDefinition: 1.1,
+    cornerLift: 0.8
+  },
+
+  pillow: {
+    id: "pillow",
+    name: "Pillow Lips",
+
+    upperVolume: 1.12,
+    lowerVolume: 1.22,
+
+    verticalLift: 0.92,
+    horizontalVolume: 1.08,
+    projection: 1.18,
+
+    cupidBow: 0.88,
+    centralTubercle: 1.08,
+    borderDefinition: 0.82,
+    cornerLift: 0.8
+  },
+
+  keyhole: {
+    id: "keyhole",
+    name: "Keyhole Lips",
+
+    upperVolume: 1.04,
+    lowerVolume: 1.08,
+
+    verticalLift: 1.02,
+    horizontalVolume: 0.82,
+    projection: 1.02,
+
+    cupidBow: 1.18,
+    centralTubercle: 1.28,
+    borderDefinition: 1.02,
+    cornerLift: 0.76,
+
+    keyholeStrength: 1
+  },
+
+  glossy: {
+    id: "glossy",
+    name: "Glossy Contour",
+
+    upperVolume: 1.02,
+    lowerVolume: 1.08,
+
+    verticalLift: 0.94,
+    horizontalVolume: 1,
+    projection: 1.06,
+
+    cupidBow: 0.98,
+    centralTubercle: 1.05,
+    borderDefinition: 1.24,
+    cornerLift: 0.92
   }
 };
 
@@ -140,11 +183,18 @@ export function getLipIntensityProfile(level = "balanced") {
 }
 
 export function getLipStyleProfile(
-  style = "classic-volume"
+  style = "classic"
 ) {
+  const normalizedStyle =
+    String(style || "classic")
+      .trim()
+      .toLowerCase();
+
   return (
-    LIP_STYLE_PROFILES[style] ||
-    LIP_STYLE_PROFILES["classic-volume"]
+    LIP_STYLE_PROFILES[
+      normalizedStyle
+    ] ||
+    LIP_STYLE_PROFILES.classic
   );
 }
 
