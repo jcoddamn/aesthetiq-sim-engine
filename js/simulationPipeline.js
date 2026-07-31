@@ -337,50 +337,50 @@ function createWarpedLandmarks(
   }
 
   switch (procedure) {
+  case "lip-filler": {
     const warped =
-  warpLipFiller(
-    landmarks,
-    level,
-    anatomyProfile?.anatomyStrength || 1,
-    tissueModel,
-    lipStyle,
-    lipProduct
-  );
-
-      return applyLandmarkConstraints(
+      warpLipFiller(
         landmarks,
-        warped,
-        constraints
-      );
-    }
-
-    case "chin-filler":
-    case "chin-implant":
-      return warpChin(
-        landmarks,
-        level
+        level,
+        anatomyProfile?.anatomyStrength || 1,
+        tissueModel,
+        lipStyle,
+        lipProduct
       );
 
-    case "cheek-filler":
-    case "cheek-implants":
-      return warpCheeks(
-        landmarks,
-        level
-      );
-
-    case "jawline-filler":
-      return warpJawline(
-        landmarks,
-        level
-      );
-
-    default:
-      return landmarks.map(
-        landmark => ({
-          ...landmark
-        })
-      );
+    return applyLandmarkConstraints(
+      landmarks,
+      warped,
+      constraints
+    );
   }
+
+  case "chin-filler":
+  case "chin-implant":
+    return warpChin(
+      landmarks,
+      level
+    );
+
+  case "cheek-filler":
+  case "cheek-implants":
+    return warpCheeks(
+      landmarks,
+      level
+    );
+
+  case "jawline-filler":
+    return warpJawline(
+      landmarks,
+      level
+    );
+
+  default:
+    return landmarks.map(
+      landmark => ({
+        ...landmark
+      })
+    );
 }
 
 // ---------------------------------------------------------
@@ -516,16 +516,16 @@ function createSimulationLevel({
   });
     
     workingLandmarks =
-  createWarpedLandmarks(
-    normalizedProcedure,
-    landmarks,
-    level,
-    anatomyProfile,
-    tissueModel,
-    constraints,
-    lipStyle,
-    lipProduct
-  );
+  function createWarpedLandmarks(
+  procedure,
+  landmarks,
+  level,
+  anatomyProfile,
+  tissueModel,
+  constraints,
+  lipStyle = "classic",
+  lipProduct = "provider"
+) {
 
     if (
   normalizedProcedure ===
