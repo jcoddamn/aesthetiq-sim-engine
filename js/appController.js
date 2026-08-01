@@ -665,6 +665,8 @@ function handlePrecisionScanComplete(
     "precision-active"
   );
 
+  precisionCapture.stop();
+
   if (precisionScanButton) {
     precisionScanButton.textContent =
       "Start Precision Scan";
@@ -672,51 +674,86 @@ function handlePrecisionScanComplete(
 
   if (precisionInstruction) {
     precisionInstruction.textContent =
-      "Precision scan complete";
-  }
-
-  if (poseHoldProgress) {
-    poseHoldProgress.style.width =
-      "100%";
+      "Testing result display…";
   }
 
   const straightCapture =
     captures?.straight;
 
-  if (
-    !straightCapture?.imageCanvas ||
-    !straightCapture?.landmarks
-  ) {
-    setStatus(
-      "Scan failed — straight capture missing",
-      "error"
+  if (!straightCapture) {
+    alert(
+      "TEST FAILED: straight capture missing"
     );
 
     return;
   }
 
-  setStatus(
-    `Scan captured ${
-      straightCapture.landmarks.length
-    } landmarks`,
-    "ready"
-  );
+  if (!straightCapture.imageCanvas) {
+    alert(
+      "TEST FAILED: imageCanvas missing"
+    );
 
-  /*
-   * TEMPORARY TEST:
-   * Skip anatomy analysis so we can verify
-   * that the simulation pipeline itself works.
-   */
+    return;
+  }
+
+  if (!resultsSection) {
+    alert(
+      "TEST FAILED: resultsSection missing"
+    );
+
+    return;
+  }
+
+  if (!resultCanvas) {
+    alert(
+      "TEST FAILED: resultCanvas missing"
+    );
+
+    return;
+  }
 
   capturedCanvas =
     straightCapture.imageCanvas;
 
-  generateSimulation(
-    straightCapture.imageCanvas,
-    straightCapture.landmarks,
-    null,
-    null
+  // Force the section to appear,
+  // regardless of stylesheet state.
+  resultsSection.hidden = false;
+  resultsSection.style.display =
+    "block";
+
+  resultsSection.classList.add(
+    "visible"
   );
+
+  renderCanvasToElement(
+    capturedCanvas,
+    resultCanvas
+  );
+
+  if (resultLabel) {
+    resultLabel.textContent =
+      "DISPLAY TEST";
+  }
+
+  setStatus(
+    "DISPLAY TEST READY",
+    "ready"
+  );
+
+  alert(
+    `Display test reached.\nCanvas: ${
+      capturedCanvas.width
+    } × ${
+      capturedCanvas.height
+    }`
+  );
+
+  setTimeout(() => {
+    resultsSection.scrollIntoView({
+      behavior: "auto",
+      block: "start"
+    });
+  }, 200);
 }
 
 // =========================================================
