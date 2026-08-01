@@ -44,8 +44,6 @@ export async function startFaceTracking(videoElement, onLandmarks, onStatus) {
 
     onLandmarks?.(landmarks, results);
 
-    onStatus?.("Face detected");
-
   } else {
 
     onStatus?.("Searching for face…");
