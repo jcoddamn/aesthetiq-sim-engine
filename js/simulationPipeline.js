@@ -498,96 +498,110 @@ function createSimulationLevel({
     copyCanvas(sourceCanvas);
 
   if (
-    usesGeometryWarp(
-      normalizedProcedure
-    )
-  ) {
-    const constraints =
-  getProcedureConstraints({
-    procedure:
-      normalizedProcedure,
-
-    level,
-
-    anatomyProfile:
-      anatomyProfile || {},
-
-    tissueModel:
-      tissueModel || {}
-  });
-    
-   workingLandmarks =
-  createWarpedLandmarks(
-    normalizedProcedure,
-    landmarks,
-    level,
-    anatomyProfile,
-    tissueModel,
-    constraints,
-    lipStyle,
-    lipProduct
-  ); 
-
-    if (
-  normalizedProcedure ===
-  "lip-filler"
+  usesGeometryWarp(
+    normalizedProcedure
+  )
 ) {
-  console.log(
-    "[AesthetIQ] MESH RENDER TEST",
-    {
-      originalCount:
-        landmarks?.length,
+  const constraints =
+    getProcedureConstraints({
+      procedure:
+        normalizedProcedure,
 
-      warpedCount:
-        workingLandmarks?.length
+      level,
+
+      anatomyProfile:
+        anatomyProfile || {},
+
+      tissueModel:
+        tissueModel || {}
+    });
+
+  workingLandmarks =
+    createWarpedLandmarks(
+      normalizedProcedure,
+      landmarks,
+      level,
+      anatomyProfile,
+      tissueModel,
+      constraints,
+      lipStyle,
+      lipProduct
+    );
+
+  if (
+    normalizedProcedure ===
+    "lip-filler"
+  ) {
+    console.log(
+      "[AesthetIQ] MESH RENDER TEST",
+      {
+        originalCount:
+          landmarks?.length,
+
+        warpedCount:
+          workingLandmarks?.length
+      }
+    );
+
+    try {
+      const meshCanvas =
+        meshRenderer.render(
+          sourceCanvas,
+          landmarks,
+          workingLandmarks
+        );
+
+      if (!meshCanvas) {
+        throw new Error(
+          "MeshRenderer returned no canvas."
+        );
+      }
+
+      workingCanvas =
+        meshCanvas;
+
+    } catch (error) {
+      console.error(
+        "[AesthetIQ] MeshRenderer failed:",
+        error
+      );
+
+      workingCanvas =
+        copyCanvas(sourceCanvas);
+
+      setTimeout(() => {
+        alert(
+          `MeshRenderer failed: ${
+            error?.message ||
+            String(error)
+          }`
+        );
+      }, 0);
     }
-  );
 
-  try {
-    const meshCanvas =
-      meshRenderer.render(
+  } else {
+    workingCanvas =
+      renderWarp(
         sourceCanvas,
         landmarks,
         workingLandmarks
       );
-
-    if (!meshCanvas) {
-      throw new Error(
-        "MeshRenderer returned no canvas."
-      );
-    }
-
-    workingCanvas =
-      meshCanvas;
-
-  } catch (error) {
-    console.error(
-      "[AesthetIQ] MeshRenderer failed:",
-      error
-    );
-
-    workingCanvas =
-      copyCanvas(sourceCanvas);
-
-    setTimeout(() => {
-      alert(
-        `MeshRenderer failed: ${
-          error?.message ||
-          String(error)
-        }`
-      );
-    }, 0);
   }
+} // <-- THIS WAS MISSING
 
-} else {
-  workingCanvas =
-    renderWarp(
-      sourceCanvas,
-      landmarks,
-      workingLandmarks
-    );
-}
+const {
+  polygons,
+  maskCanvas
+} = generateMaskData(
+  normalizedProcedure,
+  workingLandmarks,
+  workingCanvas.width,
+  workingCanvas.height,
+  {
+    blurPx,
+    mirrorX
   }
+);
 
   const {
     polygons,
