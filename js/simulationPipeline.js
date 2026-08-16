@@ -647,31 +647,63 @@ export function runProcedureSimulation({
     );
   }
 
-  console.log(
-    "[AesthetIQ] PIPELINE PASS-THROUGH TEST",
+  const normalizedProcedure =
+    normalizeProcedureId(procedure);
+
+  const {
+    polygons,
+    maskCanvas
+  } = generateMaskData(
+    normalizedProcedure,
+    landmarks,
+    sourceCanvas.width,
+    sourceCanvas.height,
     {
-      procedure,
-      landmarkCount:
-        landmarks.length,
-
-      width:
-        sourceCanvas.width,
-
-      height:
-        sourceCanvas.height
+      blurPx,
+      mirrorX
     }
   );
 
+  console.log(
+    "[AesthetIQ] MASK TEST",
+    {
+      procedure:
+        normalizedProcedure,
+
+      polygonCount:
+        polygons?.length,
+
+      hasMask:
+        !!maskCanvas,
+
+      landmarkCount:
+        landmarks.length
+    }
+  );
+
+  const debugCanvas =
+    DEBUG_MASKS
+      ? createMaskDebugCanvas(
+          sourceCanvas,
+          polygons || [],
+          {
+            drawPoints: true,
+            drawFill: true,
+            drawStroke: true
+          }
+        )
+      : null;
+
   return {
     procedure:
-      normalizeProcedureId(procedure),
+      normalizedProcedure,
 
-    polygons: [],
+    polygons:
+      polygons || [],
 
-    maskCanvas: null,
+    maskCanvas,
 
-    debugCanvas:
-      copyCanvas(sourceCanvas),
+    debugCanvas,
 
     naturalCanvas:
       copyCanvas(sourceCanvas),
