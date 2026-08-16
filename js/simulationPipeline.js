@@ -653,8 +653,10 @@ export function runProcedureSimulation({
       procedure,
       landmarkCount:
         landmarks.length,
+
       width:
         sourceCanvas.width,
+
       height:
         sourceCanvas.height
     }
@@ -682,92 +684,9 @@ export function runProcedureSimulation({
   };
 }
 
-  const normalizedProcedure =
-    normalizeProcedureId(procedure);
-
-  const naturalResult =
-  createSimulationLevel({
-    normalizedProcedure,
-    level: "natural",
-    landmarks,
-    sourceCanvas,
-    anatomyProfile,
-    tissueModel,
-
-    lipStyle,
-    lipProduct,
-
-    blurPx,
-    mirrorX
-  });
-
-  const balancedResult =
-  createSimulationLevel({
-    normalizedProcedure,
-    level: "balanced",
-    landmarks,
-    sourceCanvas,
-    anatomyProfile,
-    tissueModel,
-
-    lipStyle,
-    lipProduct,
-
-    blurPx,
-    mirrorX
-  });
-
-  const enhancedResult =
-  createSimulationLevel({
-    normalizedProcedure,
-    level: "enhanced",
-    landmarks,
-    sourceCanvas,
-    anatomyProfile,
-    tissueModel,
-
-    lipStyle,
-    lipProduct,
-
-    blurPx,
-    mirrorX
-  });
-
-  const debugCanvas =
-    DEBUG_MASKS
-      ? createMaskDebugCanvas(
-          sourceCanvas,
-          balancedResult.polygons,
-          {
-            drawPoints: true,
-            drawFill: true,
-            drawStroke: true
-          }
-        )
-      : null;
-
-  return {
-    procedure:
-      normalizedProcedure,
-
-    polygons:
-      balancedResult.polygons,
-
-    maskCanvas:
-      balancedResult.maskCanvas,
-
-    debugCanvas,
-
-    naturalCanvas:
-      naturalResult.canvas,
-
-    balancedCanvas:
-      balancedResult.canvas,
-
-    enhancedCanvas:
-      enhancedResult.canvas
-  };
-}
+// ---------------------------------------------------------
+// SIMULATE FROM IMAGE OR VIDEO
+// ---------------------------------------------------------
 
 // ---------------------------------------------------------
 // SIMULATE FROM IMAGE OR VIDEO
