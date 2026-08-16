@@ -587,6 +587,7 @@ function createSimulationLevel({
       workingLandmarks
     );
 }
+  }
 
   const {
     polygons,
