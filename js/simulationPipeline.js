@@ -532,20 +532,20 @@ function createSimulationLevel({
   normalizedProcedure ===
   "lip-filler"
 ) {
-  workingCanvas =
-    meshRenderer.render(
-      sourceCanvas,
-      landmarks,
-      workingLandmarks
-    );
+  console.log(
+    "[AesthetIQ] LIP WARP TEST",
+    {
+      originalCount:
+        landmarks?.length,
+
+      warpedCount:
+        workingLandmarks?.length
+    }
+  );
 
   workingCanvas =
-    repairLowerLipTexture(
-      workingCanvas,
-      landmarks,
-      workingLandmarks,
-      0.7
-    );
+    copyCanvas(sourceCanvas);
+
 } else {
       workingCanvas =
         renderWarp(
