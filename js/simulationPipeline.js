@@ -533,7 +533,7 @@ function createSimulationLevel({
   "lip-filler"
 ) {
   console.log(
-    "[AesthetIQ] LIP WARP TEST",
+    "[AesthetIQ] MESH RENDER TEST",
     {
       originalCount:
         landmarks?.length,
@@ -544,7 +544,17 @@ function createSimulationLevel({
   );
 
   workingCanvas =
-    copyCanvas(sourceCanvas);
+    meshRenderer.render(
+      sourceCanvas,
+      landmarks,
+      workingLandmarks
+    );
+
+  if (!workingCanvas) {
+    throw new Error(
+      "MeshRenderer returned no canvas."
+    );
+  }
 
 } else {
       workingCanvas =
