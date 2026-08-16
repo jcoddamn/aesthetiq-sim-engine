@@ -10,29 +10,42 @@ export class MeshRenderer {
   }
 
   toCanvasPoint(
-    point,
-    width,
-    height
+  point,
+  width,
+  height
+) {
+  if (!point) {
+    return null;
+  }
+
+  const x =
+    Number(point.x);
+
+  const y =
+    Number(point.y);
+
+  if (
+    !Number.isFinite(x) ||
+    !Number.isFinite(y)
   ) {
-    if (!point) {
-      return null;
-    }
+    return null;
+  }
 
-    if (
-      Math.abs(point.x) <= 1.5 &&
-      Math.abs(point.y) <= 1.5
-    ) {
-      return {
-        x: point.x * width,
-        y: point.y * height
-      };
-    }
-
+  if (
+    Math.abs(x) <= 1.5 &&
+    Math.abs(y) <= 1.5
+  ) {
     return {
-      x: point.x,
-      y: point.y
+      x: x * width,
+      y: y * height
     };
   }
+
+  return {
+    x,
+    y
+  };
+}
 
   triangleToCanvas(
     indices,
@@ -62,6 +75,26 @@ export class MeshRenderer {
   ) {
     const [s0, s1, s2] = source;
     const [t0, t1, t2] = target;
+    const allPoints = [
+  s0,
+  s1,
+  s2,
+  t0,
+  t1,
+  t2
+];
+
+const valid =
+  allPoints.every(
+    (point) =>
+      point &&
+      Number.isFinite(point.x) &&
+      Number.isFinite(point.y)
+  );
+
+if (!valid) {
+  return null;
+}
 
     const denominator =
       s0.x * (s1.y - s2.y) +
@@ -141,14 +174,31 @@ export class MeshRenderer {
           )
       ) / denominator;
 
-    return {
-      a,
-      b,
-      c,
-      d,
-      e,
-      f
-    };
+    const values = [
+  a,
+  b,
+  c,
+  d,
+  e,
+  f
+];
+
+if (
+  !values.every(
+    Number.isFinite
+  )
+) {
+  return null;
+}
+
+return {
+  a,
+  b,
+  c,
+  d,
+  e,
+  f
+};
   }
 
   setTriangles(triangles) {
@@ -249,9 +299,9 @@ export class MeshRenderer {
       )
       .filter(Boolean);
 
-  if (!points.length) {
-    return;
-  }
+  if (points.length < 2) {
+  return;
+}
 
   const minX =
     Math.min(
