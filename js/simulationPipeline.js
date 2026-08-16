@@ -650,65 +650,55 @@ export function runProcedureSimulation({
   const normalizedProcedure =
     normalizeProcedureId(procedure);
 
-  const {
-    polygons,
-    maskCanvas
-  } = generateMaskData(
-    normalizedProcedure,
-    landmarks,
-    sourceCanvas.width,
-    sourceCanvas.height,
-    {
+  const balancedResult =
+    createSimulationLevel({
+      normalizedProcedure,
+      level: "balanced",
+      landmarks,
+      sourceCanvas,
+      anatomyProfile,
+      tissueModel,
+      lipStyle,
+      lipProduct,
       blurPx,
       mirrorX
-    }
-  );
+    });
 
   console.log(
-    "[AesthetIQ] MASK TEST",
+    "[AesthetIQ] LEVEL TEST",
     {
       procedure:
         normalizedProcedure,
 
+      hasCanvas:
+        !!balancedResult?.canvas,
+
       polygonCount:
-        polygons?.length,
+        balancedResult?.polygons?.length,
 
       hasMask:
-        !!maskCanvas,
-
-      landmarkCount:
-        landmarks.length
+        !!balancedResult?.maskCanvas
     }
   );
-
-  const debugCanvas =
-    DEBUG_MASKS
-      ? createMaskDebugCanvas(
-          sourceCanvas,
-          polygons || [],
-          {
-            drawPoints: true,
-            drawFill: true,
-            drawStroke: true
-          }
-        )
-      : null;
 
   return {
     procedure:
       normalizedProcedure,
 
     polygons:
-      polygons || [],
+      balancedResult?.polygons || [],
 
-    maskCanvas,
+    maskCanvas:
+      balancedResult?.maskCanvas || null,
 
-    debugCanvas,
+    debugCanvas:
+      copyCanvas(sourceCanvas),
 
     naturalCanvas:
       copyCanvas(sourceCanvas),
 
     balancedCanvas:
+      balancedResult?.canvas ||
       copyCanvas(sourceCanvas),
 
     enhancedCanvas:
