@@ -640,30 +640,47 @@ export function runProcedureSimulation({
     !Array.isArray(landmarks) ||
     landmarks.length < 468
   ) {
-    console.warn(
-      "[AesthetIQ] Valid MediaPipe face landmarks were not provided."
+    throw new Error(
+      `Invalid landmarks: ${
+        landmarks?.length || 0
+      }`
     );
-
-    return {
-      procedure:
-        normalizeProcedureId(procedure),
-
-      polygons: [],
-      maskCanvas: null,
-
-      debugCanvas:
-        copyCanvas(sourceCanvas),
-
-      naturalCanvas:
-        copyCanvas(sourceCanvas),
-
-      balancedCanvas:
-        copyCanvas(sourceCanvas),
-
-      enhancedCanvas:
-        copyCanvas(sourceCanvas)
-    };
   }
+
+  console.log(
+    "[AesthetIQ] PIPELINE PASS-THROUGH TEST",
+    {
+      procedure,
+      landmarkCount:
+        landmarks.length,
+      width:
+        sourceCanvas.width,
+      height:
+        sourceCanvas.height
+    }
+  );
+
+  return {
+    procedure:
+      normalizeProcedureId(procedure),
+
+    polygons: [],
+
+    maskCanvas: null,
+
+    debugCanvas:
+      copyCanvas(sourceCanvas),
+
+    naturalCanvas:
+      copyCanvas(sourceCanvas),
+
+    balancedCanvas:
+      copyCanvas(sourceCanvas),
+
+    enhancedCanvas:
+      copyCanvas(sourceCanvas)
+  };
+}
 
   const normalizedProcedure =
     normalizeProcedureId(procedure);
