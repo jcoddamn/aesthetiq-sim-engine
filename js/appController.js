@@ -674,39 +674,26 @@ function handlePrecisionScanComplete(
 
   if (precisionInstruction) {
     precisionInstruction.textContent =
-      "Testing result display…";
+      "Precision scan complete";
+  }
+
+  if (poseHoldProgress) {
+    poseHoldProgress.style.width =
+      "100%";
   }
 
   const straightCapture =
     captures?.straight;
 
-  if (!straightCapture) {
-    alert(
-      "TEST FAILED: straight capture missing"
-    );
-
-    return;
-  }
-
-  if (!straightCapture.imageCanvas) {
-    alert(
-      "TEST FAILED: imageCanvas missing"
-    );
-
-    return;
-  }
-
-  if (!resultsSection) {
-    alert(
-      "TEST FAILED: resultsSection missing"
-    );
-
-    return;
-  }
-
-  if (!resultCanvas) {
-    alert(
-      "TEST FAILED: resultCanvas missing"
+  if (
+    !straightCapture?.imageCanvas ||
+    !Array.isArray(
+      straightCapture?.landmarks
+    )
+  ) {
+    setStatus(
+      "Precision scan capture missing",
+      "error"
     );
 
     return;
@@ -715,45 +702,27 @@ function handlePrecisionScanComplete(
   capturedCanvas =
     straightCapture.imageCanvas;
 
-  // Force the section to appear,
-  // regardless of stylesheet state.
-  resultsSection.hidden = false;
-  resultsSection.style.display =
-    "block";
+  console.log(
+    "[AesthetIQ] Precision capture ready",
+    {
+      width:
+        capturedCanvas.width,
 
-  resultsSection.classList.add(
-    "visible"
+      height:
+        capturedCanvas.height,
+
+      landmarkCount:
+        straightCapture
+          .landmarks.length
+    }
   );
 
-  renderCanvasToElement(
-    capturedCanvas,
-    resultCanvas
+  generateSimulation(
+    straightCapture.imageCanvas,
+    straightCapture.landmarks,
+    null,
+    null
   );
-
-  if (resultLabel) {
-    resultLabel.textContent =
-      "DISPLAY TEST";
-  }
-
-  setStatus(
-    "DISPLAY TEST READY",
-    "ready"
-  );
-
-  alert(
-    `Display test reached.\nCanvas: ${
-      capturedCanvas.width
-    } × ${
-      capturedCanvas.height
-    }`
-  );
-
-  setTimeout(() => {
-    resultsSection.scrollIntoView({
-      behavior: "auto",
-      block: "start"
-    });
-  }, 200);
 }
 
 // =========================================================
