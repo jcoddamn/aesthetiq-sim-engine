@@ -543,28 +543,50 @@ function createSimulationLevel({
     }
   );
 
+  try {
+    const meshCanvas =
+      meshRenderer.render(
+        sourceCanvas,
+        landmarks,
+        workingLandmarks
+      );
+
+    if (!meshCanvas) {
+      throw new Error(
+        "MeshRenderer returned no canvas."
+      );
+    }
+
+    workingCanvas =
+      meshCanvas;
+
+  } catch (error) {
+    console.error(
+      "[AesthetIQ] MeshRenderer failed:",
+      error
+    );
+
+    workingCanvas =
+      copyCanvas(sourceCanvas);
+
+    setTimeout(() => {
+      alert(
+        `MeshRenderer failed: ${
+          error?.message ||
+          String(error)
+        }`
+      );
+    }, 0);
+  }
+
+} else {
   workingCanvas =
-    meshRenderer.render(
+    renderWarp(
       sourceCanvas,
       landmarks,
       workingLandmarks
     );
-
-  if (!workingCanvas) {
-    throw new Error(
-      "MeshRenderer returned no canvas."
-    );
-  }
-
-} else {
-      workingCanvas =
-        renderWarp(
-          sourceCanvas,
-          landmarks,
-          workingLandmarks
-        );
-    }
-  }
+}
 
   const {
     polygons,
