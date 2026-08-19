@@ -490,7 +490,6 @@ function createSimulationLevel({
   blurPx,
   mirrorX
 }) {
-  
   let workingLandmarks =
     landmarks;
 
@@ -498,110 +497,96 @@ function createSimulationLevel({
     copyCanvas(sourceCanvas);
 
   if (
-  usesGeometryWarp(
-    normalizedProcedure
-  )
-) {
-  const constraints =
-    getProcedureConstraints({
-      procedure:
-        normalizedProcedure,
-
-      level,
-
-      anatomyProfile:
-        anatomyProfile || {},
-
-      tissueModel:
-        tissueModel || {}
-    });
-
-  workingLandmarks =
-    createWarpedLandmarks(
-      normalizedProcedure,
-      landmarks,
-      level,
-      anatomyProfile,
-      tissueModel,
-      constraints,
-      lipStyle,
-      lipProduct
-    );
-
-  if (
-    normalizedProcedure ===
-    "lip-filler"
+    usesGeometryWarp(
+      normalizedProcedure
+    )
   ) {
-    console.log(
-      "[AesthetIQ] MESH RENDER TEST",
-      {
-        originalCount:
-          landmarks?.length,
+    const constraints =
+      getProcedureConstraints({
+        procedure:
+          normalizedProcedure,
 
-        warpedCount:
-          workingLandmarks?.length
+        level,
+
+        anatomyProfile:
+          anatomyProfile || {},
+
+        tissueModel:
+          tissueModel || {}
+      });
+
+    workingLandmarks =
+      createWarpedLandmarks(
+        normalizedProcedure,
+        landmarks,
+        level,
+        anatomyProfile,
+        tissueModel,
+        constraints,
+        lipStyle,
+        lipProduct
+      );
+
+    if (
+      normalizedProcedure ===
+      "lip-filler"
+    ) {
+      console.log(
+        "[AesthetIQ] MESH RENDER TEST",
+        {
+          originalCount:
+            landmarks?.length,
+
+          warpedCount:
+            workingLandmarks?.length
+        }
+      );
+
+      try {
+        const meshCanvas =
+          meshRenderer.render(
+            sourceCanvas,
+            landmarks,
+            workingLandmarks
+          );
+
+        if (!meshCanvas) {
+          throw new Error(
+            "MeshRenderer returned no canvas."
+          );
+        }
+
+        workingCanvas =
+          meshCanvas;
+
+      } catch (error) {
+        console.error(
+          "[AesthetIQ] MeshRenderer failed:",
+          error
+        );
+
+        workingCanvas =
+          copyCanvas(sourceCanvas);
+
+        setTimeout(() => {
+          alert(
+            `MeshRenderer failed: ${
+              error?.message ||
+              String(error)
+            }`
+          );
+        }, 0);
       }
-    );
 
-    try {
-      const meshCanvas =
-        meshRenderer.render(
+    } else {
+      workingCanvas =
+        renderWarp(
           sourceCanvas,
           landmarks,
           workingLandmarks
         );
-
-      if (!meshCanvas) {
-        throw new Error(
-          "MeshRenderer returned no canvas."
-        );
-      }
-
-      workingCanvas =
-        meshCanvas;
-
-    } catch (error) {
-      console.error(
-        "[AesthetIQ] MeshRenderer failed:",
-        error
-      );
-
-      workingCanvas =
-        copyCanvas(sourceCanvas);
-
-      setTimeout(() => {
-        alert(
-          `MeshRenderer failed: ${
-            error?.message ||
-            String(error)
-          }`
-        );
-      }, 0);
     }
-
-  } else {
-    workingCanvas =
-      renderWarp(
-        sourceCanvas,
-        landmarks,
-        workingLandmarks
-      );
   }
-} // <-- THIS WAS MISSING
-
-const {
-  polygons,
-  maskCanvas
-} = generateMaskData(
-  normalizedProcedure,
-  workingLandmarks,
-  workingCanvas.width,
-  workingCanvas.height,
-  {
-    blurPx,
-    mirrorX
-  }
-);
 
   const {
     polygons,
@@ -619,45 +604,52 @@ const {
 
   if (!maskCanvas) {
     return {
-      canvas: workingCanvas,
-      landmarks: workingLandmarks,
+      canvas:
+        workingCanvas,
+
+      landmarks:
+        workingLandmarks,
+
       polygons: [],
+
       maskCanvas: null
     };
   }
 
   let resultCanvas =
-  applyTreatmentEffect(
-    normalizedProcedure,
-    workingCanvas,
-    maskCanvas,
-    level
-  );
-
-if (
-  normalizedProcedure ===
-  "lip-filler"
-) {
-  resultCanvas =
-    applySoftTissueLighting(
-      resultCanvas ||
-        workingCanvas,
+    applyTreatmentEffect(
+      normalizedProcedure,
+      workingCanvas,
       maskCanvas,
       level
     );
-}
 
-return {
-  canvas:
-    resultCanvas ||
-    workingCanvas,
+  if (
+    normalizedProcedure ===
+    "lip-filler"
+  ) {
+    resultCanvas =
+      applySoftTissueLighting(
+        resultCanvas ||
+          workingCanvas,
 
-  landmarks:
-    workingLandmarks,
+        maskCanvas,
+        level
+      );
+  }
 
-  polygons,
-  maskCanvas
-};
+  return {
+    canvas:
+      resultCanvas ||
+      workingCanvas,
+
+    landmarks:
+      workingLandmarks,
+
+    polygons,
+
+    maskCanvas
+  };
 }
 
 // ---------------------------------------------------------
@@ -752,10 +744,6 @@ export function runProcedureSimulation({
       copyCanvas(sourceCanvas)
   };
 }
-
-// ---------------------------------------------------------
-// SIMULATE FROM IMAGE OR VIDEO
-// ---------------------------------------------------------
 
 // ---------------------------------------------------------
 // SIMULATE FROM IMAGE OR VIDEO
