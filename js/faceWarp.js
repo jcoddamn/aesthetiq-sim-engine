@@ -660,9 +660,9 @@ moveGroup(
     }
 
     const centerInfluence =
-      index === 0
-        ? 1
-        : 0.62;
+  index === 0
+    ? 0.32
+    : 1;
 
     result[index] = {
       ...point,
