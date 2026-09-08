@@ -96,7 +96,7 @@ export const LIP_STYLE_PROFILES = {
 
   verticalLift: 1.28,
   projection: 0.86
-}
+},
 
   heart: {
     id: "heart",
