@@ -1152,11 +1152,16 @@ function generateSimulation(
       }
     );
 
-    resultsSection?.classList.add(
-      "visible"
-    );
+    if (resultsSection) {
+  resultsSection.hidden = false;
+  resultsSection.style.display = "block";
 
-    viewingOriginal = false;
+  resultsSection.classList.add(
+    "visible"
+  );
+}
+
+viewingOriginal = false;
 
     updateIntensityButtons();
     updateCompareButtons();
@@ -1286,9 +1291,14 @@ function resetSimulation() {
   simulationResults = null;
   viewingOriginal = false;
 
-  resultsSection?.classList.remove(
+  if (resultsSection) {
+  resultsSection.classList.remove(
     "visible"
   );
+
+  resultsSection.hidden = true;
+  resultsSection.style.display = "none";
+}
 
   [
     resultCanvas,
