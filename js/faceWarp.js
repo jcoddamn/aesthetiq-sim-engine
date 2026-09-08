@@ -9,7 +9,7 @@ import {
 
 import {
   displaceLipSkin
-} from "./lipSkinDisplacement.js?v=2";
+} from "./lipSkinDisplacement.js?v=3";
 
 import {
   applyLipBiomechanics
