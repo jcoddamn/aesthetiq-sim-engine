@@ -1177,21 +1177,25 @@ viewingOriginal = false;
       block: "start"
     });
 
-  } catch (error) {
-    console.error(
-      "[AesthetIQ] Simulation failed:",
-      error
-    );
+   } catch (error) {
+  const message =
+    error?.message ||
+    String(error);
 
-    const message =
-      error?.message ||
-      String(error);
+  console.error(
+    "[AesthetIQ] Simulation failed:",
+    error
+  );
 
-    setStatus(
-      `Simulation failed: ${message}`,
-      "error"
-    );
-  } finally {
+  alert(
+    `SIMULATION FAILED\n\n${message}`
+  );
+
+  setStatus(
+    `Simulation failed: ${message}`,
+    "error"
+  );
+} finally {
     setCaptureLoading(false);
   }
 }
