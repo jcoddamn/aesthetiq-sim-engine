@@ -689,6 +689,22 @@ export function runProcedureSimulation({
   const normalizedProcedure =
     normalizeProcedureId(procedure);
 
+  // NATURAL
+  const naturalResult =
+    createSimulationLevel({
+      normalizedProcedure,
+      level: "natural",
+      landmarks,
+      sourceCanvas,
+      anatomyProfile,
+      tissueModel,
+      lipStyle,
+      lipProduct,
+      blurPx,
+      mirrorX
+    });
+
+  // BALANCED
   const balancedResult =
     createSimulationLevel({
       normalizedProcedure,
@@ -703,20 +719,35 @@ export function runProcedureSimulation({
       mirrorX
     });
 
+  // ENHANCED
+  const enhancedResult =
+    createSimulationLevel({
+      normalizedProcedure,
+      level: "enhanced",
+      landmarks,
+      sourceCanvas,
+      anatomyProfile,
+      tissueModel,
+      lipStyle,
+      lipProduct,
+      blurPx,
+      mirrorX
+    });
+
   console.log(
-    "[AesthetIQ] LEVEL TEST",
+    "[AesthetIQ] LEVEL RESULTS",
     {
       procedure:
         normalizedProcedure,
 
-      hasCanvas:
+      natural:
+        !!naturalResult?.canvas,
+
+      balanced:
         !!balancedResult?.canvas,
 
-      polygonCount:
-        balancedResult?.polygons?.length,
-
-      hasMask:
-        !!balancedResult?.maskCanvas
+      enhanced:
+        !!enhancedResult?.canvas
     }
   );
 
@@ -734,6 +765,7 @@ export function runProcedureSimulation({
       copyCanvas(sourceCanvas),
 
     naturalCanvas:
+      naturalResult?.canvas ||
       copyCanvas(sourceCanvas),
 
     balancedCanvas:
@@ -741,6 +773,7 @@ export function runProcedureSimulation({
       copyCanvas(sourceCanvas),
 
     enhancedCanvas:
+      enhancedResult?.canvas ||
       copyCanvas(sourceCanvas)
   };
 }
