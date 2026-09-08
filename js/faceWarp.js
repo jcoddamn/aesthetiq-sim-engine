@@ -712,8 +712,10 @@ moveGroup(
     };
   });
 
-  // Central tubercle fullness.
-  [0, 13].forEach((index) => {
+  // Central vermilion fullness.
+// Landmark 0 is already controlled by the
+// Cupid's-bow shaping above.
+[13].forEach((index) => {
     const point =
       result[index];
 
