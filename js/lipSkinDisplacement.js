@@ -427,13 +427,13 @@ lowerLipSeamPoints.forEach(
      * but still weaker than the actual lip.
      */
     const seamStrength =
-      Math.min(
-        0.78,
-        Math.max(
-          0.42,
-          strength * 1.45
-        )
-      );
+  Math.min(
+    0.44,
+    Math.max(
+      0.34,
+      strength * 1.7
+    )
+  );
 
     result[skinIndex] = {
       ...result[skinIndex],
