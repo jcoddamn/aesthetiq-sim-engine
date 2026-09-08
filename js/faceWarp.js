@@ -192,7 +192,7 @@ const baseLevelStrength =
   level === "natural"
     ? 0.4
     : level === "enhanced"
-    ? 0.82
+    ? 0.72
     : 0.6;
 
 const levelStrength =
