@@ -561,7 +561,7 @@ moveGroup(
 moveGroup(
   lowerOuter,
   1,
-  0.0105 *
+  0.0082 *
     lowerVolume *
     verticalLift *
     levelStrength,
@@ -575,7 +575,7 @@ moveGroup(
 moveGroup(
   lowerInner,
   1,
-  0.0028 *
+  0.0022 *
     lowerVolume *
     verticalLift *
     levelStrength,
@@ -643,7 +643,7 @@ moveGroup(
       ...point,
       y:
         point.y +
-        0.0022 *
+        0.0014 *
         lowerVolume *
         levelStrength *
         centerInfluence
