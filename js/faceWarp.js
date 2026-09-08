@@ -1014,10 +1014,10 @@ const biomechanicalResult =
 
 const skinStrength =
   level === "natural"
-    ? 0.42
+    ? 0.2
     : level === "enhanced"
-    ? 0.18
-    : 0.3;
+    ? 0.48
+    : 0.33;
 
 return displaceLipSkin(
   landmarks,
