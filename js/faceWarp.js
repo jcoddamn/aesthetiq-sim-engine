@@ -190,10 +190,10 @@ const tissueDeformationStrength =
   
 const baseLevelStrength =
   level === "natural"
-    ? 0.4
+    ? 0.34
     : level === "enhanced"
     ? 0.72
-    : 0.6;
+    : 0.54;
 
 const levelStrength =
   baseLevelStrength *
