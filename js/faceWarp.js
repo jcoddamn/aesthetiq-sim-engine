@@ -1,23 +1,23 @@
 import {
   getLipIntensityProfile,
   getLipStyleProfile
-} from "./lipProfiles.js";
+} from "./lipProfiles.js?v=2";
 
 import {
   applyLipSoftTissue
-} from "./lipSoftTissue.js";
+} from "./lipSoftTissue.js?v=2";
 
 import {
   displaceLipSkin
-} from "./lipSkinDisplacement.js";
+} from "./lipSkinDisplacement.js?v=2";
 
 import {
   applyLipBiomechanics
-} from "./lipBiomechanics.js";
+} from "./lipBiomechanics.js?v=2";
 
 import {
   getLipProfile
-} from "./lipAnatomy.js";
+} from "./lipAnatomy.js?v=2";
 
 /*
 =========================================================
