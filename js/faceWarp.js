@@ -1,7 +1,7 @@
 import {
   getLipIntensityProfile,
   getLipStyleProfile
-} from "./lipProfiles.js?v=2";
+} from "./lipProfiles.js?v=3";
 
 import {
   applyLipSoftTissue
