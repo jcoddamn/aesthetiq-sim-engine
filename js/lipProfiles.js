@@ -84,21 +84,19 @@ export const LIP_STYLE_PROFILES = {
   },
 
   russian: {
-    id: "russian",
-    name: "Russian Lips",
+  upperVolume: 1.08,
+  lowerVolume: 0.92,
 
-    upperVolume: 1.18,
-    lowerVolume: 0.88,
+  horizontalVolume: 0.72,
 
-    verticalLift: 1.32,
-    horizontalVolume: 0.68,
-    projection: 0.66,
+  cupidBow: 1.22,
+  borderDefinition: 1.12,
+  centralTubercle: 1.15,
+  cornerLift: 0.9,
 
-    cupidBow: 1.38,
-    centralTubercle: 1.18,
-    borderDefinition: 1.2,
-    cornerLift: 0.72
-  },
+  verticalLift: 1.28,
+  projection: 0.86
+}
 
   heart: {
     id: "heart",
