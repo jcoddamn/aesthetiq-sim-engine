@@ -1014,21 +1014,90 @@ const biomechanicalResult =
     combinedAnatomyStrength
   );
 
+// =========================================================
+// LOWER-LIP CENTER SMOOTHING
+// Prevent the lower lip from forming a pointed/V center.
+// =========================================================
+
+const smoothedBiomechanics =
+  biomechanicalResult.map(
+    (point) => ({
+      ...point
+    })
+  );
+
+const lowerCenterPoint =
+  smoothedBiomechanics[17];
+
+const lowerLeftPoint =
+  smoothedBiomechanics[84];
+
+const lowerRightPoint =
+  smoothedBiomechanics[314];
+
+if (
+  lowerCenterPoint &&
+  lowerLeftPoint &&
+  lowerRightPoint
+) {
+  const neighborY =
+    (
+      lowerLeftPoint.y +
+      lowerRightPoint.y
+    ) / 2;
+
+  smoothedBiomechanics[17] = {
+    ...lowerCenterPoint,
+
+    y:
+      lowerCenterPoint.y * 0.4 +
+      neighborY * 0.6
+  };
+}
+
+const innerLowerCenter =
+  smoothedBiomechanics[14];
+
+const innerLowerLeft =
+  smoothedBiomechanics[87];
+
+const innerLowerRight =
+  smoothedBiomechanics[317];
+
+if (
+  innerLowerCenter &&
+  innerLowerLeft &&
+  innerLowerRight
+) {
+  const neighborY =
+    (
+      innerLowerLeft.y +
+      innerLowerRight.y
+    ) / 2;
+
+  smoothedBiomechanics[14] = {
+    ...innerLowerCenter,
+
+    y:
+      innerLowerCenter.y * 0.5 +
+      neighborY * 0.5
+  };
+}
+
 const skinStrength =
   level === "natural"
-    ? 0.2
+    ? 0.18
     : level === "enhanced"
-    ? 0.48
-    : 0.33;
+    ? 0.24
+    : 0.21;
 
 return displaceLipSkin(
   landmarks,
-  biomechanicalResult,
+  smoothedBiomechanics,
   skinStrength *
     safeAnatomyStrength *
     skinMobility
 );
-}
 
 /*
 =========================================================
