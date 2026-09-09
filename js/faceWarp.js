@@ -1099,6 +1099,7 @@ return displaceLipSkin(
     safeAnatomyStrength *
     skinMobility
 );
+}
 
 /*
 =========================================================
