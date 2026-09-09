@@ -650,30 +650,31 @@ moveGroup(
     };
   });
 
-  // Preserve and sharpen Cupid's bow.
-  cupidBow.forEach((index) => {
-    const point =
-      result[index];
+  // Preserve and shape Cupid's bow.
+cupidBow.forEach((index) => {
+  const point =
+    result[index];
 
-    if (!point) {
-      return;
-    }
+  if (!point) {
+    return;
+  }
 
-    const centerInfluence =
-  index === 0
-    ? 0.32
-    : 1;
+  const centerInfluence =
+    index === 0
+      ? 0.18
+      : 1;
 
-    result[index] = {
-      ...point,
-      y:
-        point.y -
-        0.0028 *
-        cupidBowStrength *
-        levelStrength *
-        centerInfluence
-    };
-  });
+  result[index] = {
+    ...point,
+
+    y:
+      point.y -
+      0.0024 *
+      cupidBowStrength *
+      levelStrength *
+      centerInfluence
+  };
+});
 
   // Slightly define the outer vermilion border.
   upperOuter.forEach((index) => {
