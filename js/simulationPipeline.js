@@ -51,8 +51,55 @@ import {
 const meshRenderer =
   new MeshRenderer();
 
+const LIP_RENDER_INDICES =
+  new Set([
+    // Outer upper lip
+    61, 185, 40, 39, 37,
+    0, 267, 269, 270, 409, 291,
+
+    // Outer lower lip
+    146, 91, 181, 84,
+    17, 314, 405, 321, 375,
+
+    // Inner upper lip
+    78, 191, 80, 81, 82,
+    13, 312, 311, 310, 415, 308,
+
+    // Inner lower lip
+    95, 88, 178, 87,
+    14, 317, 402, 318, 324,
+
+    // Immediate upper-lip skin
+    164, 167, 165, 92, 186,
+    57, 43, 106, 182, 83,
+    18, 313, 406, 335, 273,
+    287, 410, 322, 391, 393,
+
+    // Immediate side transition
+    205, 50, 187, 207,
+    206, 203, 129, 202, 214,
+    425, 280, 411, 427,
+    426, 423, 358, 422, 434,
+
+    // Lower-lip transition
+    200, 199, 175,
+    208, 201, 194,
+    428, 421, 418
+  ]);
+
+const lipTriangles =
+  getFaceTriangles().filter(
+    (triangle) =>
+      Array.isArray(triangle) &&
+      triangle.length >= 3 &&
+      triangle.every(
+        (index) =>
+          LIP_RENDER_INDICES.has(index)
+      )
+  );
+
 meshRenderer.setTriangles(
-  getFaceTriangles()
+  lipTriangles
 );
 
 // Keep enabled while testing facial regions.
