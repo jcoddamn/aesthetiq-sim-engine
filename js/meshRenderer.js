@@ -433,94 +433,189 @@ return {
   ctx.restore();
 }
 
-  drawTriangle(
-    ctx,
-    sourceCanvas,
-    triangle,
-    original,
-    warped
+expandTriangle(
+  points,
+  pixels = 1.2
+) {
+  if (
+    !Array.isArray(points) ||
+    points.length < 3
   ) {
-    if (
-      !Array.isArray(triangle) ||
-      triangle.length < 3
-    ) {
-      return;
-    }
-
-    const sourceTriangle =
-      this.triangleToCanvas(
-        triangle,
-        original,
-        sourceCanvas.width,
-        sourceCanvas.height
-      );
-
-    const targetTriangle =
-      this.triangleToCanvas(
-        triangle,
-        warped,
-        sourceCanvas.width,
-        sourceCanvas.height
-      );
-
-    if (
-      sourceTriangle.some(
-        (point) => !point
-      ) ||
-      targetTriangle.some(
-        (point) => !point
-      )
-    ) {
-      return;
-    }
-
-    const transform =
-      this.getAffineTransform(
-        sourceTriangle,
-        targetTriangle
-      );
-
-    if (!transform) {
-      return;
-    }
-
-    ctx.save();
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      targetTriangle[0].x,
-      targetTriangle[0].y
-    );
-
-    ctx.lineTo(
-      targetTriangle[1].x,
-      targetTriangle[1].y
-    );
-
-    ctx.lineTo(
-      targetTriangle[2].x,
-      targetTriangle[2].y
-    );
-
-    ctx.closePath();
-    ctx.clip();
-
-    ctx.setTransform(
-      transform.a,
-      transform.b,
-      transform.c,
-      transform.d,
-      transform.e,
-      transform.f
-    );
-
-    ctx.drawImage(
-      sourceCanvas,
-      0,
-      0
-    );
-
-    ctx.restore();
+    return points;
   }
+
+  const centerX =
+    (
+      points[0].x +
+      points[1].x +
+      points[2].x
+    ) / 3;
+
+  const centerY =
+    (
+      points[0].y +
+      points[1].y +
+      points[2].y
+    ) / 3;
+
+  return points.map((point) => {
+    const deltaX =
+      point.x - centerX;
+
+    const deltaY =
+      point.y - centerY;
+
+    const distance =
+      Math.sqrt(
+        deltaX * deltaX +
+        deltaY * deltaY
+      );
+
+    if (
+      !Number.isFinite(distance) ||
+      distance < 0.0001
+    ) {
+      return {
+        ...point
+      };
+    }
+
+    return {
+      x:
+        point.x +
+        (
+          deltaX /
+          distance
+        ) * pixels,
+
+      y:
+        point.y +
+        (
+          deltaY /
+          distance
+        ) * pixels
+    };
+  });
+}
+
+  drawTriangle(
+  ctx,
+  sourceCanvas,
+  triangle,
+  original,
+  warped
+) {
+  if (
+    !Array.isArray(triangle) ||
+    triangle.length < 3
+  ) {
+    return;
+  }
+
+  const sourceTriangle =
+    this.triangleToCanvas(
+      triangle,
+      original,
+      sourceCanvas.width,
+      sourceCanvas.height
+    );
+
+  const targetTriangle =
+    this.triangleToCanvas(
+      triangle,
+      warped,
+      sourceCanvas.width,
+      sourceCanvas.height
+    );
+
+  if (
+    sourceTriangle.some(
+      (point) => !point
+    ) ||
+    targetTriangle.some(
+      (point) => !point
+    )
+  ) {
+    return;
+  }
+
+  const transform =
+    this.getAffineTransform(
+      sourceTriangle,
+      targetTriangle
+    );
+
+  if (!transform) {
+    return;
+  }
+
+  /*
+   * IMPORTANT:
+   * Expand only the clipping triangle.
+   *
+   * The actual affine transform still uses the
+   * real landmark positions.
+   *
+   * This creates a tiny overlap between neighboring
+   * mesh triangles and prevents visible Safari seams.
+   */
+  const clipTriangle =
+    this.expandTriangle(
+      targetTriangle,
+      1.2
+    );
+
+  ctx.save();
+
+  ctx.setTransform(
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  );
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    clipTriangle[0].x,
+    clipTriangle[0].y
+  );
+
+  ctx.lineTo(
+    clipTriangle[1].x,
+    clipTriangle[1].y
+  );
+
+  ctx.lineTo(
+    clipTriangle[2].x,
+    clipTriangle[2].y
+  );
+
+  ctx.closePath();
+  ctx.clip();
+
+  ctx.imageSmoothingEnabled =
+    true;
+
+  ctx.imageSmoothingQuality =
+    "high";
+
+  ctx.setTransform(
+    transform.a,
+    transform.b,
+    transform.c,
+    transform.d,
+    transform.e,
+    transform.f
+  );
+
+  ctx.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
+
+  ctx.restore();
 }
