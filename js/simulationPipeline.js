@@ -25,7 +25,7 @@ import {
   warpChin,
   warpCheeks,
   warpJawline
-} from "./faceWarp.js?v=9";
+} from "./faceWarp.js?v=11";
 
 import {
   renderWarp,
