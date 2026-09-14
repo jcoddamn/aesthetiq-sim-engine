@@ -252,13 +252,13 @@ return {
         warpedLandmarks
       );
     }
-
+/*
     this.blendLowerLipSeam(
   output,
   sourceCanvas,
   warpedLandmarks
 );
-
+*/
     ctx.setTransform(
       1,
       0,
