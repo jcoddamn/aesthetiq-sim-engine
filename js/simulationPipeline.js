@@ -34,7 +34,7 @@ import {
 
 import {
   MeshRenderer
-} from "./meshRenderer.js?v=5";
+} from "./meshRenderer.js?v=6";
 
 import {
   applySoftTissueLighting
