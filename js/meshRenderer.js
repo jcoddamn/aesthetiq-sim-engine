@@ -562,7 +562,7 @@ expandTriangle(
   const clipTriangle =
     this.expandTriangle(
       targetTriangle,
-      1.2
+      0.5
     );
 
   ctx.save();
