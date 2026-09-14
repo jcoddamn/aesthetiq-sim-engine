@@ -1040,7 +1040,7 @@ const projectionStrength =
   level === "natural"
     ? 0.0018
     : level === "enhanced"
-    ? 0.0048
+    ? 0.0040
     : 0.0032;
 
 const projectionAmount =
