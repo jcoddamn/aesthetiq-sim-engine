@@ -1108,7 +1108,7 @@ function generateSimulation(
         lipProduct:
           selectedLipProduct,
 
-        blurPx: 18,
+        blurPx: 8,
 
         mirrorX: false
       });
