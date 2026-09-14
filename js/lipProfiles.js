@@ -84,18 +84,27 @@ export const LIP_STYLE_PROFILES = {
   },
 
   russian: {
-  upperVolume: 1.08,
-  lowerVolume: 0.92,
+  id: "russian",
+  name: "Russian Lips",
 
-  horizontalVolume: 0.72,
+  // More emphasis on upper-lip height.
+  upperVolume: 1.18,
+  lowerVolume: 0.94,
 
-  cupidBow: 1.22,
-  borderDefinition: 1.12,
-  centralTubercle: 1.15,
-  cornerLift: 0.9,
+  // Build height instead of width.
+  verticalLift: 1.34,
+  horizontalVolume: 0.58,
 
-  verticalLift: 1.28,
-  projection: 0.86
+  // Russian lips should look everted,
+  // not simply projected forward.
+  projection: 0.78,
+
+  cupidBow: 1.38,
+  centralTubercle: 1.24,
+  borderDefinition: 1.2,
+
+  // Keep corners relatively anchored.
+  cornerLift: 0.78
 },
 
   heart: {
