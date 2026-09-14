@@ -619,3 +619,5 @@ expandTriangle(
 
   ctx.restore();
 }
+
+}
