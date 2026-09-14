@@ -678,19 +678,22 @@ cupidBow.forEach((index) => {
 
 // =========================================================
 // RUSSIAN LIP SHAPING
-// Adds central height, upper-lip eversion,
-// and controlled width.
+// Broader M-shaped upper lip with controlled center dip,
+// limited width, and stronger vertical eversion.
 // =========================================================
 
 if (lipStyle === "russian") {
   const russianStrength =
     level === "natural"
-      ? 0.55
+      ? 0.52
       : level === "enhanced"
       ? 1
-      : 0.78;
+      : 0.76;
 
-  // Cupid's-bow peaks
+  /*
+   * Main Cupid's-bow peaks.
+   * These should be the highest points.
+   */
   [37, 267].forEach((index) => {
     const point = result[index];
 
@@ -700,13 +703,244 @@ if (lipStyle === "russian") {
 
     result[index] = {
       ...point,
+
       y:
         point.y -
-        0.0018 *
+        0.0019 *
         russianStrength *
         safeAnatomyStrength
     };
   });
+
+  /*
+   * Keep landmark 0 slightly LOWER than
+   * the two Cupid's-bow peaks.
+   *
+   * This creates an M-shaped upper lip
+   * instead of one pointed central peak.
+   */
+  const upperCenterPeak =
+    result[0];
+
+  const leftPeak =
+    result[37];
+
+  const rightPeak =
+    result[267];
+
+  if (
+    upperCenterPeak &&
+    leftPeak &&
+    rightPeak
+  ) {
+    const peakAverageY =
+      (
+        leftPeak.y +
+        rightPeak.y
+      ) / 2;
+
+    result[0] = {
+      ...upperCenterPeak,
+
+      y:
+        upperCenterPeak.y * 0.35 +
+        (
+          peakAverageY +
+          0.00115 *
+          russianStrength
+        ) * 0.65
+    };
+  }
+
+  /*
+   * Lift the shoulders of the Cupid's bow.
+   * This broadens the upper-lip arc instead
+   * of concentrating everything at the center.
+   */
+  [39, 269].forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      y:
+        point.y -
+        0.00125 *
+        russianStrength *
+        safeAnatomyStrength
+    };
+  });
+
+  /*
+   * Smaller lift farther toward the sides.
+   */
+  [40, 270].forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      y:
+        point.y -
+        0.00065 *
+        russianStrength *
+        safeAnatomyStrength
+    };
+  });
+
+  /*
+   * Evert the central wet-line portion upward.
+   * This gives the "rolled-out" upper-lip appearance
+   * seen in Russian filler results.
+   */
+  [82, 13, 312].forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      y:
+        point.y -
+        0.00115 *
+        russianStrength *
+        safeAnatomyStrength
+    };
+  });
+
+  /*
+   * Gentle support immediately outside
+   * the central wet-line.
+   */
+  [81, 311].forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      y:
+        point.y -
+        0.00065 *
+        russianStrength
+    };
+  });
+
+  /*
+   * Do NOT let Russian lips widen aggressively.
+   * Pull the major upper-lip side points back toward
+   * their original horizontal position.
+   */
+  [185, 40, 270, 409].forEach((index) => {
+    const point =
+      result[index];
+
+    const originalPoint =
+      landmarks[index];
+
+    if (
+      !point ||
+      !originalPoint
+    ) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      x:
+        originalPoint.x +
+        (
+          point.x -
+          originalPoint.x
+        ) * 0.58
+    };
+  });
+
+  /*
+   * Strongly anchor the mouth corners.
+   */
+  [61, 291].forEach((index) => {
+    const point =
+      result[index];
+
+    const originalPoint =
+      landmarks[index];
+
+    if (
+      !point ||
+      !originalPoint
+    ) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+
+      x:
+        originalPoint.x +
+        (
+          point.x -
+          originalPoint.x
+        ) * 0.18,
+
+      y:
+        originalPoint.y +
+        (
+          point.y -
+          originalPoint.y
+        ) * 0.45
+    };
+  });
+
+  /*
+   * Keep the lower lip rounded and supportive.
+   * Russian style should emphasize the upper lip,
+   * not create a pointed lower center.
+   */
+  const lowerLeft =
+    result[84];
+
+  const lowerCenterPoint =
+    result[17];
+
+  const lowerRight =
+    result[314];
+
+  if (
+    lowerLeft &&
+    lowerCenterPoint &&
+    lowerRight
+  ) {
+    const neighborY =
+      (
+        lowerLeft.y +
+        lowerRight.y
+      ) / 2;
+
+    result[17] = {
+      ...lowerCenterPoint,
+
+      y:
+        lowerCenterPoint.y * 0.3 +
+        neighborY * 0.7
+    };
+  }
+}
 
   // Upper vermilion center
   [82, 13, 312].forEach((index) => {
