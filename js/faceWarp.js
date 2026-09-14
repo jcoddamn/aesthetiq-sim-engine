@@ -757,7 +757,7 @@ if (lipStyle === "russian") {
    * This broadens the upper-lip arc instead
    * of concentrating everything at the center.
    */
-  [39, 269].forEach((index) => {
+  [40, 39, 269, 270].forEach((index) => {
     const point = result[index];
 
     if (!point) {
@@ -769,32 +769,12 @@ if (lipStyle === "russian") {
 
       y:
         point.y -
-        0.00125 *
+        0.0011 *
         russianStrength *
         safeAnatomyStrength
     };
   });
 
-  /*
-   * Smaller lift farther toward the sides.
-   */
-  [40, 270].forEach((index) => {
-    const point = result[index];
-
-    if (!point) {
-      return;
-    }
-
-    result[index] = {
-      ...point,
-
-      y:
-        point.y -
-        0.00065 *
-        russianStrength *
-        safeAnatomyStrength
-    };
-  });
 
   /*
    * Evert the central wet-line portion upward.
