@@ -706,7 +706,7 @@ if (lipStyle === "russian") {
 
       y:
         point.y -
-        0.0019 *
+        0.0025 *
         russianStrength *
         safeAnatomyStrength
     };
