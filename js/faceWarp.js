@@ -774,37 +774,45 @@ if (lipStyle === "russian") {
    * instead of one pointed central peak.
    */
   const upperCenterPeak =
-    result[0];
+  result[0];
 
-  const leftPeak =
-    result[37];
+const leftPeak =
+  result[37];
 
-  const rightPeak =
-    result[267];
+const rightPeak =
+  result[267];
 
-  if (
-    upperCenterPeak &&
-    leftPeak &&
-    rightPeak
-  ) {
-    const peakAverageY =
-      (
-        leftPeak.y +
-        rightPeak.y
-      ) / 2;
+if (
+  upperCenterPeak &&
+  leftPeak &&
+  rightPeak
+) {
+  const peakAverageY =
+    (
+      leftPeak.y +
+      rightPeak.y
+    ) / 2;
 
-    result[0] = {
-      ...upperCenterPeak,
+  /*
+   * Russian lip:
+   * keep landmark 0 distinctly BELOW
+   * the two Cupid's-bow peaks.
+   *
+   * Positive Y = downward.
+   */
+  const russianNotchDepth =
+    0.0018 *
+    russianStrength *
+    safeAnatomyStrength;
 
-      y:
-        upperCenterPeak.y * 0.35 +
-        (
-          peakAverageY +
-          0.00115 *
-          russianStrength
-        ) * 0.65
-    };
-  }
+  result[0] = {
+    ...upperCenterPeak,
+
+    y:
+      peakAverageY +
+      russianNotchDepth
+  };
+}
 
   /*
    * Lift the shoulders of the Cupid's bow.
