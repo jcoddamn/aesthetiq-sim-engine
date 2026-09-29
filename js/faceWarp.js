@@ -651,30 +651,84 @@ moveGroup(
   });
 
   // Preserve and shape Cupid's bow.
-cupidBow.forEach((index) => {
-  const point =
-    result[index];
+//
+// 37 and 267 form the two peaks.
+// 0 forms the center notch.
+//
+// Canvas Y increases downward, so:
+// peaks move slightly UP (-Y)
+// center notch moves slightly DOWN (+Y)
 
-  if (!point) {
-    return;
-  }
+const leftCupidPeak =
+  result[37];
 
-  const centerInfluence =
-    index === 0
-      ? 0.18
-      : 1;
+const cupidNotch =
+  result[0];
 
-  result[index] = {
-    ...point,
+const rightCupidPeak =
+  result[267];
+
+if (
+  leftCupidPeak &&
+  cupidNotch &&
+  rightCupidPeak
+) {
+  const peakLift =
+    0.0016 *
+    cupidBowStrength *
+    levelStrength;
+
+  /*
+   * Lift both Cupid's-bow peaks.
+   */
+  result[37] = {
+    ...leftCupidPeak,
+    y:
+      leftCupidPeak.y -
+      peakLift
+  };
+
+  result[267] = {
+    ...rightCupidPeak,
+    y:
+      rightCupidPeak.y -
+      peakLift
+  };
+
+  /*
+   * Calculate the new height of the
+   * two peaks.
+   */
+  const peakAverageY =
+    (
+      result[37].y +
+      result[267].y
+    ) / 2;
+
+  /*
+   * Put landmark 0 BELOW the peaks.
+   *
+   * This explicitly preserves the
+   * Cupid's-bow notch rather than
+   * allowing the upper border to
+   * become a straight line.
+   */
+  const notchDepth =
+    0.00125 *
+    cupidBowStrength *
+    levelStrength;
+
+  result[0] = {
+    ...cupidNotch,
 
     y:
-      point.y -
-      0.0024 *
-      cupidBowStrength *
-      levelStrength *
-      centerInfluence
+      Math.max(
+        cupidNotch.y,
+        peakAverageY +
+          notchDepth
+      )
   };
-});
+}
 
 // =========================================================
 // RUSSIAN LIP SHAPING
