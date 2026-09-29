@@ -209,67 +209,258 @@ return {
   }
 
   render(
-    sourceCanvas,
-    originalLandmarks,
-    warpedLandmarks
-  ) {
-    if (
-      !sourceCanvas ||
-      !Array.isArray(originalLandmarks) ||
-      !Array.isArray(warpedLandmarks)
-    ) {
-      return sourceCanvas;
-    }
-
-    const output =
-      document.createElement("canvas");
-
-    output.width =
-      sourceCanvas.width;
-
-    output.height =
-      sourceCanvas.height;
-
-    const ctx =
-      output.getContext("2d");
-
-    if (!ctx) {
-      return sourceCanvas;
-    }
-
-    ctx.drawImage(
-      sourceCanvas,
-      0,
-      0
-    );
-
-    for (const triangle of this.triangles) {
-      this.drawTriangle(
-        ctx,
-        sourceCanvas,
-        triangle,
-        originalLandmarks,
-        warpedLandmarks
-      );
-    }
-/*
-    this.blendLowerLipSeam(
-  output,
   sourceCanvas,
+  originalLandmarks,
   warpedLandmarks
-);
-*/
-    ctx.setTransform(
-      1,
-      0,
-      0,
-      1,
-      0,
-      0
-    );
+) {
+  if (
+    !sourceCanvas ||
+    !Array.isArray(originalLandmarks) ||
+    !Array.isArray(warpedLandmarks)
+  ) {
+    return sourceCanvas;
+  }
 
+  const width =
+    sourceCanvas.width;
+
+  const height =
+    sourceCanvas.height;
+
+  /*
+   * Final canvas starts as the untouched
+   * original image.
+   */
+  const output =
+    document.createElement("canvas");
+
+  output.width = width;
+  output.height = height;
+
+  const outputCtx =
+    output.getContext("2d");
+
+  if (!outputCtx) {
+    return sourceCanvas;
+  }
+
+  outputCtx.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
+
+  /*
+   * Render all warped triangles onto a
+   * separate temporary canvas first.
+   */
+  const warpedCanvas =
+    document.createElement("canvas");
+
+  warpedCanvas.width = width;
+  warpedCanvas.height = height;
+
+  const warpedCtx =
+    warpedCanvas.getContext("2d");
+
+  if (!warpedCtx) {
     return output;
   }
+
+  /*
+   * Start with the original so there are
+   * no transparent gaps between triangles.
+   */
+  warpedCtx.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
+
+  for (
+    const triangle
+    of this.triangles
+  ) {
+    this.drawTriangle(
+      warpedCtx,
+      sourceCanvas,
+      triangle,
+      originalLandmarks,
+      warpedLandmarks
+    );
+  }
+
+  warpedCtx.setTransform(
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  );
+
+  /*
+   * Build ONE mask around the complete
+   * warped mouth instead of exposing
+   * individual triangle edges.
+   */
+  const lipIndices = [
+    61,
+    185,
+    40,
+    39,
+    37,
+    0,
+    267,
+    269,
+    270,
+    409,
+    291,
+
+    375,
+    321,
+    405,
+    314,
+    17,
+    84,
+    181,
+    91,
+    146
+  ];
+
+  const lipPoints =
+    lipIndices
+      .map((index) =>
+        this.toCanvasPoint(
+          warpedLandmarks[index],
+          width,
+          height
+        )
+      )
+      .filter(Boolean);
+
+  if (lipPoints.length < 3) {
+    return warpedCanvas;
+  }
+
+  const mask =
+    document.createElement("canvas");
+
+  mask.width = width;
+  mask.height = height;
+
+  const maskCtx =
+    mask.getContext("2d");
+
+  if (!maskCtx) {
+    return warpedCanvas;
+  }
+
+  /*
+   * Draw the outer mouth shape.
+   */
+  maskCtx.beginPath();
+
+  maskCtx.moveTo(
+    lipPoints[0].x,
+    lipPoints[0].y
+  );
+
+  for (
+    let i = 1;
+    i < lipPoints.length;
+    i++
+  ) {
+    maskCtx.lineTo(
+      lipPoints[i].x,
+      lipPoints[i].y
+    );
+  }
+
+  maskCtx.closePath();
+
+  maskCtx.fillStyle =
+    "rgba(255,255,255,1)";
+
+  maskCtx.fill();
+
+  /*
+   * Slight feather only at the outside
+   * boundary of the whole lip region.
+   *
+   * This does NOT blur the lip texture.
+   */
+  maskCtx.globalCompositeOperation =
+    "destination-out";
+
+  maskCtx.filter =
+    "blur(2px)";
+
+  maskCtx.globalAlpha =
+    0.22;
+
+  maskCtx.strokeStyle =
+    "rgba(0,0,0,1)";
+
+  maskCtx.lineWidth = 3;
+
+  maskCtx.stroke();
+
+  maskCtx.filter =
+    "none";
+
+  maskCtx.globalAlpha = 1;
+
+  maskCtx.globalCompositeOperation =
+    "source-over";
+
+  /*
+   * Apply the single lip mask to the
+   * completed warped image.
+   */
+  const composite =
+    document.createElement("canvas");
+
+  composite.width = width;
+  composite.height = height;
+
+  const compositeCtx =
+    composite.getContext("2d");
+
+  if (!compositeCtx) {
+    return warpedCanvas;
+  }
+
+  compositeCtx.drawImage(
+    warpedCanvas,
+    0,
+    0
+  );
+
+  compositeCtx.globalCompositeOperation =
+    "destination-in";
+
+  compositeCtx.drawImage(
+    mask,
+    0,
+    0
+  );
+
+  compositeCtx.globalCompositeOperation =
+    "source-over";
+
+  /*
+   * Put the completed warped lip region
+   * over the untouched original.
+   */
+  outputCtx.drawImage(
+    composite,
+    0,
+    0
+  );
+
+  return output;
+}
 
   blendLowerLipSeam(
   outputCanvas,
