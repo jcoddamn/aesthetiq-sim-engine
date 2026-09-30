@@ -811,6 +811,143 @@ if (
   }
 }
 
+function drawFaceMeshOverlay(
+  landmarks
+) {
+  if (
+    !cameraPreview ||
+    !Array.isArray(landmarks)
+  ) {
+    return;
+  }
+
+  const context =
+    cameraPreview.getContext("2d");
+
+  if (!context) {
+    return;
+  }
+
+  const width =
+    cameraPreview.width;
+
+  const height =
+    cameraPreview.height;
+
+  /*
+   * MediaPipe's face connections should
+   * already be available from face_mesh.js.
+   */
+  const connections =
+    globalThis.FACEMESH_TESSELATION;
+
+  context.save();
+
+  context.lineWidth = 0.7;
+
+  context.strokeStyle =
+    "rgba(120, 235, 255, 0.48)";
+
+  /*
+   * Draw the triangular FaceMesh.
+   */
+  if (
+    Array.isArray(connections)
+  ) {
+    context.beginPath();
+
+    connections.forEach(
+      ([firstIndex, secondIndex]) => {
+        const first =
+          landmarks[firstIndex];
+
+        const second =
+          landmarks[secondIndex];
+
+        if (
+          !first ||
+          !second
+        ) {
+          return;
+        }
+
+        /*
+         * Camera preview is mirrored,
+         * so mirror landmark X as well.
+         */
+        const x1 =
+          (1 - first.x) *
+          width;
+
+        const y1 =
+          first.y *
+          height;
+
+        const x2 =
+          (1 - second.x) *
+          width;
+
+        const y2 =
+          second.y *
+          height;
+
+        context.moveTo(
+          x1,
+          y1
+        );
+
+        context.lineTo(
+          x2,
+          y2
+        );
+      }
+    );
+
+    context.stroke();
+  }
+
+  /*
+   * Landmark dots also act as a fallback
+   * if the MediaPipe connection table
+   * isn't available.
+   */
+  context.fillStyle =
+    "rgba(170, 245, 255, 0.72)";
+
+  landmarks.forEach(
+    (point) => {
+      if (
+        !Number.isFinite(point?.x) ||
+        !Number.isFinite(point?.y)
+      ) {
+        return;
+      }
+
+      const x =
+        (1 - point.x) *
+        width;
+
+      const y =
+        point.y *
+        height;
+
+      context.beginPath();
+
+      context.arc(
+        x,
+        y,
+        0.85,
+        0,
+        Math.PI * 2
+      );
+
+      context.fill();
+    }
+  );
+
+  context.restore();
+}
+
 function drawSelectedProcedureRegion(
   landmarks
 ) {
