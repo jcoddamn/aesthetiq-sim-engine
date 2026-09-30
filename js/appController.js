@@ -787,10 +787,24 @@ function drawCameraPreview() {
 
   context.restore();
 
-  if (
-    DEBUG_MODE &&
+/*
+ * Show the facial analysis mesh
+ * while Precision Scan is active.
+ */
+if (
+  precisionCapture.isActive() &&
+  Array.isArray(latestLandmarks) &&
+  latestLandmarks.length >= 468
+) {
+  drawFaceMeshOverlay(
     latestLandmarks
-  ) {
+  );
+}
+
+if (
+  DEBUG_MODE &&
+  latestLandmarks
+) {
     drawSelectedProcedureRegion(
       latestLandmarks
     );
