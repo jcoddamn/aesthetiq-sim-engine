@@ -574,23 +574,87 @@ export function simulateSkinSmoothing(
   maskCanvas,
   level = "balanced"
 ) {
-  const intensity =
-    getIntensityValue(level);
+  /*
+   * Neuromodulator preview:
+   *
+   * Reduce visible line contrast while
+   * preserving normal skin texture.
+   *
+   * Natural  = subtle softening
+   * Balanced = noticeable reduction
+   * Enhanced = stronger reduction
+   */
 
+  const profiles = {
+    natural: {
+      blur: 1.15,
+      brightness: 1.006,
+      contrast: 0.985,
+      opacity: 0.22,
+      feather: 14
+    },
+
+    balanced: {
+      blur: 1.55,
+      brightness: 1.01,
+      contrast: 0.97,
+      opacity: 0.34,
+      feather: 16
+    },
+
+    enhanced: {
+      blur: 2.0,
+      brightness: 1.014,
+      contrast: 0.955,
+      opacity: 0.46,
+      feather: 18
+    }
+  };
+
+  const profile =
+    profiles[level] ||
+    profiles.balanced;
+
+  /*
+   * Feather the treatment boundary so
+   * there is no visible Botox-shaped patch.
+   */
   const featheredMask =
-    featherMask(maskCanvas, 20);
+    featherMask(
+      maskCanvas,
+      profile.feather
+    );
 
+  /*
+   * Create a gently softened version of
+   * the ORIGINAL skin.
+   *
+   * Blur stays intentionally low.
+   * Most real skin texture remains visible.
+   */
   const effectCanvas =
     createEffectLayer(
       sourceCanvas,
-      `brightness(${1 + intensity * 0.04}) contrast(${1 - intensity * 0.05}) blur(${1 + intensity * 2.4}px)`
+      [
+        `brightness(${profile.brightness})`,
+        `contrast(${profile.contrast})`,
+        `blur(${profile.blur}px)`
+      ].join(" ")
     );
 
+  /*
+   * Blend only part of the softened layer
+   * back over the original.
+   *
+   * This keeps pores, lighting and normal
+   * facial texture instead of producing
+   * an airbrushed forehead.
+   */
   return applyMaskedLayer(
     sourceCanvas,
     effectCanvas,
     featheredMask,
-    0.3 + intensity * 0.28
+    profile.opacity
   );
 }
 
