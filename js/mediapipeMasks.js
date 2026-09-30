@@ -54,6 +54,7 @@ const FACE_OVAL = [
 // ---------------------------------------------------------
 
 const FOREHEAD = [
+  // Top center → right side
   10,
   338,
   297,
@@ -61,18 +62,22 @@ const FOREHEAD = [
   284,
   251,
   389,
-  70,
-  63,
-  105,
-  66,
-  107,
-  9,
-  336,
-  296,
-  334,
-  293,
-  300,
   368,
+
+  // Right side → across above brows
+  300,
+  293,
+  334,
+  296,
+  336,
+  9,
+  107,
+  66,
+  105,
+  63,
+  70,
+
+  // Left side → back toward top center
   127,
   162,
   21,
