@@ -17,7 +17,7 @@ import {
   getProcedureMask,
   getProcedureColor,
   normalizeProcedureId
-} from "./procedureMap.js";
+} from "./procedureMap.js?v=2";
 
 import {
   getProcedureById
