@@ -6,7 +6,7 @@
 import {
   getMaskPolygons,
   hasMaskDefinition
-} from "./mediapipeMasks.js";
+} from "./mediapipeMasks.js?v=2";
 
 // ---------------------------------------------------------
 // PROCEDURE CONFIGURATION
