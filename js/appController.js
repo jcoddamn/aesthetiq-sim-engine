@@ -36,6 +36,11 @@ import {
 } from "./neuromodulatorProfiles.js?v=1";
 
 import {
+  getRecoveryTimeline,
+  getRecoveryStage
+} from "./recoveryTimeline.js?v=1";
+
+import {
   drawPolygonOutline
 } from "./maskUtils.js";
 
@@ -104,6 +109,7 @@ let latestLandmarks = null;
 let capturedCanvas = null;
 let simulationResults = null;
 let selectedLevel = "balanced";
+let selectedRecoveryStage = "final";
 let viewingOriginal = false;
 
 const smoothLandmarks =
@@ -145,6 +151,21 @@ const selectedTreatmentElement =
 
 const selectedRecoveryElement =
   document.getElementById("selectedRecovery");
+
+const recoveryTimelineElement =
+  document.getElementById(
+    "recoveryTimeline"
+  );
+
+const recoveryStageTimingElement =
+  document.getElementById(
+    "recoveryStageTiming"
+  );
+
+const recoveryStageNoteElement =
+  document.getElementById(
+    "recoveryStageNote"
+  );
 
 const trackingStatus =
   document.getElementById("trackingStatus");
@@ -363,6 +384,7 @@ function initApp() {
   }
 
   updateProcedureInformation();
+  renderRecoveryTimeline();
   bindControls();
 
   if (DEBUG_MODE) {
@@ -573,6 +595,30 @@ precisionScanButton?.addEventListener(
         }
       );
     });
+
+  recoveryTimelineElement?.addEventListener(
+    "click",
+    (event) => {
+      const button =
+        event.target.closest(
+          ".recovery-stage-button"
+        );
+
+      if (!button) {
+        return;
+      }
+
+      selectedRecoveryStage =
+        button.dataset.stage ||
+        "final";
+
+      viewingOriginal = false;
+
+      updateRecoveryTimelineUI();
+      updateCompareButtons();
+      renderSelectedResult();
+    }
+  );
 
   showOriginalButton?.addEventListener(
     "click",
@@ -1472,6 +1518,123 @@ viewingOriginal = false;
 // RESULT DISPLAY
 // =========================================================
 
+function renderRecoveryTimeline() {
+  if (!recoveryTimelineElement) {
+    return;
+  }
+
+  const timeline =
+    getRecoveryTimeline(
+      currentProcedure
+    );
+
+  recoveryTimelineElement.innerHTML =
+    timeline
+      .map(stage => `
+        <button
+          class="recovery-stage-button"
+          data-stage="${stage.id}"
+          type="button"
+        >
+          ${stage.label}
+        </button>
+      `)
+      .join("");
+
+  updateRecoveryTimelineUI();
+}
+
+function updateRecoveryTimelineUI() {
+  const stage =
+    getRecoveryStage(
+      currentProcedure,
+      selectedRecoveryStage
+    );
+
+  document
+    .querySelectorAll(
+      ".recovery-stage-button"
+    )
+    .forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.stage ===
+          stage.id
+      );
+    });
+
+  if (recoveryStageTimingElement) {
+    recoveryStageTimingElement.textContent =
+      stage.timing;
+  }
+
+  if (recoveryStageNoteElement) {
+    recoveryStageNoteElement.textContent =
+      stage.note;
+  }
+}
+
+function renderRecoveryAdjustedResult(
+  sourceCanvas,
+  targetCanvas
+) {
+  const stage =
+    getRecoveryStage(
+      currentProcedure,
+      selectedRecoveryStage
+    );
+
+  const progress =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        Number(stage.resultProgress) || 0
+      )
+    );
+
+  targetCanvas.width =
+    capturedCanvas.width;
+
+  targetCanvas.height =
+    capturedCanvas.height;
+
+  const context =
+    targetCanvas.getContext("2d");
+
+  if (!context) {
+    return;
+  }
+
+  context.clearRect(
+    0,
+    0,
+    targetCanvas.width,
+    targetCanvas.height
+  );
+
+  context.drawImage(
+    capturedCanvas,
+    0,
+    0,
+    targetCanvas.width,
+    targetCanvas.height
+  );
+
+  context.save();
+  context.globalAlpha = progress;
+
+  context.drawImage(
+    sourceCanvas,
+    0,
+    0,
+    targetCanvas.width,
+    targetCanvas.height
+  );
+
+  context.restore();
+}
+
 function renderSelectedResult() {
   if (
     !resultCanvas ||
@@ -1501,14 +1664,20 @@ function renderSelectedResult() {
     return;
   }
 
-  renderCanvasToElement(
+  renderRecoveryAdjustedResult(
     selectedCanvas,
     resultCanvas
   );
 
   if (resultLabel) {
+    const stage =
+      getRecoveryStage(
+        currentProcedure,
+        selectedRecoveryStage
+      );
+
     resultLabel.textContent =
-      capitalize(selectedLevel);
+      `${capitalize(selectedLevel)} • ${stage.label}`;
   }
 }
 
@@ -1561,7 +1730,10 @@ function updateCompareButtons() {
 function resetSimulation() {
   capturedCanvas = null;
   simulationResults = null;
+  selectedRecoveryStage = "final";
   viewingOriginal = false;
+
+  updateRecoveryTimelineUI();
 
   if (resultsSection) {
   resultsSection.classList.remove(
