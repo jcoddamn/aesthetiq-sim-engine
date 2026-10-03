@@ -216,7 +216,8 @@ export function simulateUnderEyeFiller(
   level = "balanced",
   fillerProduct = "provider",
   fillerGoal = "balanced",
-  neuromodulatorProduct = "botox"
+  neuromodulatorProduct = "botox",
+  procedureOption = ""
 ) {
   const intensity =
     getIntensityValue(level);
@@ -758,6 +759,223 @@ export function simulateSkinSmoothing(
 }
 
 // ---------------------------------------------------------
+// PROCEDURE-SPECIFIC SKIN PREVIEWS
+// ---------------------------------------------------------
+
+function getSkinGoalProfile(
+  procedure,
+  goal = ""
+) {
+  const normalizedGoal =
+    String(goal || "")
+      .trim()
+      .toLowerCase();
+
+  const profiles = {
+    "laser-resurfacing": {
+      default: {
+        brightness: 1.018,
+        contrast: 0.985,
+        saturation: 1.005,
+        blur: 1.15,
+        opacity: 0.32
+      },
+      "texture-refinement": {
+        brightness: 1.012,
+        contrast: 0.975,
+        saturation: 1,
+        blur: 1.45,
+        opacity: 0.36
+      },
+      "tone-refinement": {
+        brightness: 1.025,
+        contrast: 0.99,
+        saturation: 0.985,
+        blur: 0.9,
+        opacity: 0.34
+      }
+    },
+
+    "co2-laser": {
+      default: {
+        brightness: 1.02,
+        contrast: 0.975,
+        saturation: 1,
+        blur: 1.5,
+        opacity: 0.38
+      },
+      "texture-refinement": {
+        brightness: 1.014,
+        contrast: 0.965,
+        saturation: 1,
+        blur: 1.8,
+        opacity: 0.42
+      },
+      "tone-refinement": {
+        brightness: 1.03,
+        contrast: 0.98,
+        saturation: 0.98,
+        blur: 1.15,
+        opacity: 0.38
+      }
+    },
+
+    microneedling: {
+      default: {
+        brightness: 1.01,
+        contrast: 0.985,
+        saturation: 1,
+        blur: 0.9,
+        opacity: 0.28
+      },
+      "texture-refinement": {
+        brightness: 1.008,
+        contrast: 0.978,
+        saturation: 1,
+        blur: 1.25,
+        opacity: 0.33
+      },
+      "surface-smoothing": {
+        brightness: 1.012,
+        contrast: 0.982,
+        saturation: 1,
+        blur: 1.08,
+        opacity: 0.31
+      }
+    },
+
+    "rf-microneedling": {
+      default: {
+        brightness: 1.01,
+        contrast: 0.982,
+        saturation: 1,
+        blur: 1.05,
+        opacity: 0.31
+      },
+      "texture-refinement": {
+        brightness: 1.008,
+        contrast: 0.975,
+        saturation: 1,
+        blur: 1.35,
+        opacity: 0.35
+      },
+      "firmness-emphasis": {
+        brightness: 1.012,
+        contrast: 0.99,
+        saturation: 1,
+        blur: 0.82,
+        opacity: 0.3
+      }
+    },
+
+    ipl: {
+      default: {
+        brightness: 1.018,
+        contrast: 0.992,
+        saturation: 0.985,
+        blur: 0.55,
+        opacity: 0.3
+      },
+      "tone-evening": {
+        brightness: 1.025,
+        contrast: 0.99,
+        saturation: 0.975,
+        blur: 0.5,
+        opacity: 0.34
+      },
+      "redness-softening": {
+        brightness: 1.014,
+        contrast: 0.988,
+        saturation: 0.94,
+        blur: 0.45,
+        opacity: 0.33
+      }
+    }
+  };
+
+  const procedureProfiles =
+    profiles[procedure] ||
+    profiles.microneedling;
+
+  return (
+    procedureProfiles[
+      normalizedGoal
+    ] ||
+    procedureProfiles.default
+  );
+}
+
+export function simulateSkinProcedure(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced",
+  procedure = "microneedling",
+  goal = ""
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const profile =
+    getSkinGoalProfile(
+      procedure,
+      goal
+    );
+
+  const strength =
+    0.72 +
+    intensity * 0.38;
+
+  const featheredMask =
+    featherMask(
+      maskCanvas,
+      procedure === "ipl"
+        ? 20
+        : 24
+    );
+
+  const brightness =
+    1 +
+    (profile.brightness - 1) *
+      strength;
+
+  const contrast =
+    1 +
+    (profile.contrast - 1) *
+      strength;
+
+  const saturation =
+    1 +
+    (profile.saturation - 1) *
+      strength;
+
+  const blur =
+    profile.blur *
+    strength;
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      [
+        `brightness(${brightness})`,
+        `contrast(${contrast})`,
+        `saturate(${saturation})`,
+        `blur(${blur}px)`
+      ].join(" ")
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    Math.min(
+      0.52,
+      profile.opacity *
+        strength
+    )
+  );
+}
+
+// ---------------------------------------------------------
 // TEETH WHITENING
 // ---------------------------------------------------------
 
@@ -978,10 +1196,14 @@ export function applyTreatmentEffect(
     case "laserEye":
     case "laser-resurfacing":
     case "co2-laser":
-      return simulateLaserResurfacing(
+      return simulateSkinProcedure(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        procedure === "laserEye"
+          ? "laser-resurfacing"
+          : procedure,
+        procedureOption
       );
 
     // Lip filler
@@ -1048,10 +1270,12 @@ export function applyTreatmentEffect(
     case "microneedling":
     case "rf-microneedling":
     case "ipl":
-      return simulateSkinSmoothing(
+      return simulateSkinProcedure(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        procedure,
+        procedureOption
       );
 
     // Teeth whitening
