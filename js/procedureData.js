@@ -60,8 +60,8 @@ export const procedures = [
     ],
     candidate:
       "People who have fully healed from a previous rhinoplasty and continue to have functional or cosmetic concerns.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "revision-rhinoplasty",
     featured: false
   },
 
@@ -92,7 +92,7 @@ export const procedures = [
     candidate:
       "Adults with a recessed or underprojected chin who want longer-lasting structural enhancement.",
     simulation: "2D Available",
-    cameraProcedure: "chinImplant",
+    cameraProcedure: "chin-implant",
     featured: true
   },
 
@@ -122,8 +122,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking permanent cheek enhancement or increased midface definition.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "cheek-implants",
     featured: false
   },
 
@@ -154,7 +154,7 @@ export const procedures = [
     candidate:
       "Adults with persistent lower-cheek fullness and stable weight who understand that facial volume naturally decreases with age.",
     simulation: "2D Available",
-    cameraProcedure: "buccalFatRemoval",
+    cameraProcedure: "buccal-fat-removal",
     featured: true
   },
 
@@ -215,8 +215,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with mild to moderate lower-face laxity who may not require a full facelift.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "mini-facelift",
     featured: false
   },
 
@@ -247,7 +247,7 @@ export const procedures = [
     candidate:
       "Adults with low or uneven brows, forehead laxity, or upper-eye heaviness.",
     simulation: "2D Available",
-    cameraProcedure: "browLift",
+    cameraProcedure: "brow-lift",
     featured: false
   },
 
@@ -278,7 +278,7 @@ export const procedures = [
     candidate:
       "Adults with upper-eyelid skin excess or hooding who have been evaluated for eye-health concerns.",
     simulation: "2D Available",
-    cameraProcedure: "upperBlepharoplasty",
+    cameraProcedure: "upper-blepharoplasty",
     featured: true
   },
 
@@ -309,7 +309,7 @@ export const procedures = [
     candidate:
       "Adults with persistent under-eye bags or lower-eyelid skin excess.",
     simulation: "2D Available",
-    cameraProcedure: "lowerBlepharoplasty",
+    cameraProcedure: "lower-blepharoplasty",
     featured: true
   },
 
@@ -339,7 +339,7 @@ export const procedures = [
     ],
     candidate:
       "Adults with neck laxity, visible neck bands, or reduced jawline definition.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: false
   },
@@ -371,7 +371,7 @@ export const procedures = [
     candidate:
       "Adults with a long upper-lip distance who want a permanent structural change rather than filler alone.",
     simulation: "2D Available",
-    cameraProcedure: "lipLift",
+    cameraProcedure: "lip-lift",
     featured: false
   },
 
@@ -402,6 +402,7 @@ export const procedures = [
     candidate:
       "Adults or children with fully developed ears who want to change ear position or shape.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -431,8 +432,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking facial volume enhancement who have enough donor fat and understand that some transferred fat may be reabsorbed.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "facial-fat-transfer",
     featured: false
   },
 
@@ -467,7 +468,7 @@ export const procedures = [
     candidate:
       "Adults seeking temporary lip enhancement who understand that results and product longevity vary.",
     simulation: "2D Available",
-    cameraProcedure: "lipFiller",
+    cameraProcedure: "lip-filler",
     featured: true
   },
 
@@ -498,7 +499,7 @@ export const procedures = [
     candidate:
       "Adults seeking temporary cheek enhancement or age-related volume restoration.",
     simulation: "2D Available",
-    cameraProcedure: "cheekFiller",
+    cameraProcedure: "cheek-filler",
     featured: true
   },
 
@@ -529,7 +530,7 @@ export const procedures = [
     candidate:
       "Adults who want temporary chin enhancement without placement of a permanent implant.",
     simulation: "2D Available",
-    cameraProcedure: "chinFiller",
+    cameraProcedure: "chin-filler",
     featured: true
   },
 
@@ -560,7 +561,7 @@ export const procedures = [
     candidate:
       "Adults seeking temporary jawline enhancement who have appropriate skin support and realistic expectations.",
     simulation: "2D Available",
-    cameraProcedure: "jawlineFiller",
+    cameraProcedure: "jawline-filler",
     featured: true
   },
 
@@ -591,7 +592,7 @@ export const procedures = [
     candidate:
       "Carefully selected adults with under-eye hollowing rather than prominent bags or significant skin laxity.",
     simulation: "2D Available",
-    cameraProcedure: "underEyeFiller",
+    cameraProcedure: "under-eye-filler",
     featured: true
   },
 
@@ -621,8 +622,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with visible temple hollowing who are appropriate candidates for injectable treatment.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "temple-filler",
     featured: false
   },
 
@@ -653,7 +654,7 @@ export const procedures = [
     candidate:
       "Adults with dynamic forehead lines who want a temporary reduction in muscle movement.",
     simulation: "2D Available",
-    cameraProcedure: "foreheadBotox",
+    cameraProcedure: "forehead-neuromodulator",
     featured: true
   },
 
@@ -684,7 +685,7 @@ export const procedures = [
     candidate:
       "Adults with visible expression lines between the eyebrows.",
     simulation: "2D Available",
-    cameraProcedure: "glabellaBotox",
+    cameraProcedure: "glabella-neuromodulator",
     featured: true
   },
 
@@ -715,7 +716,7 @@ export const procedures = [
     candidate:
       "Adults with dynamic lines around the outer eyes.",
     simulation: "2D Available",
-    cameraProcedure: "crowsFeetBotox",
+    cameraProcedure: "crows-feet-neuromodulator",
     featured: false
   },
 
@@ -746,7 +747,7 @@ export const procedures = [
     candidate:
       "Adults seeking a subtle, temporary change in upper-lip position rather than additional volume.",
     simulation: "2D Available",
-    cameraProcedure: "lipFlip",
+    cameraProcedure: "lip-flip",
     featured: false
   },
 
@@ -781,7 +782,7 @@ export const procedures = [
     candidate:
       "Adults seeking improvement in skin tone or texture who have been evaluated for skin type and pigment risk.",
     simulation: "2D Available",
-    cameraProcedure: "chemicalPeel",
+    cameraProcedure: "chemical-peel",
     featured: true
   },
 
@@ -811,8 +812,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with appropriate skin type and treatment goals who can follow strict aftercare and sun protection.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "laser-resurfacing",
     featured: true
   },
 
@@ -842,8 +843,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking gradual skin-texture improvement who do not have active skin infection or certain healing disorders.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "microneedling",
     featured: true
   },
 
@@ -873,8 +874,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking texture or mild tightening improvements who have been evaluated for device and skin-type suitability.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "rf-microneedling",
     featured: false
   },
 
@@ -904,8 +905,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with appropriate skin type and selected pigment or vascular concerns.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "ipl",
     featured: false
   },
 
@@ -935,7 +936,8 @@ export const procedures = [
     ],
     candidate:
       "Carefully selected adults who understand the greater downtime and aftercare associated with ablative resurfacing.",
-    simulation: "Educational",
+    simulation: "2D Available",
+    cameraProcedure: "co2-laser",
     featured: false
   },
 
@@ -969,7 +971,7 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking increased breast volume who understand implant maintenance, alternatives, and long-term follow-up.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: true
   },
@@ -1000,7 +1002,7 @@ export const procedures = [
     ],
     candidate:
       "Adults with breast sagging who have stable weight and realistic expectations about scars.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: false
   },
@@ -1032,6 +1034,7 @@ export const procedures = [
     candidate:
       "Adults experiencing physical or cosmetic concerns related to breast size.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1061,7 +1064,7 @@ export const procedures = [
     ],
     candidate:
       "Adults near a stable weight with localized fat deposits and reasonable skin elasticity.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: true
   },
@@ -1092,7 +1095,7 @@ export const procedures = [
     ],
     candidate:
       "Adults with loose abdominal skin or muscle separation who are near a stable weight and do not plan major future weight changes.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: true
   },
@@ -1124,6 +1127,7 @@ export const procedures = [
     candidate:
       "Adults whose concerns are mainly limited to the lower abdomen.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1153,7 +1157,7 @@ export const procedures = [
     ],
     candidate:
       "Adults with enough donor fat who understand the serious safety considerations and need for a properly trained surgeon.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: true
   },
@@ -1185,6 +1189,7 @@ export const procedures = [
     candidate:
       "Adults seeking buttock augmentation who do not have enough donor fat or prefer implants after reviewing risks.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1215,6 +1220,7 @@ export const procedures = [
     candidate:
       "Adults who have completed pregnancy and breastfeeding, have stable weight, and are healthy enough for combined surgery.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1245,6 +1251,7 @@ export const procedures = [
     candidate:
       "Adults with significant upper-arm skin laxity, often after major weight loss.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1275,6 +1282,7 @@ export const procedures = [
     candidate:
       "Adults with significant thigh skin laxity and stable weight.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1305,6 +1313,7 @@ export const procedures = [
     candidate:
       "Adult men with persistent enlarged breast tissue after medical causes have been considered.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1335,6 +1344,7 @@ export const procedures = [
     candidate:
       "Adults seeking structural chest enhancement who understand implant-related risks.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1365,6 +1375,7 @@ export const procedures = [
     candidate:
       "Adults seeking calf enhancement for cosmetic or reconstructive reasons.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1398,7 +1409,7 @@ export const procedures = [
     ],
     candidate:
       "Adults with suitable donor-hair density and a stable or medically managed pattern of hair loss.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: true
   },
@@ -1430,6 +1441,7 @@ export const procedures = [
     candidate:
       "Adults with adequate donor hair who accept a linear donor scar and need a larger graft session.",
     simulation: "Educational",
+    cameraProcedure: null,
     featured: false
   },
 
@@ -1459,7 +1471,7 @@ export const procedures = [
     ],
     candidate:
       "Adults with suitable donor hair who want increased facial-hair density.",
-    simulation: "Camera Preview",
+    simulation: "Educational",
     cameraProcedure: null,
     featured: false
   },
@@ -1490,8 +1502,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with thin or absent eyebrow areas and suitable donor hair.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "eyebrow-transplant",
     featured: false
   },
 
@@ -1521,8 +1533,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with a naturally high hairline, good scalp flexibility, and no uncontrolled progressive frontal hair loss.",
-    simulation: "2D Available",
-    cameraProcedure: "hairlineLowering",
+    simulation: "Educational",
+    cameraProcedure: null,
     featured: true
   },
 
@@ -1588,7 +1600,7 @@ export const procedures = [
     candidate:
       "Adults with minor cosmetic tooth concerns and healthy underlying teeth.",
     simulation: "2D Available",
-    cameraProcedure: "dentalBonding",
+    cameraProcedure: "dental-bonding",
     featured: true
   },
 
@@ -1619,7 +1631,7 @@ export const procedures = [
     candidate:
       "Adults with healthy teeth and gums whose discoloration is suitable for bleaching.",
     simulation: "2D Available",
-    cameraProcedure: "teethWhitening",
+    cameraProcedure: "teeth-whitening",
     featured: true
   },
 
@@ -1650,7 +1662,7 @@ export const procedures = [
     candidate:
       "Adults with healthy gums who want to adjust gumline shape or tooth exposure.",
     simulation: "2D Available",
-    cameraProcedure: "gumContouring",
+    cameraProcedure: "gum-contouring",
     featured: false
   },
 
@@ -1680,8 +1692,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with multiple cosmetic dental concerns who have completed a full dental evaluation.",
-    simulation: "Camera Preview",
-    cameraProcedure: null,
+    simulation: "2D Available",
+    cameraProcedure: "smile-makeover",
     featured: true
   }
 ];
