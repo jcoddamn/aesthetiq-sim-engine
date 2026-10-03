@@ -2016,7 +2016,8 @@ export function warpRhinoplasty(
 
 export function warpBuccalSlimming(
   landmarks,
-  level = "balanced"
+  level = "balanced",
+  goal = "balanced-contour"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -2024,6 +2025,12 @@ export function warpBuccalSlimming(
 
   const result =
     cloneFaceLandmarks(landmarks);
+
+  const normalizedGoal =
+    String(
+      goal ||
+      "balanced-contour"
+    ).toLowerCase();
 
   const amount =
     levelAmount(
@@ -2043,45 +2050,73 @@ export function warpBuccalSlimming(
     397, 365
   ];
 
-  left.forEach((index, position) => {
-    const point = result[index];
+  const applySide = (
+    indices,
+    direction
+  ) => {
+    indices.forEach(
+      (index, position) => {
+        const point =
+          result[index];
 
-    if (!point) {
-      return;
-    }
+        if (!point) {
+          return;
+        }
 
-    const taper =
-      1 -
-      position /
-        (left.length * 1.5);
+        const t =
+          position /
+          Math.max(
+            1,
+            indices.length - 1
+          );
 
-    result[index] = {
-      ...point,
-      x:
-        point.x +
-        amount * taper
-    };
-  });
+        const midCheekWeight =
+          1 -
+          Math.abs(t - 0.42) *
+            1.35;
 
-  right.forEach((index, position) => {
-    const point = result[index];
+        const lowerTransitionWeight =
+          0.68 +
+          t * 0.4;
 
-    if (!point) {
-      return;
-    }
+        const goalWeight =
+          normalizedGoal ===
+            "mid-cheek-emphasis"
+            ? 0.7 +
+              midCheekWeight * 0.42
+            : normalizedGoal ===
+              "lower-cheek-transition"
+            ? lowerTransitionWeight
+            : 1;
 
-    const taper =
-      1 -
-      position /
-        (right.length * 1.5);
+        const taper =
+          (
+            1 -
+            position /
+              (indices.length * 1.5)
+          ) *
+          Math.max(
+            0.65,
+            Math.min(
+              1.14,
+              goalWeight
+            )
+          );
 
-    result[index] = {
-      ...point,
-      x:
-        point.x -
-        amount * taper
-    };
-  });
+        result[index] = {
+          ...point,
+          x:
+            point.x +
+            direction *
+              amount *
+              taper
+        };
+      }
+    );
+  };
+
+  applySide(left, 1);
+  applySide(right, -1);
 
   return result;
 }
@@ -2487,7 +2522,8 @@ export function warpLowerBlepharoplasty(
 
 export function warpLipLift(
   landmarks,
-  level = "balanced"
+  level = "balanced",
+  goal = "balanced-lip-lift"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -2496,6 +2532,12 @@ export function warpLipLift(
   const result =
     cloneFaceLandmarks(landmarks);
 
+  const normalizedGoal =
+    String(
+      goal ||
+      "balanced-lip-lift"
+    ).toLowerCase();
+
   const lift =
     levelAmount(
       level,
@@ -2503,6 +2545,9 @@ export function warpLipLift(
       0.0022,
       0.0033
     );
+
+  const centerX =
+    landmarks[13]?.x || 0.5;
 
   const upperLip = [
     61, 185, 40, 39, 37,
@@ -2513,28 +2558,54 @@ export function warpLipLift(
     310, 415, 308
   ];
 
-  upperLip.forEach((index) => {
+  upperLip.forEach(index => {
     const point = result[index];
 
     if (!point) {
       return;
     }
 
-    const center =
+    const centerWeight =
       Math.max(
-        0.35,
+        0.25,
         1 -
         Math.abs(
-          point.x -
-          (landmarks[13]?.x || 0.5)
+          point.x - centerX
         ) * 5
       );
+
+    const broadWeight =
+      0.76 +
+      centerWeight * 0.24;
+
+    const cupidWeight =
+      0.52 +
+      centerWeight * 0.58;
+
+    const goalWeight =
+      normalizedGoal ===
+        "central-lip-lift"
+        ? cupidWeight
+        : normalizedGoal ===
+          "broad-upper-lip-lift"
+        ? broadWeight
+        : Math.max(
+            0.35,
+            centerWeight
+          );
 
     result[index] = {
       ...point,
       y:
         point.y -
-        lift * center
+        lift *
+          Math.max(
+            0.35,
+            Math.min(
+              1.12,
+              goalWeight
+            )
+          )
     };
   });
 
