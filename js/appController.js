@@ -1410,6 +1410,9 @@ function generateSimulation(
 
         tissueModel,
 
+        procedureOption:
+          selectedOption,
+
         lipStyle:
           selectedLipStyle,
 
