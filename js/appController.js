@@ -9,7 +9,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=7";
+} from "./simulationPipeline.js?v=8";
 
 import {
   getProcedureLabel,
@@ -17,7 +17,7 @@ import {
   getProcedureMask,
   getProcedureColor,
   normalizeProcedureId
-} from "./procedureMap.js?v=2";
+} from "./procedureMap.js?v=3";
 
 import {
   getProcedureById
