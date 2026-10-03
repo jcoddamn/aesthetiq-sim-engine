@@ -1302,31 +1302,63 @@ function usesNeuromodulatorWizard(
     rhinoplasty: {
       title: "Rhinoplasty",
       description:
-        "Choose the graft or implant option you would like to explore.",
+        "Choose the visual goal you want the educational simulation to emphasize.",
       options: [
         {
-          id: "septal-cartilage",
-          name: "Septal Cartilage",
+          id: "balanced-refinement",
+          name: "Balanced Refinement",
           detail:
-            "Cartilage taken from inside the nose and commonly used for structural support."
+            "A conservative combination of bridge, tip and nasal-base refinement."
         },
         {
-          id: "ear-cartilage",
-          name: "Ear Cartilage",
+          id: "bridge-refinement",
+          name: "Bridge Refinement",
           detail:
-            "Cartilage taken from the ear and shaped for specific nasal areas."
+            "Places more visual emphasis on the nasal bridge while keeping tip and base changes conservative."
         },
         {
-          id: "rib-cartilage",
-          name: "Rib Cartilage",
+          id: "tip-refinement",
+          name: "Tip Refinement",
           detail:
-            "Provides a larger amount of structural cartilage for more complex cases."
+            "Places more visual emphasis on tip definition and rotation while limiting bridge changes."
         },
         {
-          id: "silicone-implant",
-          name: "Silicone Implant",
+          id: "nasal-base-refinement",
+          name: "Nasal Base Refinement",
           detail:
-            "A synthetic nasal implant used in some augmentation procedures."
+            "Places more visual emphasis on the lower nose and base width."
+        }
+      ]
+    },
+
+    "revision-rhinoplasty": {
+      title: "Revision Rhinoplasty",
+      description:
+        "Choose the area you want the educational revision preview to emphasize. Revision changes are intentionally more conservative.",
+      options: [
+        {
+          id: "balanced-refinement",
+          name: "Balanced Refinement",
+          detail:
+            "A conservative overall refinement preview."
+        },
+        {
+          id: "bridge-refinement",
+          name: "Bridge Refinement",
+          detail:
+            "Emphasizes a limited bridge refinement preview."
+        },
+        {
+          id: "tip-refinement",
+          name: "Tip Refinement",
+          detail:
+            "Emphasizes a limited tip refinement preview."
+        },
+        {
+          id: "nasal-base-refinement",
+          name: "Nasal Base Refinement",
+          detail:
+            "Emphasizes a limited nasal-base refinement preview."
         }
       ]
     },
