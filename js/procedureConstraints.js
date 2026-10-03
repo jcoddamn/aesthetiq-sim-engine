@@ -255,6 +255,100 @@ export function getProcedureConstraints({
           0.028
       };
 
+    case "rhinoplasty":
+    case "revision-rhinoplasty":
+      return {
+        ...base,
+        strengthMultiplier:
+          clamp(
+            levelStrength /
+              projectionResistance,
+            0.72,
+            1.12
+          ),
+        maxHorizontalChange: 0.016,
+        maxVerticalChange: 0.014,
+        maxProjectionChange: 0.016
+      };
+
+    case "buccal-fat-removal":
+      return {
+        ...base,
+        strengthMultiplier:
+          clamp(
+            levelStrength *
+              skinMobility,
+            0.7,
+            1.12
+          ),
+        maxHorizontalChange: 0.014,
+        maxVerticalChange: 0.01,
+        maxProjectionChange: 0.01
+      };
+
+    case "facelift":
+    case "mini-facelift":
+      return {
+        ...base,
+        strengthMultiplier:
+          clamp(
+            levelStrength *
+              skinMobility *
+              elasticity,
+            0.72,
+            1.12
+          ),
+        maxHorizontalChange: 0.018,
+        maxVerticalChange: 0.022,
+        maxProjectionChange: 0.012
+      };
+
+    case "brow-lift":
+      return {
+        ...base,
+        strengthMultiplier:
+          clamp(
+            levelStrength *
+              skinMobility,
+            0.75,
+            1.1
+          ),
+        maxHorizontalChange: 0.01,
+        maxVerticalChange: 0.016,
+        maxProjectionChange: 0.008
+      };
+
+    case "upper-blepharoplasty":
+    case "lower-blepharoplasty":
+      return {
+        ...base,
+        strengthMultiplier:
+          clamp(
+            levelStrength *
+              elasticity,
+            0.78,
+            1.08
+          ),
+        maxHorizontalChange: 0.008,
+        maxVerticalChange: 0.009,
+        maxProjectionChange: 0.006
+      };
+
+    case "lip-lift":
+      return {
+        ...base,
+        strengthMultiplier:
+          clamp(
+            levelStrength *
+              skinMobility,
+            0.75,
+            1.1
+          ),
+        maxHorizontalChange: 0.008,
+        maxVerticalChange: 0.012,
+        maxProjectionChange: 0.008
+      };
+
     default:
       return base;
   }
