@@ -1448,15 +1448,28 @@ Chin Projection
 
 export function warpChin(
   landmarks,
-  intensity = "balanced"
+  intensity = "balanced",
+  fillerProduct = "provider"
 ){
 
-  const amount =
+  const fillerProfile =
+    getFillerVisualProfile(
+      fillerProduct,
+      "chin-filler"
+    );
+
+  const baseAmount =
     intensity === "natural"
-      ? 1.03
+      ? 0.03
       : intensity === "balanced"
-      ? 1.08
-      : 1.15;
+      ? 0.08
+      : 0.15;
+
+  const amount =
+    1 +
+    baseAmount *
+      (Number(fillerProfile.projection) || 1) *
+      (Number(fillerProfile.definition) || 1);
 
   const chin = [
     152,
@@ -1489,7 +1502,8 @@ Jawline Definition
 
 export function warpJawline(
   landmarks,
-  intensity = "balanced"
+  intensity = "balanced",
+  fillerProduct = "provider"
 ) {
   if (
     !Array.isArray(landmarks) ||
@@ -1498,12 +1512,22 @@ export function warpJawline(
     return landmarks;
   }
 
+  const fillerProfile =
+    getFillerVisualProfile(
+      fillerProduct,
+      "jawline-filler"
+    );
+
   const strength =
-    intensity === "natural"
-      ? 0.012
-      : intensity === "balanced"
-      ? 0.022
-      : 0.035;
+    (
+      intensity === "natural"
+        ? 0.012
+        : intensity === "balanced"
+        ? 0.022
+        : 0.035
+    ) *
+    (Number(fillerProfile.definition) || 1) *
+    (Number(fillerProfile.projection) || 1);
 
   const result = landmarks.map(
     (landmark) => ({
@@ -1646,15 +1670,28 @@ Cheek Volume
 
 export function warpCheeks(
   landmarks,
-  intensity="balanced"
+  intensity="balanced",
+  fillerProduct = "provider"
 ){
 
-  const amount =
+  const fillerProfile =
+    getFillerVisualProfile(
+      fillerProduct,
+      "cheek-filler"
+    );
+
+  const baseAmount =
     intensity === "natural"
-      ? 1.04
+      ? 0.04
       : intensity === "balanced"
-      ? 1.09
-      : 1.16;
+      ? 0.09
+      : 0.16;
+
+  const amount =
+    1 +
+    baseAmount *
+      (Number(fillerProfile.volume) || 1) *
+      (Number(fillerProfile.projection) || 1);
 
   const leftCheek=[
     234,93,132,58
