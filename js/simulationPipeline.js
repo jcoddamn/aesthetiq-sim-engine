@@ -496,8 +496,7 @@ function createWarpedLandmarks(
       landmarks,
       level,
       fillerProduct,
-      fillerGoal,
-      neuromodulatorProduct
+      fillerGoal
     );
 
   case "chin-implant":
@@ -536,7 +535,7 @@ function createWarpedLandmarks(
         landmarks,
         level,
         procedureOption,
-        normalizedProcedure ===
+        procedure ===
           "revision-rhinoplasty"
       ),
       constraints
