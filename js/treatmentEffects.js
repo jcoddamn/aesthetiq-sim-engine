@@ -1180,25 +1180,83 @@ export function simulateLiftSupport(
 export function simulateDentalSurface(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  dentalMesh = null,
+  procedure = "veneers"
 ) {
   const intensity =
     getIntensityValue(level);
 
+  const confidence =
+    dentalMesh?.valid
+      ? Math.max(
+          0.35,
+          Math.min(
+            1,
+            Number(
+              dentalMesh.confidence
+            ) || 0
+          )
+        )
+      : 0.45;
+
   const featheredMask =
-    featherMask(maskCanvas, 3);
+    featherMask(
+      maskCanvas,
+      dentalMesh?.valid
+        ? 1.4
+        : 3
+    );
+
+  const isBonding =
+    procedure ===
+    "dental-bonding";
+
+  const brightness =
+    1 +
+    intensity *
+      (
+        isBonding
+          ? 0.075
+          : 0.105
+      );
+
+  const contrast =
+    1 +
+    intensity *
+      (
+        isBonding
+          ? 0.02
+          : 0.03
+      );
+
+  const saturation =
+    1 -
+    intensity *
+      (
+        isBonding
+          ? 0.045
+          : 0.07
+      );
 
   const effectCanvas =
     createEffectLayer(
       sourceCanvas,
-      `brightness(${1 + intensity * 0.12}) contrast(${1 + intensity * 0.035}) saturate(${1 - intensity * 0.08})`
+      `brightness(${brightness}) contrast(${contrast}) saturate(${saturation})`
     );
 
   return applyMaskedLayer(
     sourceCanvas,
     effectCanvas,
     featheredMask,
-    0.28 + intensity * 0.28
+    (
+      0.22 +
+      intensity * 0.22
+    ) *
+      (
+        0.78 +
+        confidence * 0.22
+      )
   );
 }
 
@@ -1238,7 +1296,9 @@ export function applyTreatmentEffect(
   level = "balanced",
   fillerProduct = "provider",
   fillerGoal = "balanced",
-  neuromodulatorProduct = "botox"
+  neuromodulatorProduct = "botox",
+  procedureOption = "",
+  dentalMesh = null
 ) {
   switch (procedure) {
     // Under-eye filler
@@ -1394,7 +1454,9 @@ export function applyTreatmentEffect(
       return simulateDentalSurface(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        dentalMesh,
+        procedure
       );
 
     case "gum-contouring":
@@ -1415,7 +1477,9 @@ export function applyTreatmentEffect(
       return simulateDentalSurface(
         whitened,
         maskCanvas,
-        level
+        level,
+        dentalMesh,
+        "veneers"
       );
     }
 
