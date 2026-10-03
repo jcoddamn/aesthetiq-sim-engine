@@ -9,7 +9,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=9";
+} from "./simulationPipeline.js?v=10";
 
 import {
   getProcedureLabel,
@@ -65,7 +65,7 @@ const selectedLipStyle =
   params.get("style") ||
   "classic";
 
-const selectedLipProduct =
+const selectedFillerProduct =
   params.get("product") ||
   "provider";
 
@@ -1286,8 +1286,8 @@ function generateSimulation(
         lipStyle:
           selectedLipStyle,
 
-        lipProduct:
-          selectedLipProduct,
+        fillerProduct:
+          selectedFillerProduct,
 
         blurPx: 8,
 
