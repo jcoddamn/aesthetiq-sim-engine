@@ -697,6 +697,135 @@ export function simulateTeethWhitening(
 }
 
 // ---------------------------------------------------------
+// SUBTLE SUPPORT EFFECTS FOR GEOMETRY PROCEDURES
+// ---------------------------------------------------------
+
+export function simulateVolumeSupport(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 14);
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${1 + intensity * 0.018}) contrast(${1 + intensity * 0.012}) saturate(${1 + intensity * 0.01})`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.16 + intensity * 0.12
+  );
+}
+
+export function simulateContourSupport(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 14);
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${1 - intensity * 0.018}) contrast(${1 + intensity * 0.045}) saturate(${1 - intensity * 0.015})`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.15 + intensity * 0.14
+  );
+}
+
+export function simulateLiftSupport(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 16);
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${1 + intensity * 0.012}) contrast(${1 - intensity * 0.025}) blur(${0.6 + intensity * 0.8}px)`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.14 + intensity * 0.12
+  );
+}
+
+export function simulateDentalSurface(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 3);
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${1 + intensity * 0.12}) contrast(${1 + intensity * 0.035}) saturate(${1 - intensity * 0.08})`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.28 + intensity * 0.28
+  );
+}
+
+export function simulateGumContour(
+  sourceCanvas,
+  maskCanvas,
+  level = "balanced"
+) {
+  const intensity =
+    getIntensityValue(level);
+
+  const featheredMask =
+    featherMask(maskCanvas, 3);
+
+  const effectCanvas =
+    createEffectLayer(
+      sourceCanvas,
+      `brightness(${1 + intensity * 0.025}) contrast(${1 - intensity * 0.025}) saturate(${1 - intensity * 0.04})`
+    );
+
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    0.18 + intensity * 0.16
+  );
+}
+
+// ---------------------------------------------------------
 // PROCEDURE ROUTER
 // ---------------------------------------------------------
 
@@ -796,6 +925,59 @@ export function applyTreatmentEffect(
     case "teethWhitening":
     case "teeth-whitening":
       return simulateTeethWhitening(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
+    // Volume and implant support
+    case "chin-filler":
+    case "chin-implant":
+    case "cheek-filler":
+    case "cheek-implants":
+    case "temple-filler":
+    case "facial-fat-transfer":
+      return simulateVolumeSupport(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
+    // Contour / reduction procedures
+    case "rhinoplasty":
+    case "revision-rhinoplasty":
+    case "buccal-fat-removal":
+    case "jawline-filler":
+      return simulateContourSupport(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
+    // Surgical lift / eyelid support
+    case "facelift":
+    case "mini-facelift":
+    case "brow-lift":
+    case "upper-blepharoplasty":
+    case "lower-blepharoplasty":
+    case "lip-lift":
+      return simulateLiftSupport(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
+    // Smile surface simulations
+    case "veneers":
+    case "dental-bonding":
+      return simulateDentalSurface(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
+    case "gum-contouring":
+      return simulateGumContour(
         sourceCanvas,
         maskCanvas,
         level
