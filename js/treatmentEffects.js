@@ -745,9 +745,10 @@ export function applyTreatmentEffect(
       );
 
     // Forehead neuromodulator
+    // Use the texture-preserving smoothing path.
     case "foreheadBotox":
     case "forehead-neuromodulator":
-      return simulateForeheadBotox(
+      return simulateSkinSmoothing(
         sourceCanvas,
         maskCanvas,
         level
