@@ -657,7 +657,8 @@ function createSimulationLevel({
         tissueModel,
         constraints,
         lipStyle,
-        fillerProduct
+        fillerProduct,
+        fillerGoal
       );
 
     if (
@@ -755,7 +756,8 @@ function createSimulationLevel({
       workingCanvas,
       maskCanvas,
       level,
-      fillerProduct
+      fillerProduct,
+      fillerGoal
     );
 
   if (
