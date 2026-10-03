@@ -113,6 +113,13 @@ export const PROCEDURE_MAP = {
     category: "eyes"
   },
 
+  "neck-lift": {
+    masks: [],
+    effect: "neckLift",
+    category: "neck",
+    externalMaskRequired: true
+  },
+
   "lip-lift": {
     masks: [
       "upperLip",
@@ -270,6 +277,36 @@ export const PROCEDURE_MAP = {
   // HAIR
   // =======================================================
 
+  "fue-hair-transplant": {
+    masks: [],
+    effect: "hairRestoration",
+    category: "hair",
+    externalMaskRequired: true
+  },
+
+  "fut-hair-transplant": {
+    masks: [],
+    effect: "hairRestoration",
+    category: "hair",
+    externalMaskRequired: true
+  },
+
+  "beard-transplant": {
+    masks: [],
+    effect: "beardRestoration",
+    category: "hair",
+    externalMaskRequired: true
+  },
+
+  "eyebrow-transplant": {
+    masks: [
+      "leftBrow",
+      "rightBrow"
+    ],
+    effect: "eyebrowRestoration",
+    category: "brows"
+  },
+
   "hairline-lowering": {
     masks: [],
     effect: "hairlineLowering",
@@ -302,6 +339,15 @@ export const PROCEDURE_MAP = {
   "gum-contouring": {
     masks: ["gums"],
     effect: "gumContouring",
+    category: "smile"
+  },
+
+  "smile-makeover": {
+    masks: [
+      "teeth",
+      "gums"
+    ],
+    effect: "smileMakeover",
     category: "smile"
   }
 };
@@ -347,7 +393,13 @@ export const PROCEDURE_ALIASES = {
   dentalBonding: "dental-bonding",
   teethWhitening: "teeth-whitening",
   gumContouring: "gum-contouring",
-  hairlineLowering: "hairline-lowering"
+  hairlineLowering: "hairline-lowering",
+  neckLift: "neck-lift",
+  fueHairTransplant: "fue-hair-transplant",
+  futHairTransplant: "fut-hair-transplant",
+  beardTransplant: "beard-transplant",
+  eyebrowTransplant: "eyebrow-transplant",
+  smileMakeover: "smile-makeover"
 };
 
 // ---------------------------------------------------------
