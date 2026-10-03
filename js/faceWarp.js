@@ -2089,7 +2089,8 @@ export function warpBuccalSlimming(
 export function warpFacelift(
   landmarks,
   level = "balanced",
-  mini = false
+  mini = false,
+  goal = "balanced-lift"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -2098,7 +2099,13 @@ export function warpFacelift(
   const result =
     cloneFaceLandmarks(landmarks);
 
-  const lift =
+  const normalizedGoal =
+    String(
+      goal ||
+      "balanced-lift"
+    ).toLowerCase();
+
+  const baseLift =
     levelAmount(
       level,
       0.0025,
@@ -2107,8 +2114,30 @@ export function warpFacelift(
     ) *
     (mini ? 0.72 : 1);
 
+  const liftWeight =
+    normalizedGoal === "midface-lift"
+      ? 1.12
+      : normalizedGoal ===
+        "jawline-refinement"
+      ? 0.82
+      : 1;
+
+  const lateralWeight =
+    normalizedGoal ===
+      "jawline-refinement"
+      ? 1.18
+      : normalizedGoal ===
+        "midface-lift"
+      ? 0.78
+      : 1;
+
+  const lift =
+    baseLift * liftWeight;
+
   const lateral =
-    lift * 0.45;
+    baseLift *
+    0.45 *
+    lateralWeight;
 
   const left = [
     234, 93, 132, 58,
@@ -2120,58 +2149,77 @@ export function warpFacelift(
     397, 365, 379
   ];
 
-  left.forEach((index, position) => {
-    const point = result[index];
+  const applySide = (
+    indices,
+    direction
+  ) => {
+    indices.forEach(
+      (index, position) => {
+        const point =
+          result[index];
 
-    if (!point) {
-      return;
-    }
+        if (!point) {
+          return;
+        }
 
-    const weight =
-      1 -
-      position /
-        (left.length + 1);
+        const normalizedPosition =
+          position /
+          Math.max(
+            1,
+            indices.length - 1
+          );
 
-    result[index] = {
-      ...point,
-      x:
-        point.x -
-        lateral * weight,
-      y:
-        point.y -
-        lift * weight
-    };
-  });
+        const upperEmphasis =
+          normalizedGoal ===
+            "midface-lift"
+            ? 1 -
+              normalizedPosition *
+                0.52
+            : 1 -
+              normalizedPosition *
+                0.28;
 
-  right.forEach((index, position) => {
-    const point = result[index];
+        const lowerEmphasis =
+          normalizedGoal ===
+            "jawline-refinement"
+            ? 0.72 +
+              normalizedPosition *
+                0.28
+            : 1;
 
-    if (!point) {
-      return;
-    }
+        const weight =
+          Math.max(
+            0.42,
+            upperEmphasis *
+              lowerEmphasis
+          );
 
-    const weight =
-      1 -
-      position /
-        (right.length + 1);
+        result[index] = {
+          ...point,
+          x:
+            point.x +
+            direction *
+              lateral *
+              weight,
+          y:
+            point.y -
+            lift *
+              weight
+        };
+      }
+    );
+  };
 
-    result[index] = {
-      ...point,
-      x:
-        point.x +
-        lateral * weight,
-      y:
-        point.y -
-        lift * weight
-    };
-  });
+  applySide(left, -1);
+  applySide(right, 1);
 
   return result;
 }
 
 export function warpBrowLift(
   landmarks,
-  level = "balanced"
+  level = "balanced",
+  goal = "balanced-brow-lift"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -2179,6 +2227,12 @@ export function warpBrowLift(
 
   const result =
     cloneFaceLandmarks(landmarks);
+
+  const normalizedGoal =
+    String(
+      goal ||
+      "balanced-brow-lift"
+    ).toLowerCase();
 
   const lift =
     levelAmount(
@@ -2188,6 +2242,12 @@ export function warpBrowLift(
       0.0048
     );
 
+  const centerX =
+    (
+      (landmarks[70]?.x || 0.35) +
+      (landmarks[300]?.x || 0.65)
+    ) / 2;
+
   const browPoints = [
     70, 63, 105, 66, 107,
     55, 65, 52, 53, 46,
@@ -2195,16 +2255,41 @@ export function warpBrowLift(
     276, 283, 282, 295, 285
   ];
 
-  browPoints.forEach((index) => {
+  browPoints.forEach(index => {
     const point = result[index];
 
     if (!point) {
       return;
     }
 
+    const lateralDistance =
+      Math.min(
+        1,
+        Math.abs(
+          point.x - centerX
+        ) / 0.18
+      );
+
+    const weight =
+      normalizedGoal ===
+        "lateral-brow-lift"
+        ? 0.58 +
+          lateralDistance * 0.62
+        : normalizedGoal ===
+          "central-brow-lift"
+        ? 1.18 -
+          lateralDistance * 0.5
+        : 1;
+
     result[index] = {
       ...point,
-      y: point.y - lift
+      y:
+        point.y -
+        lift *
+          Math.max(
+            0.55,
+            Math.min(1.2, weight)
+          )
     };
   });
 
@@ -2213,7 +2298,8 @@ export function warpBrowLift(
 
 export function warpUpperBlepharoplasty(
   landmarks,
-  level = "balanced"
+  level = "balanced",
+  goal = "balanced-upper-lid"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -2221,6 +2307,12 @@ export function warpUpperBlepharoplasty(
 
   const result =
     cloneFaceLandmarks(landmarks);
+
+  const normalizedGoal =
+    String(
+      goal ||
+      "balanced-upper-lid"
+    ).toLowerCase();
 
   const lift =
     levelAmount(
@@ -2230,32 +2322,80 @@ export function warpUpperBlepharoplasty(
       0.0022
     );
 
-  const points = [
-    246, 161, 160, 159,
-    158, 157,
-    466, 388, 387, 386,
-    385, 384
+  const left = [
+    246, 161, 160,
+    159, 158, 157
   ];
 
-  points.forEach((index) => {
-    const point = result[index];
+  const right = [
+    466, 388, 387,
+    386, 385, 384
+  ];
 
-    if (!point) {
-      return;
-    }
+  const applyLid = indices => {
+    indices.forEach(
+      (index, position) => {
+        const point =
+          result[index];
 
-    result[index] = {
-      ...point,
-      y: point.y - lift
-    };
-  });
+        if (!point) {
+          return;
+        }
+
+        const normalizedPosition =
+          position /
+          Math.max(
+            1,
+            indices.length - 1
+          );
+
+        const centerWeight =
+          1 -
+          Math.abs(
+            normalizedPosition - 0.5
+          ) * 1.2;
+
+        const outerWeight =
+          0.7 +
+          normalizedPosition * 0.45;
+
+        const weight =
+          normalizedGoal ===
+            "central-lid-opening"
+            ? 0.72 +
+              centerWeight * 0.45
+            : normalizedGoal ===
+              "outer-lid-refinement"
+            ? outerWeight
+            : 1;
+
+        result[index] = {
+          ...point,
+          y:
+            point.y -
+            lift *
+              Math.max(
+                0.62,
+                Math.min(
+                  1.18,
+                  weight
+                )
+              )
+        };
+      }
+    );
+  };
+
+  applyLid(left);
+  applyLid(right);
 
   return result;
 }
 
 export function warpLowerBlepharoplasty(
   landmarks,
-  level = "balanced"
+  level = "balanced",
+  goal = "balanced-lower-lid"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -2263,6 +2403,12 @@ export function warpLowerBlepharoplasty(
 
   const result =
     cloneFaceLandmarks(landmarks);
+
+  const normalizedGoal =
+    String(
+      goal ||
+      "balanced-lower-lid"
+    ).toLowerCase();
 
   const lift =
     levelAmount(
@@ -2272,25 +2418,69 @@ export function warpLowerBlepharoplasty(
       0.0017
     );
 
-  const points = [
-    155, 154, 153, 145,
-    144, 163,
-    398, 384, 385, 386,
-    387, 388
+  const left = [
+    155, 154, 153,
+    145, 144, 163
   ];
 
-  points.forEach((index) => {
-    const point = result[index];
+  const right = [
+    398, 384, 385,
+    386, 387, 388
+  ];
 
-    if (!point) {
-      return;
-    }
+  const applyLid = indices => {
+    indices.forEach(
+      (index, position) => {
+        const point =
+          result[index];
 
-    result[index] = {
-      ...point,
-      y: point.y - lift
-    };
-  });
+        if (!point) {
+          return;
+        }
+
+        const normalizedPosition =
+          position /
+          Math.max(
+            1,
+            indices.length - 1
+          );
+
+        const centerWeight =
+          1 -
+          Math.abs(
+            normalizedPosition - 0.5
+          ) * 1.1;
+
+        const weight =
+          normalizedGoal ===
+            "central-smoothing"
+            ? 0.72 +
+              centerWeight * 0.42
+            : normalizedGoal ===
+              "lid-cheek-transition"
+            ? 0.86 +
+              centerWeight * 0.24
+            : 1;
+
+        result[index] = {
+          ...point,
+          y:
+            point.y -
+            lift *
+              Math.max(
+                0.65,
+                Math.min(
+                  1.16,
+                  weight
+                )
+              )
+        };
+      }
+    );
+  };
+
+  applyLid(left);
+  applyLid(right);
 
   return result;
 }
