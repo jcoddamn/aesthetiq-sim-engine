@@ -983,6 +983,28 @@ export function applyTreatmentEffect(
         level
       );
 
+    case "smile-makeover": {
+      const whitened =
+        simulateTeethWhitening(
+          sourceCanvas,
+          maskCanvas,
+          level
+        );
+
+      return simulateDentalSurface(
+        whitened,
+        maskCanvas,
+        level
+      );
+    }
+
+    case "eyebrow-transplant":
+      return simulateContourSupport(
+        sourceCanvas,
+        maskCanvas,
+        level
+      );
+
     default:
       console.warn(
         `[AesthetIQ] No treatment effect found for: ${procedure}`
