@@ -6,6 +6,10 @@ import {
   getFillerGoalVisualProfile
 } from "./fillerGoals.js?v=1";
 
+import {
+  getNeuromodulatorVisualProfile
+} from "./neuromodulatorProfiles.js?v=1";
+
 // =========================================================
 // AESTHETIQ — TREATMENT EFFECTS
 // File: js/treatmentEffects.js
@@ -211,7 +215,8 @@ export function simulateUnderEyeFiller(
   maskCanvas,
   level = "balanced",
   fillerProduct = "provider",
-  fillerGoal = "balanced"
+  fillerGoal = "balanced",
+  neuromodulatorProduct = "botox"
 ) {
   const intensity =
     getIntensityValue(level);
@@ -346,16 +351,49 @@ export function simulateLipFiller(
 }
 
 // ---------------------------------------------------------
+// NEUROMODULATOR PREVIEW PROFILE
+// ---------------------------------------------------------
+
+function getNeuromodulatorEffectStrength(
+  productId
+) {
+  const profile =
+    getNeuromodulatorVisualProfile(
+      productId
+    );
+
+  const softening =
+    Number(profile.softening) || 1;
+
+  const blend =
+    Number(profile.blend) || 1;
+
+  return Math.max(
+    0.96,
+    Math.min(
+      1.04,
+      (softening + blend) / 2
+    )
+  );
+}
+
+// ---------------------------------------------------------
 // LIP FLIP
 // ---------------------------------------------------------
 
 export function simulateLipFlip(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  neuromodulatorProduct = "botox"
 ) {
   const intensity =
     getIntensityValue(level);
+
+  const productStrength =
+    getNeuromodulatorEffectStrength(
+      neuromodulatorProduct
+    );
 
   const featheredMask =
     featherMask(maskCanvas, 10);
@@ -382,7 +420,8 @@ export function simulateLipFlip(
     sourceCanvas,
     effectCanvas,
     featheredMask,
-    0.32 + intensity * 0.28
+    (0.32 + intensity * 0.28) *
+      productStrength
   );
 }
 
@@ -393,10 +432,16 @@ export function simulateLipFlip(
 export function simulateForeheadBotox(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  neuromodulatorProduct = "botox"
 ) {
   const intensity =
     getIntensityValue(level);
+
+  const productStrength =
+    getNeuromodulatorEffectStrength(
+      neuromodulatorProduct
+    );
 
   const featheredMask =
     featherMask(maskCanvas, 18);
@@ -425,7 +470,8 @@ export function simulateForeheadBotox(
       sourceCanvas,
       smoothLayer,
       featheredMask,
-      0.26 + intensity * 0.32
+      (0.26 + intensity * 0.32) *
+        productStrength
     );
 
   result =
@@ -433,7 +479,8 @@ export function simulateForeheadBotox(
       result,
       matteLayer,
       featheredMask,
-      0.12 + intensity * 0.18
+      (0.12 + intensity * 0.18) *
+        productStrength
     );
 
   return result;
@@ -446,10 +493,16 @@ export function simulateForeheadBotox(
 export function simulateGlabellaBotox(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  neuromodulatorProduct = "botox"
 ) {
   const intensity =
     getIntensityValue(level);
+
+  const productStrength =
+    getNeuromodulatorEffectStrength(
+      neuromodulatorProduct
+    );
 
   const featheredMask =
     featherMask(maskCanvas, 10);
@@ -483,7 +536,7 @@ export function simulateGlabellaBotox(
       sourceCanvas,
       smoothLayer,
       featheredMask,
-      0.3 + intensity * 0.25
+      (0.3 + intensity * 0.25) * productStrength
     );
 
   result =
@@ -491,7 +544,7 @@ export function simulateGlabellaBotox(
       result,
       flattenLayer,
       featheredMask,
-      0.3 + intensity * 0.26
+      (0.3 + intensity * 0.26) * productStrength
     );
 
   result =
@@ -499,7 +552,7 @@ export function simulateGlabellaBotox(
       result,
       matteLayer,
       featheredMask,
-      0.12 + intensity * 0.12
+      (0.12 + intensity * 0.12) * productStrength
     );
 
   if (level !== "natural") {
@@ -508,9 +561,10 @@ export function simulateGlabellaBotox(
         result,
         centerLayer,
         featheredMask,
-        level === "enhanced"
+        (level === "enhanced"
           ? 0.42
-          : 0.24
+          : 0.24) *
+          productStrength
       );
   }
 
@@ -524,10 +578,16 @@ export function simulateGlabellaBotox(
 export function simulateCrowsFeetBotox(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  neuromodulatorProduct = "botox"
 ) {
   const intensity =
     getIntensityValue(level);
+
+  const productStrength =
+    getNeuromodulatorEffectStrength(
+      neuromodulatorProduct
+    );
 
   const featheredMask =
     featherMask(maskCanvas, 16);
@@ -930,17 +990,19 @@ export function applyTreatmentEffect(
       return simulateLipFlip(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        neuromodulatorProduct
       );
 
     // Forehead neuromodulator
     // Use the texture-preserving smoothing path.
     case "foreheadBotox":
     case "forehead-neuromodulator":
-      return simulateSkinSmoothing(
+      return simulateForeheadBotox(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        neuromodulatorProduct
       );
 
     // Glabella neuromodulator
@@ -950,7 +1012,8 @@ export function applyTreatmentEffect(
       return simulateGlabellaBotox(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        neuromodulatorProduct
       );
 
     // Crow's feet neuromodulator
@@ -960,7 +1023,8 @@ export function applyTreatmentEffect(
       return simulateCrowsFeetBotox(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        neuromodulatorProduct
       );
 
     // Skin treatments
