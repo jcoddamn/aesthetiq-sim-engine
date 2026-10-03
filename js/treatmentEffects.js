@@ -1,3 +1,7 @@
+import {
+  getFillerVisualProfile
+} from "./fillerProfiles.js?v=1";
+
 // =========================================================
 // AESTHETIQ — TREATMENT EFFECTS
 // File: js/treatmentEffects.js
@@ -201,10 +205,23 @@ export function featherMask(
 export function simulateUnderEyeFiller(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  fillerProduct = "provider"
 ) {
   const intensity =
     getIntensityValue(level);
+
+  const fillerProfile =
+    getFillerVisualProfile(
+      fillerProduct,
+      "under-eye-filler"
+    );
+
+  const productStrength =
+    (
+      (Number(fillerProfile.volume) || 1) +
+      (Number(fillerProfile.spread) || 1)
+    ) / 2;
 
   const featheredMask =
     featherMask(maskCanvas, 18);
@@ -228,7 +245,8 @@ export function simulateUnderEyeFiller(
     sourceCanvas,
     effectCanvas,
     featheredMask,
-    0.42 + intensity * 0.28
+    (0.42 + intensity * 0.28) *
+      productStrength
   );
 }
 
@@ -703,10 +721,24 @@ export function simulateTeethWhitening(
 export function simulateVolumeSupport(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  fillerProduct = "provider",
+  procedure = ""
 ) {
   const intensity =
     getIntensityValue(level);
+
+  const fillerProfile =
+    getFillerVisualProfile(
+      fillerProduct,
+      procedure
+    );
+
+  const productStrength =
+    (
+      (Number(fillerProfile.volume) || 1) +
+      (Number(fillerProfile.projection) || 1)
+    ) / 2;
 
   const featheredMask =
     featherMask(maskCanvas, 14);
@@ -721,7 +753,8 @@ export function simulateVolumeSupport(
     sourceCanvas,
     effectCanvas,
     featheredMask,
-    0.16 + intensity * 0.12
+    (0.16 + intensity * 0.12) *
+      productStrength
   );
 }
 
@@ -833,7 +866,8 @@ export function applyTreatmentEffect(
   procedure,
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  fillerProduct = "provider"
 ) {
   switch (procedure) {
     // Under-eye filler
@@ -842,7 +876,8 @@ export function applyTreatmentEffect(
       return simulateUnderEyeFiller(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        fillerProduct
       );
 
     // Laser resurfacing
@@ -940,7 +975,9 @@ export function applyTreatmentEffect(
       return simulateVolumeSupport(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        fillerProduct,
+        procedure
       );
 
     // Contour / reduction procedures
