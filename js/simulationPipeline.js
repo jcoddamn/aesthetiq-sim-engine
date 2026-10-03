@@ -6,7 +6,7 @@
 import {
   getProcedureMask,
   normalizeProcedureId
-} from "./procedureMap.js";
+} from "./procedureMap.js?v=3";
 
 import {
   createFeatheredMask
@@ -14,7 +14,7 @@ import {
 
 import {
   applyTreatmentEffect
-} from "./treatmentEffects.js?v=3";
+} from "./treatmentEffects.js?v=4";
 
 import {
   createMaskDebugCanvas
