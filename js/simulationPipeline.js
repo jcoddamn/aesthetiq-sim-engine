@@ -462,6 +462,7 @@ function createWarpedLandmarks(
   anatomyProfile,
   tissueModel,
   constraints,
+  procedureOption = "",
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced"
@@ -533,7 +534,10 @@ function createWarpedLandmarks(
       landmarks,
       warpRhinoplasty(
         landmarks,
-        level
+        level,
+        procedureOption,
+        normalizedProcedure ===
+          "revision-rhinoplasty"
       ),
       constraints
     );
@@ -719,6 +723,7 @@ function createSimulationLevel({
   anatomyProfile,
   tissueModel,
 
+  procedureOption = "",
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
@@ -760,6 +765,7 @@ function createSimulationLevel({
         anatomyProfile,
         tissueModel,
         constraints,
+        procedureOption,
         lipStyle,
         fillerProduct,
         fillerGoal
@@ -903,6 +909,7 @@ export function runProcedureSimulation({
   anatomyProfile = null,
   tissueModel = null,
 
+  procedureOption = "",
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
@@ -940,6 +947,7 @@ export function runProcedureSimulation({
       sourceCanvas,
       anatomyProfile,
       tissueModel,
+      procedureOption,
       lipStyle,
       fillerProduct,
       fillerGoal,
@@ -957,6 +965,7 @@ export function runProcedureSimulation({
       sourceCanvas,
       anatomyProfile,
       tissueModel,
+      procedureOption,
       lipStyle,
       fillerProduct,
       fillerGoal,
@@ -974,6 +983,7 @@ export function runProcedureSimulation({
       sourceCanvas,
       anatomyProfile,
       tissueModel,
+      procedureOption,
       lipStyle,
       fillerProduct,
       fillerGoal,
@@ -1037,6 +1047,7 @@ export function runProcedureSimulationFromImage({
   anatomyProfile = null,
   tissueModel = null,
 
+  procedureOption = "",
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
@@ -1080,6 +1091,7 @@ export function runProcedureSimulationFromLandmarks({
   anatomyProfile = null,
   tissueModel = null,
 
+  procedureOption = "",
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
@@ -1098,6 +1110,7 @@ export function runProcedureSimulationFromLandmarks({
     anatomyProfile,
     tissueModel,
 
+    procedureOption,
     lipStyle,
     fillerProduct,
     fillerGoal,
