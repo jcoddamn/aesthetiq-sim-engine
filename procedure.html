@@ -919,6 +919,10 @@ body.sheet-open {
     getFillerProductsForProcedure
   } from "./js/fillerProfiles.js?v=1";
 
+  import {
+    getFillerGoalsForProcedure
+  } from "./js/fillerGoals.js?v=1";
+
   const STORAGE_KEY =
     "aesthetiqSavedProcedures";
 
@@ -973,7 +977,22 @@ body.sheet-open {
 
 let selectedStyle = "";
 let selectedProduct = "";
+let selectedGoal = "";
 let selectedIntensity = "";
+
+const GOAL_FILLER_PROCEDURES = [
+  "cheek-filler",
+  "chin-filler",
+  "jawline-filler",
+  "under-eye-filler",
+  "temple-filler"
+];
+
+function usesFillerGoalWizard(
+  id
+) {
+  return GOAL_FILLER_PROCEDURES.includes(id);
+}
 
   const procedureOptions = {
     "lip-filler": {
@@ -1850,6 +1869,26 @@ function getProcedureOptionData(procedureId) {
   }
 
   function openTreatmentOptions() {
+  if (
+    usesFillerGoalWizard(
+      procedureId
+    )
+  ) {
+    wizardStep = 1;
+    selectedProduct = "";
+    selectedGoal = "";
+    selectedIntensity = "";
+
+    renderFillerGoalWizardStep();
+
+    backdrop.classList.add("open");
+    document.body.classList.add(
+      "sheet-open"
+    );
+
+    return;
+  }
+
   if (procedureId !== "lip-filler") {
     const treatmentData =
       getProcedureOptionData(procedureId);
@@ -1949,6 +1988,109 @@ function getProcedureOptionData(procedureId) {
   document.body.classList.add(
     "sheet-open"
   );
+}
+
+  function renderFillerGoalWizardStep() {
+  optionList.innerHTML = "";
+  continueButton.disabled = true;
+
+  if (wizardStep === 1) {
+    titleElement.textContent =
+      "Choose Filler Product";
+
+    descriptionElement.textContent =
+      "Step 1 of 3 — Select a filler product, or let the provider decide.";
+
+    continueButton.textContent =
+      "Choose visual goal";
+
+    getFillerProductsForProcedure(
+      procedureId
+    ).forEach(product => {
+      createWizardOption(
+        {
+          id: product.id,
+          name: product.name,
+          detail:
+            product.id === "provider"
+              ? "Preview without selecting a specific filler product."
+              : "Use this product's educational preview profile."
+        },
+        "fillerProduct",
+        selectedProduct,
+        value => {
+          selectedProduct = value;
+        }
+      );
+    });
+
+    return;
+  }
+
+  if (wizardStep === 2) {
+    titleElement.textContent =
+      "Choose Your Visual Goal";
+
+    descriptionElement.textContent =
+      "Step 2 of 3 — Choose the appearance you want the simulation to emphasize.";
+
+    continueButton.textContent =
+      "Choose intensity";
+
+    getFillerGoalsForProcedure(
+      procedureId
+    ).forEach(goal => {
+      createWizardOption(
+        goal,
+        "fillerGoal",
+        selectedGoal,
+        value => {
+          selectedGoal = value;
+        }
+      );
+    });
+
+    return;
+  }
+
+  titleElement.textContent =
+    "Choose Simulation Intensity";
+
+  descriptionElement.textContent =
+    "Step 3 of 3 — Choose how subtle or noticeable the educational preview should appear.";
+
+  continueButton.textContent =
+    "Continue to camera";
+
+  [
+    {
+      id: "natural",
+      name: "Natural",
+      detail:
+        "A subtle preview with conservative visible change."
+    },
+    {
+      id: "balanced",
+      name: "Balanced",
+      detail:
+        "A moderate preview intended to preserve overall facial balance."
+    },
+    {
+      id: "enhanced",
+      name: "Enhanced",
+      detail:
+        "A more noticeable preview of the selected visual goal."
+    }
+  ].forEach(option => {
+    createWizardOption(
+      option,
+      "fillerIntensity",
+      selectedIntensity,
+      value => {
+        selectedIntensity = value;
+      }
+    );
+  });
 }
 
   function renderLipWizardStep() {
@@ -2443,6 +2585,76 @@ continueButton.addEventListener(
     }
 
     // ------------------------------------------
+    // NON-LIP FILLER 3-STEP WIZARD
+    // ------------------------------------------
+
+    if (
+      usesFillerGoalWizard(
+        procedureId
+      )
+    ) {
+      if (wizardStep === 1) {
+        if (!selectedProduct) {
+          return;
+        }
+
+        wizardStep = 2;
+        renderFillerGoalWizardStep();
+        return;
+      }
+
+      if (wizardStep === 2) {
+        if (!selectedGoal) {
+          return;
+        }
+
+        wizardStep = 3;
+        renderFillerGoalWizardStep();
+        return;
+      }
+
+      if (wizardStep === 3) {
+        if (
+          !selectedIntensity ||
+          !selectedCameraUrl
+        ) {
+          return;
+        }
+
+        const cameraUrl =
+          new URL(
+            selectedCameraUrl,
+            window.location.href
+          );
+
+        cameraUrl.searchParams.set(
+          "option",
+          selectedProduct
+        );
+
+        cameraUrl.searchParams.set(
+          "product",
+          selectedProduct
+        );
+
+        cameraUrl.searchParams.set(
+          "goal",
+          selectedGoal
+        );
+
+        cameraUrl.searchParams.set(
+          "intensity",
+          selectedIntensity
+        );
+
+        window.location.href =
+          cameraUrl.href;
+
+        return;
+      }
+    }
+
+    // ------------------------------------------
     // ALL OTHER PROCEDURES
     // ------------------------------------------
 
@@ -2463,21 +2675,6 @@ continueButton.addEventListener(
       "option",
       selectedOption
     );
-
-    if (
-      [
-        "cheek-filler",
-        "chin-filler",
-        "jawline-filler",
-        "under-eye-filler",
-        "temple-filler"
-      ].includes(procedureId)
-    ) {
-      cameraUrl.searchParams.set(
-        "product",
-        selectedOption
-      );
-    }
 
     window.location.href =
       cameraUrl.href;
