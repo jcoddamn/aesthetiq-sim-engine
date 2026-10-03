@@ -393,7 +393,7 @@ function createWarpedLandmarks(
   tissueModel,
   constraints,
   lipStyle = "classic",
-  lipProduct = "provider"
+  fillerProduct = "provider"
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -408,7 +408,7 @@ function createWarpedLandmarks(
         anatomyProfile?.anatomyStrength || 1,
         tissueModel,
         lipStyle,
-        lipProduct
+        fillerProduct
       );
 
     return applyLandmarkConstraints(
@@ -419,6 +419,12 @@ function createWarpedLandmarks(
   }
 
   case "chin-filler":
+    return warpChin(
+      landmarks,
+      level,
+      fillerProduct
+    );
+
   case "chin-implant":
     return warpChin(
       landmarks,
@@ -426,6 +432,12 @@ function createWarpedLandmarks(
     );
 
   case "cheek-filler":
+    return warpCheeks(
+      landmarks,
+      level,
+      fillerProduct
+    );
+
   case "cheek-implants":
     return warpCheeks(
       landmarks,
@@ -435,7 +447,8 @@ function createWarpedLandmarks(
   case "jawline-filler":
     return warpJawline(
       landmarks,
-      level
+      level,
+      fillerProduct
     );
 
   case "rhinoplasty":
@@ -599,7 +612,7 @@ function createSimulationLevel({
   tissueModel,
 
   lipStyle = "classic",
-  lipProduct = "provider",
+  fillerProduct = "provider",
 
   blurPx,
   mirrorX
@@ -638,7 +651,7 @@ function createSimulationLevel({
         tissueModel,
         constraints,
         lipStyle,
-        lipProduct
+        fillerProduct
       );
 
     if (
@@ -778,7 +791,7 @@ export function runProcedureSimulation({
   tissueModel = null,
 
   lipStyle = "classic",
-  lipProduct = "provider",
+  fillerProduct = "provider",
 
   blurPx = 18,
   mirrorX = false
@@ -813,7 +826,7 @@ export function runProcedureSimulation({
       anatomyProfile,
       tissueModel,
       lipStyle,
-      lipProduct,
+      fillerProduct,
       blurPx,
       mirrorX
     });
@@ -828,7 +841,7 @@ export function runProcedureSimulation({
       anatomyProfile,
       tissueModel,
       lipStyle,
-      lipProduct,
+      fillerProduct,
       blurPx,
       mirrorX
     });
@@ -843,7 +856,7 @@ export function runProcedureSimulation({
       anatomyProfile,
       tissueModel,
       lipStyle,
-      lipProduct,
+      fillerProduct,
       blurPx,
       mirrorX
     });
@@ -904,7 +917,7 @@ export function runProcedureSimulationFromImage({
   tissueModel = null,
 
   lipStyle = "classic",
-  lipProduct = "provider",
+  fillerProduct = "provider",
 
   blurPx = 18,
   mirrorX = false
@@ -928,7 +941,7 @@ export function runProcedureSimulationFromImage({
     tissueModel,
 
     lipStyle,
-    lipProduct,
+    fillerProduct,
 
     blurPx,
     mirrorX
@@ -943,7 +956,7 @@ export function runProcedureSimulationFromLandmarks({
   tissueModel = null,
 
   lipStyle = "classic",
-  lipProduct = "provider",
+  fillerProduct = "provider",
 
   blurPx = 18,
   mirrorX = false
@@ -959,7 +972,7 @@ export function runProcedureSimulationFromLandmarks({
     tissueModel,
 
     lipStyle,
-    lipProduct,
+    fillerProduct,
 
     blurPx,
     mirrorX
