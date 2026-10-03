@@ -32,7 +32,7 @@ import {
   warpUpperBlepharoplasty,
   warpLowerBlepharoplasty,
   warpLipLift
-} from "./faceWarp.js?v=21";
+} from "./faceWarp.js?v=22";
 
 import {
   renderWarp,
