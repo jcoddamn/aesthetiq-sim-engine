@@ -461,6 +461,62 @@
       box-shadow: 0 8px 20px rgba(109, 63, 209, 0.25);
     }
 
+    .timeline-panel {
+      margin-bottom: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .timeline-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 9px;
+    }
+
+    .timeline-heading strong {
+      font-size: 13px;
+    }
+
+    .timeline-heading span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .recovery-timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .recovery-stage-button {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      padding: 9px 5px;
+      font-size: 10px;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .recovery-stage-button.active {
+      border-color: rgba(167, 139, 250, 0.72);
+      background: rgba(139, 92, 246, 0.18);
+      color: #f5f3ff;
+    }
+
+    .recovery-stage-note {
+      margin: 9px 1px 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
     .result-card {
       overflow: hidden;
     }
@@ -1635,6 +1691,28 @@
         </button>
       </div>
 
+      <div
+        class="timeline-panel"
+        id="timelinePanel"
+      >
+        <div class="timeline-heading">
+          <strong>Recovery timeline</strong>
+          <span id="recoveryStageTiming">
+            After settling
+          </span>
+        </div>
+
+        <div
+          class="recovery-timeline"
+          id="recoveryTimeline"
+        ></div>
+
+        <p
+          class="recovery-stage-note"
+          id="recoveryStageNote"
+        ></p>
+      </div>
+
       <div class="result-card card">
         <div class="result-canvas-wrap">
           <canvas
@@ -1816,7 +1894,7 @@
 
   <script
     type="module"
-    src="./js/appController.js?v=21"
+    src="./js/appController.js?v=22"
   ></script>
 </body>
 </html>
