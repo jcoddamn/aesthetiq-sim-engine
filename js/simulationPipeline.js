@@ -57,8 +57,9 @@ import {
 
 import {
   buildDentalMesh,
-  createDentalMeshMask
-} from "./dentalMesh.js?v=1";
+  createDentalMeshMask,
+  renderDentalGeometry
+} from "./dentalMesh.js?v=2";
 
 const meshRenderer =
   new MeshRenderer();
@@ -931,14 +932,42 @@ function createSimulationLevel({
     };
   }
 
+  let treatmentSourceCanvas =
+    workingCanvas;
+
+  if (
+    dentalMesh?.valid &&
+    [
+      "veneers",
+      "dental-bonding",
+      "smile-makeover"
+    ].includes(
+      normalizedProcedure
+    )
+  ) {
+    treatmentSourceCanvas =
+      renderDentalGeometry(
+        workingCanvas,
+        dentalMesh,
+        generatedMaskCanvas,
+        level,
+        normalizedProcedure,
+        procedureOption
+      ) ||
+      workingCanvas;
+  }
+
   let resultCanvas =
     applyTreatmentEffect(
       normalizedProcedure,
-      workingCanvas,
+      treatmentSourceCanvas,
       maskCanvas,
       level,
       fillerProduct,
-      fillerGoal
+      fillerGoal,
+      neuromodulatorProduct,
+      procedureOption,
+      dentalMesh
     );
 
   if (
