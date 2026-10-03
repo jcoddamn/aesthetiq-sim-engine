@@ -1,63 +1,44 @@
 export const LIP_PRODUCTS = [
-
-{
-id:"provider",
-name:"Provider Will Decide",
-description:"Compare styles without selecting a specific filler."
-},
-
-{
-id:"juvederm-ultra",
-name:"Juvéderm Ultra XC",
-description:"Designed for fuller lip enhancement."
-},
-
-{
-id:"volbella",
-name:"Juvéderm Volbella XC",
-description:"Subtle volume with soft definition."
-},
-
-{
-id:"volux",
-name:"Juvéderm Volux",
-description:"Higher structural support."
-},
-
-{
-id:"kysse",
-name:"Restylane Kysse",
-description:"Flexible movement and natural feel."
-},
-
-{
-id:"silk",
-name:"Restylane Silk",
-description:"Designed for subtle enhancement."
-},
-
-{
-id:"rha2",
-name:"RHA 2",
-description:"Soft dynamic movement."
-},
-
-{
-id:"rha3",
-name:"RHA 3",
-description:"Greater volume with natural animation."
-},
-
-{
-id:"belotero",
-name:"Belotero Balance",
-description:"Smooth integration into tissue."
-},
-
-{
-id:"revanesse",
-name:"Revanesse Lips+",
-description:"Balanced lip enhancement."
-}
-
+  {
+    id: "provider",
+    name: "Provider Will Decide",
+    description:
+      "Compare styles without selecting a specific filler."
+  },
+  {
+    id: "juvederm-ultra",
+    name: "Juvéderm Ultra XC",
+    description:
+      "Lip augmentation option with a fuller-volume preview profile."
+  },
+  {
+    id: "volbella",
+    name: "Juvéderm Volbella XC",
+    description:
+      "Lip augmentation option with a more conservative preview profile."
+  },
+  {
+    id: "restylane-kysse",
+    name: "Restylane Kysse",
+    description:
+      "Lip augmentation option with a flexible-movement preview profile."
+  },
+  {
+    id: "restylane-silk",
+    name: "Restylane Silk",
+    description:
+      "Lip augmentation option with a refined, conservative preview profile."
+  },
+  {
+    id: "belotero-intense",
+    name: "Belotero Intense (+)",
+    description:
+      "Lip augmentation option with a soft-integration preview profile."
+  },
+  {
+    id: "revanesse-lips",
+    name: "Revanesse Lips+",
+    description:
+      "Lip augmentation option with a balanced preview profile."
+  }
 ];
