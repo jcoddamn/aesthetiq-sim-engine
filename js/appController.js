@@ -21,7 +21,11 @@ import {
 
 import {
   getProcedureById
-} from "./procedureData.js";
+} from "./procedureData.js?v=2";
+
+import {
+  getFillerProduct
+} from "./fillerProfiles.js?v=1";
 
 import {
   drawPolygonOutline
@@ -418,10 +422,24 @@ function updateProcedureInformation() {
   }
 
   if (selectedTreatmentElement) {
+    const isFillerProcedure =
+      [
+        "lip-filler",
+        "cheek-filler",
+        "chin-filler",
+        "jawline-filler",
+        "under-eye-filler",
+        "temple-filler"
+      ].includes(currentProcedure);
+
     selectedTreatmentElement.textContent =
-      getSelectedTreatmentLabel(
-        selectedOption
-      );
+      isFillerProcedure
+        ? getFillerProduct(
+            selectedFillerProduct
+          ).name
+        : getSelectedTreatmentLabel(
+            selectedOption
+          );
   }
 
   if (selectedRecoveryElement) {
