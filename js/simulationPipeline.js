@@ -390,9 +390,67 @@ function constrainWarpResult(
   warpedLandmarks,
   constraints
 ) {
+  if (
+    !Array.isArray(warpedLandmarks)
+  ) {
+    return warpedLandmarks;
+  }
+
+  const strength =
+    Math.max(
+      0.6,
+      Math.min(
+        1.2,
+        Number(
+          constraints?.strengthMultiplier
+        ) || 1
+      )
+    );
+
+  const scaledLandmarks =
+    warpedLandmarks.map(
+      (point, index) => {
+        const original =
+          originalLandmarks[index];
+
+        if (!point || !original) {
+          return point;
+        }
+
+        const originalZ =
+          Number(original.z) || 0;
+
+        const pointZ =
+          Number(point.z);
+
+        return {
+          ...point,
+          x:
+            original.x +
+            (point.x - original.x) *
+              strength,
+          y:
+            original.y +
+            (point.y - original.y) *
+              strength,
+          z:
+            originalZ +
+            (
+              (
+                Number.isFinite(pointZ)
+                  ? pointZ
+                  : originalZ
+              ) -
+              originalZ
+            ) *
+              strength
+        };
+      }
+    );
+
   return applyLandmarkConstraints(
     originalLandmarks,
-    warpedLandmarks,
+    scaledLandmarks,
     constraints
   );
 }
