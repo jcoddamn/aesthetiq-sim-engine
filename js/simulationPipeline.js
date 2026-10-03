@@ -425,7 +425,8 @@ function createWarpedLandmarks(
       landmarks,
       level,
       fillerProduct,
-      fillerGoal
+      fillerGoal,
+      neuromodulatorProduct
     );
 
   case "chin-implant":
@@ -619,6 +620,7 @@ function createSimulationLevel({
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
+  neuromodulatorProduct = "botox",
 
   blurPx,
   mirrorX
@@ -802,6 +804,7 @@ export function runProcedureSimulation({
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
+  neuromodulatorProduct = "botox",
 
   blurPx = 18,
   mirrorX = false
@@ -838,6 +841,7 @@ export function runProcedureSimulation({
       lipStyle,
       fillerProduct,
       fillerGoal,
+      neuromodulatorProduct,
       blurPx,
       mirrorX
     });
@@ -854,6 +858,7 @@ export function runProcedureSimulation({
       lipStyle,
       fillerProduct,
       fillerGoal,
+      neuromodulatorProduct,
       blurPx,
       mirrorX
     });
@@ -870,6 +875,7 @@ export function runProcedureSimulation({
       lipStyle,
       fillerProduct,
       fillerGoal,
+      neuromodulatorProduct,
       blurPx,
       mirrorX
     });
@@ -932,6 +938,7 @@ export function runProcedureSimulationFromImage({
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
+  neuromodulatorProduct = "botox",
 
   blurPx = 18,
   mirrorX = false
@@ -957,6 +964,7 @@ export function runProcedureSimulationFromImage({
     lipStyle,
     fillerProduct,
     fillerGoal,
+    neuromodulatorProduct,
 
     blurPx,
     mirrorX
@@ -973,6 +981,7 @@ export function runProcedureSimulationFromLandmarks({
   lipStyle = "classic",
   fillerProduct = "provider",
   fillerGoal = "balanced",
+  neuromodulatorProduct = "botox",
 
   blurPx = 18,
   mirrorX = false
@@ -990,6 +999,7 @@ export function runProcedureSimulationFromLandmarks({
     lipStyle,
     fillerProduct,
     fillerGoal,
+    neuromodulatorProduct,
 
     blurPx,
     mirrorX
