@@ -24,8 +24,15 @@ import {
   warpLipFiller,
   warpChin,
   warpCheeks,
-  warpJawline
-} from "./faceWarp.js?v=17";
+  warpJawline,
+  warpRhinoplasty,
+  warpBuccalSlimming,
+  warpFacelift,
+  warpBrowLift,
+  warpUpperBlepharoplasty,
+  warpLowerBlepharoplasty,
+  warpLipLift
+} from "./faceWarp.js?v=18";
 
 import {
   renderWarp,
@@ -282,7 +289,16 @@ function usesGeometryWarp(procedure) {
     "chin-implant",
     "cheek-filler",
     "cheek-implants",
-    "jawline-filler"
+    "jawline-filler",
+    "rhinoplasty",
+    "revision-rhinoplasty",
+    "buccal-fat-removal",
+    "facelift",
+    "mini-facelift",
+    "brow-lift",
+    "upper-blepharoplasty",
+    "lower-blepharoplasty",
+    "lip-lift"
   ].includes(procedure);
 }
 
@@ -418,6 +434,57 @@ function createWarpedLandmarks(
 
   case "jawline-filler":
     return warpJawline(
+      landmarks,
+      level
+    );
+
+  case "rhinoplasty":
+  case "revision-rhinoplasty":
+    return warpRhinoplasty(
+      landmarks,
+      level
+    );
+
+  case "buccal-fat-removal":
+    return warpBuccalSlimming(
+      landmarks,
+      level
+    );
+
+  case "facelift":
+    return warpFacelift(
+      landmarks,
+      level,
+      false
+    );
+
+  case "mini-facelift":
+    return warpFacelift(
+      landmarks,
+      level,
+      true
+    );
+
+  case "brow-lift":
+    return warpBrowLift(
+      landmarks,
+      level
+    );
+
+  case "upper-blepharoplasty":
+    return warpUpperBlepharoplasty(
+      landmarks,
+      level
+    );
+
+  case "lower-blepharoplasty":
+    return warpLowerBlepharoplasty(
+      landmarks,
+      level
+    );
+
+  case "lip-lift":
+    return warpLipLift(
       landmarks,
       level
     );
