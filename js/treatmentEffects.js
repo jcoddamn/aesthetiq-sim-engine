@@ -611,7 +611,8 @@ export function simulateCrowsFeetBotox(
     sourceCanvas,
     effectCanvas,
     featheredMask,
-    0.34 + intensity * 0.3
+    (0.34 + intensity * 0.3) *
+      productStrength
   );
 }
 
@@ -951,7 +952,8 @@ export function applyTreatmentEffect(
   maskCanvas,
   level = "balanced",
   fillerProduct = "provider",
-  fillerGoal = "balanced"
+  fillerGoal = "balanced",
+  neuromodulatorProduct = "botox"
 ) {
   switch (procedure) {
     // Under-eye filler
