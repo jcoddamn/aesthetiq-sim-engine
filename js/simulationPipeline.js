@@ -14,7 +14,7 @@ import {
 
 import {
   applyTreatmentEffect
-} from "./treatmentEffects.js?v=8";
+} from "./treatmentEffects.js?v=9";
 
 import {
   createMaskDebugCanvas
@@ -496,7 +496,9 @@ function createWarpedLandmarks(
       landmarks,
       level,
       fillerProduct,
-      fillerGoal
+      fillerGoal,
+      neuromodulatorProduct,
+      procedureOption
     );
 
   case "chin-implant":
