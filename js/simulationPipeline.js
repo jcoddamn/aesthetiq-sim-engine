@@ -14,7 +14,7 @@ import {
 
 import {
   applyTreatmentEffect
-} from "./treatmentEffects.js?v=5";
+} from "./treatmentEffects.js?v=6";
 
 import {
   createMaskDebugCanvas
@@ -32,7 +32,7 @@ import {
   warpUpperBlepharoplasty,
   warpLowerBlepharoplasty,
   warpLipLift
-} from "./faceWarp.js?v=20";
+} from "./faceWarp.js?v=21";
 
 import {
   renderWarp,
