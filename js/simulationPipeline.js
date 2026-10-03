@@ -14,7 +14,7 @@ import {
 
 import {
   applyTreatmentEffect
-} from "./treatmentEffects.js?v=7";
+} from "./treatmentEffects.js?v=8";
 
 import {
   createMaskDebugCanvas
