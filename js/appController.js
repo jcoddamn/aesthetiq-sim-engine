@@ -28,6 +28,10 @@ import {
 } from "./fillerProfiles.js?v=1";
 
 import {
+  getFillerGoal
+} from "./fillerGoals.js?v=1";
+
+import {
   drawPolygonOutline
 } from "./maskUtils.js";
 
@@ -73,9 +77,16 @@ const selectedFillerProduct =
   params.get("product") ||
   "provider";
 
-const selectedLipIntensity =
+const selectedFillerGoal =
+  params.get("goal") ||
+  "balanced";
+
+const selectedPreviewIntensity =
   params.get("intensity") ||
   "balanced";
+
+const selectedLipIntensity =
+  selectedPreviewIntensity;
 
 let currentProcedure =
   normalizeProcedureId(requestedProcedure);
@@ -432,14 +443,31 @@ function updateProcedureInformation() {
         "temple-filler"
       ].includes(currentProcedure);
 
-    selectedTreatmentElement.textContent =
-      isFillerProcedure
-        ? getFillerProduct(
-            selectedFillerProduct
-          ).name
-        : getSelectedTreatmentLabel(
-            selectedOption
-          );
+    if (isFillerProcedure) {
+      const productName =
+        getFillerProduct(
+          selectedFillerProduct
+        ).name;
+
+      const goalName =
+        currentProcedure ===
+        "lip-filler"
+          ? ""
+          : getFillerGoal(
+              currentProcedure,
+              selectedFillerGoal
+            ).name;
+
+      selectedTreatmentElement.textContent =
+        goalName
+          ? `${productName} • ${goalName}`
+          : productName;
+    } else {
+      selectedTreatmentElement.textContent =
+        getSelectedTreatmentLabel(
+          selectedOption
+        );
+    }
   }
 
   if (selectedRecoveryElement) {
@@ -1267,9 +1295,19 @@ function generateSimulation(
 
     // Set the ACTIVE result level before
     // running or rendering the simulation.
+    const isFillerProcedure =
+      [
+        "lip-filler",
+        "cheek-filler",
+        "chin-filler",
+        "jawline-filler",
+        "under-eye-filler",
+        "temple-filler"
+      ].includes(currentProcedure);
+
     selectedLevel =
-      currentProcedure === "lip-filler"
-        ? selectedLipIntensity
+      isFillerProcedure
+        ? selectedPreviewIntensity
         : "balanced";
 
     console.log(
@@ -1306,6 +1344,9 @@ function generateSimulation(
 
         fillerProduct:
           selectedFillerProduct,
+
+        fillerGoal:
+          selectedFillerGoal,
 
         blurPx: 8,
 
