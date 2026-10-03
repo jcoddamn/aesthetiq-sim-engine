@@ -1655,3 +1655,438 @@ export function warpCheeks(
     right
   );
 }
+
+
+/*
+=========================================================
+Additional Face Procedure Warps
+=========================================================
+*/
+
+function cloneFaceLandmarks(landmarks) {
+  return Array.isArray(landmarks)
+    ? landmarks.map((point) => ({
+        ...point
+      }))
+    : landmarks;
+}
+
+function levelAmount(
+  level,
+  natural,
+  balanced,
+  enhanced
+) {
+  return level === "natural"
+    ? natural
+    : level === "enhanced"
+    ? enhanced
+    : balanced;
+}
+
+export function warpRhinoplasty(
+  landmarks,
+  level = "balanced"
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  const result =
+    cloneFaceLandmarks(landmarks);
+
+  const centerX =
+    (
+      (landmarks[1]?.x || 0.5) +
+      (landmarks[2]?.x || 0.5)
+    ) / 2;
+
+  const narrowing =
+    levelAmount(
+      level,
+      0.08,
+      0.14,
+      0.2
+    );
+
+  const noseSides = [
+    98, 97, 2, 326, 327,
+    129, 49, 279, 358
+  ];
+
+  noseSides.forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      x:
+        point.x +
+        (centerX - point.x) *
+        narrowing
+    };
+  });
+
+  const tipLift =
+    levelAmount(
+      level,
+      0.0015,
+      0.0028,
+      0.004
+    );
+
+  [1, 4, 5].forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      y: point.y - tipLift
+    };
+  });
+
+  return result;
+}
+
+export function warpBuccalSlimming(
+  landmarks,
+  level = "balanced"
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  const result =
+    cloneFaceLandmarks(landmarks);
+
+  const amount =
+    levelAmount(
+      level,
+      0.003,
+      0.0055,
+      0.008
+    );
+
+  const left = [
+    234, 93, 132, 58,
+    172, 136
+  ];
+
+  const right = [
+    454, 323, 361, 288,
+    397, 365
+  ];
+
+  left.forEach((index, position) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const taper =
+      1 -
+      position /
+        (left.length * 1.5);
+
+    result[index] = {
+      ...point,
+      x:
+        point.x +
+        amount * taper
+    };
+  });
+
+  right.forEach((index, position) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const taper =
+      1 -
+      position /
+        (right.length * 1.5);
+
+    result[index] = {
+      ...point,
+      x:
+        point.x -
+        amount * taper
+    };
+  });
+
+  return result;
+}
+
+export function warpFacelift(
+  landmarks,
+  level = "balanced",
+  mini = false
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  const result =
+    cloneFaceLandmarks(landmarks);
+
+  const lift =
+    levelAmount(
+      level,
+      0.0025,
+      0.0045,
+      0.0065
+    ) *
+    (mini ? 0.72 : 1);
+
+  const lateral =
+    lift * 0.45;
+
+  const left = [
+    234, 93, 132, 58,
+    172, 136, 150
+  ];
+
+  const right = [
+    454, 323, 361, 288,
+    397, 365, 379
+  ];
+
+  left.forEach((index, position) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const weight =
+      1 -
+      position /
+        (left.length + 1);
+
+    result[index] = {
+      ...point,
+      x:
+        point.x -
+        lateral * weight,
+      y:
+        point.y -
+        lift * weight
+    };
+  });
+
+  right.forEach((index, position) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const weight =
+      1 -
+      position /
+        (right.length + 1);
+
+    result[index] = {
+      ...point,
+      x:
+        point.x +
+        lateral * weight,
+      y:
+        point.y -
+        lift * weight
+    };
+  });
+
+  return result;
+}
+
+export function warpBrowLift(
+  landmarks,
+  level = "balanced"
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  const result =
+    cloneFaceLandmarks(landmarks);
+
+  const lift =
+    levelAmount(
+      level,
+      0.0018,
+      0.0032,
+      0.0048
+    );
+
+  const browPoints = [
+    70, 63, 105, 66, 107,
+    55, 65, 52, 53, 46,
+    336, 296, 334, 293, 300,
+    276, 283, 282, 295, 285
+  ];
+
+  browPoints.forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      y: point.y - lift
+    };
+  });
+
+  return result;
+}
+
+export function warpUpperBlepharoplasty(
+  landmarks,
+  level = "balanced"
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  const result =
+    cloneFaceLandmarks(landmarks);
+
+  const lift =
+    levelAmount(
+      level,
+      0.0008,
+      0.0015,
+      0.0022
+    );
+
+  const points = [
+    246, 161, 160, 159,
+    158, 157,
+    466, 388, 387, 386,
+    385, 384
+  ];
+
+  points.forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      y: point.y - lift
+    };
+  });
+
+  return result;
+}
+
+export function warpLowerBlepharoplasty(
+  landmarks,
+  level = "balanced"
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  const result =
+    cloneFaceLandmarks(landmarks);
+
+  const lift =
+    levelAmount(
+      level,
+      0.0006,
+      0.0011,
+      0.0017
+    );
+
+  const points = [
+    155, 154, 153, 145,
+    144, 163,
+    398, 384, 385, 386,
+    387, 388
+  ];
+
+  points.forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      y: point.y - lift
+    };
+  });
+
+  return result;
+}
+
+export function warpLipLift(
+  landmarks,
+  level = "balanced"
+) {
+  if (!Array.isArray(landmarks)) {
+    return landmarks;
+  }
+
+  const result =
+    cloneFaceLandmarks(landmarks);
+
+  const lift =
+    levelAmount(
+      level,
+      0.0012,
+      0.0022,
+      0.0033
+    );
+
+  const upperLip = [
+    61, 185, 40, 39, 37,
+    0, 267, 269, 270,
+    409, 291,
+    78, 191, 80, 81,
+    82, 13, 312, 311,
+    310, 415, 308
+  ];
+
+  upperLip.forEach((index) => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    const center =
+      Math.max(
+        0.35,
+        1 -
+        Math.abs(
+          point.x -
+          (landmarks[13]?.x || 0.5)
+        ) * 5
+      );
+
+    result[index] = {
+      ...point,
+      y:
+        point.y -
+        lift * center
+    };
+  });
+
+  return result;
+}
