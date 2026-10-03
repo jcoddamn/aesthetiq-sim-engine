@@ -49,7 +49,7 @@ import {
 
 import {
   getProcedureConstraints
-} from "./procedureConstraints.js";
+} from "./procedureConstraints.js?v=2";
 
 import {
   repairLowerLipTexture
