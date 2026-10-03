@@ -1861,7 +1861,9 @@ function levelAmount(
 
 export function warpRhinoplasty(
   landmarks,
-  level = "balanced"
+  level = "balanced",
+  goal = "balanced-refinement",
+  revision = false
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -1870,26 +1872,70 @@ export function warpRhinoplasty(
   const result =
     cloneFaceLandmarks(landmarks);
 
+  const normalizedGoal =
+    String(
+      goal ||
+      "balanced-refinement"
+    ).toLowerCase();
+
+  const revisionScale =
+    revision ? 0.82 : 1;
+
   const centerX =
     (
       (landmarks[1]?.x || 0.5) +
       (landmarks[2]?.x || 0.5)
     ) / 2;
 
-  const narrowing =
+  const baseStrength =
     levelAmount(
       level,
-      0.08,
-      0.14,
-      0.2
-    );
+      0.72,
+      1,
+      1.18
+    ) *
+    revisionScale;
 
-  const noseSides = [
-    98, 97, 2, 326, 327,
-    129, 49, 279, 358
+  const bridgeWeight =
+    normalizedGoal ===
+      "bridge-refinement"
+      ? 1.18
+      : normalizedGoal ===
+        "tip-refinement" ||
+        normalizedGoal ===
+          "nasal-base-refinement"
+      ? 0.48
+      : 0.82;
+
+  const tipWeight =
+    normalizedGoal ===
+      "tip-refinement"
+      ? 1.2
+      : normalizedGoal ===
+        "bridge-refinement"
+      ? 0.5
+      : 0.88;
+
+  const baseWeight =
+    normalizedGoal ===
+      "nasal-base-refinement"
+      ? 1.18
+      : normalizedGoal ===
+        "bridge-refinement"
+      ? 0.5
+      : 0.82;
+
+  const bridgeNarrowing =
+    0.095 *
+    baseStrength *
+    bridgeWeight;
+
+  const bridgePoints = [
+    168, 6, 197, 195,
+    5, 4, 45, 275
   ];
 
-  noseSides.forEach((index) => {
+  bridgePoints.forEach(index => {
     const point = result[index];
 
     if (!point) {
@@ -1901,19 +1947,27 @@ export function warpRhinoplasty(
       x:
         point.x +
         (centerX - point.x) *
-        narrowing
+        bridgeNarrowing
     };
   });
 
-  const tipLift =
-    levelAmount(
-      level,
-      0.0015,
-      0.0028,
-      0.004
-    );
+  const baseNarrowing =
+    0.085 *
+    baseStrength *
+    baseWeight;
 
-  [1, 4, 5].forEach((index) => {
+  const leftBase = [
+    129, 98, 97, 49
+  ];
+
+  const rightBase = [
+    358, 327, 326, 279
+  ];
+
+  [
+    ...leftBase,
+    ...rightBase
+  ].forEach(index => {
     const point = result[index];
 
     if (!point) {
@@ -1922,7 +1976,38 @@ export function warpRhinoplasty(
 
     result[index] = {
       ...point,
-      y: point.y - tipLift
+      x:
+        point.x +
+        (centerX - point.x) *
+        baseNarrowing
+    };
+  });
+
+  const tipLift =
+    0.0027 *
+    baseStrength *
+    tipWeight;
+
+  const tipProjection =
+    0.0018 *
+    baseStrength *
+    tipWeight;
+
+  [1, 4, 5].forEach(index => {
+    const point = result[index];
+
+    if (!point) {
+      return;
+    }
+
+    result[index] = {
+      ...point,
+      y:
+        point.y -
+        tipLift,
+      z:
+        (Number(point.z) || 0) -
+        tipProjection
     };
   });
 
