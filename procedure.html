@@ -915,6 +915,10 @@ body.sheet-open {
     getProcedureById
   } from "./js/procedureData.js";
 
+  import {
+    getFillerProductsForProcedure
+  } from "./js/fillerProfiles.js?v=1";
+
   const STORAGE_KEY =
     "aesthetiqSavedProcedures";
 
@@ -1028,12 +1032,16 @@ let selectedIntensity = "";
       description:
         "Choose the treatment type you would like to preview.",
       options: [
-        {
-          id: "hyaluronic-acid",
-          name: "Hyaluronic Acid Filler",
+        ...getFillerProductsForProcedure(
+          "under-eye-filler"
+        ).map(product => ({
+          id: product.id,
+          name: product.name,
           detail:
-            "A temporary gel used to soften the appearance of under-eye hollows."
-        },
+            product.id === "provider"
+              ? "Preview under-eye filler without choosing a specific product."
+              : "Product-specific educational under-eye filler preview."
+        })),
         {
           id: "prf",
           name: "PRF",
@@ -1378,6 +1386,41 @@ let selectedIntensity = "";
   ]
   
 function getProcedureOptionData(procedureId) {
+  const fillerProcedures = [
+    "cheek-filler",
+    "chin-filler",
+    "jawline-filler",
+    "temple-filler"
+  ];
+
+  if (
+    fillerProcedures.includes(
+      procedureId
+    )
+  ) {
+    const procedure =
+      getProcedureById(procedureId);
+
+    return {
+      title:
+        procedure?.name ||
+        "Filler",
+      description:
+        "Choose a filler product to preview, or let the provider decide.",
+      options:
+        getFillerProductsForProcedure(
+          procedureId
+        ).map(product => ({
+          id: product.id,
+          name: product.name,
+          detail:
+            product.id === "provider"
+              ? "Preview without selecting a specific filler product."
+              : "Product-specific educational preview profile."
+        }))
+    };
+  }
+
   // Use the detailed options whenever they exist.
   if (procedureOptions[procedureId]) {
     return procedureOptions[procedureId];
@@ -2420,6 +2463,21 @@ continueButton.addEventListener(
       "option",
       selectedOption
     );
+
+    if (
+      [
+        "cheek-filler",
+        "chin-filler",
+        "jawline-filler",
+        "under-eye-filler",
+        "temple-filler"
+      ].includes(procedureId)
+    ) {
+      cameraUrl.searchParams.set(
+        "product",
+        selectedOption
+      );
+    }
 
     window.location.href =
       cameraUrl.href;
