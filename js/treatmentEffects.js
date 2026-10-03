@@ -631,37 +631,97 @@ export function simulateCrowsFeetBotox(
 export function simulateChemicalPeel(
   sourceCanvas,
   maskCanvas,
-  level = "balanced"
+  level = "balanced",
+  peelType = ""
 ) {
   const intensity =
     getIntensityValue(level);
 
+  const profiles = {
+    "glycolic-acid": {
+      brightness: 1.035,
+      contrast: 0.99,
+      saturation: 1.005,
+      blur: 0.9,
+      opacity: 0.31
+    },
+    "lactic-acid": {
+      brightness: 1.025,
+      contrast: 0.992,
+      saturation: 1.005,
+      blur: 0.75,
+      opacity: 0.28
+    },
+    "salicylic-acid": {
+      brightness: 1.018,
+      contrast: 0.985,
+      saturation: 0.99,
+      blur: 0.85,
+      opacity: 0.3
+    },
+    tca: {
+      brightness: 1.04,
+      contrast: 0.975,
+      saturation: 0.99,
+      blur: 1.25,
+      opacity: 0.36
+    },
+    phenol: {
+      brightness: 1.045,
+      contrast: 0.968,
+      saturation: 0.985,
+      blur: 1.45,
+      opacity: 0.39
+    }
+  };
+
+  const profile =
+    profiles[
+      String(peelType || "")
+        .toLowerCase()
+    ] ||
+    profiles["glycolic-acid"];
+
+  const strength =
+    0.72 +
+    intensity * 0.38;
+
   const featheredMask =
-    featherMask(maskCanvas, 28);
-
-  const brighten =
-    1 + intensity * 0.1;
-
-  const contrast =
-    1 - intensity * 0.04;
-
-  const saturate =
-    1 + intensity * 0.05;
-
-  const blur =
-    1.2 + intensity * 3;
+    featherMask(maskCanvas, 26);
 
   const effectCanvas =
     createEffectLayer(
       sourceCanvas,
-      `brightness(${brighten}) contrast(${contrast}) saturate(${saturate}) blur(${blur}px)`
+      [
+        `brightness(${
+          1 +
+          (profile.brightness - 1) *
+            strength
+        })`,
+        `contrast(${
+          1 +
+          (profile.contrast - 1) *
+            strength
+        })`,
+        `saturate(${
+          1 +
+          (profile.saturation - 1) *
+            strength
+        })`,
+        `blur(${
+          profile.blur * strength
+        }px)`
+      ].join(" ")
     );
 
   return applyMaskedLayer(
     sourceCanvas,
     effectCanvas,
     featheredMask,
-    0.5 + intensity * 0.28
+    Math.min(
+      0.5,
+      profile.opacity * strength
+    )
   );
 }
 
@@ -1264,7 +1324,8 @@ export function applyTreatmentEffect(
       return simulateChemicalPeel(
         sourceCanvas,
         maskCanvas,
-        level
+        level,
+        procedureOption
       );
 
     case "microneedling":
