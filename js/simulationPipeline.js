@@ -55,6 +55,11 @@ import {
   repairLowerLipTexture
 } from "./lipTextureRepair.js";
 
+import {
+  buildDentalMesh,
+  createDentalMeshMask
+} from "./dentalMesh.js?v=1";
+
 const meshRenderer =
   new MeshRenderer();
 
@@ -281,6 +286,21 @@ function getProcedureBlur(
 // ---------------------------------------------------------
 // GEOMETRY SUPPORT
 // ---------------------------------------------------------
+
+const DENTAL_MESH_PROCEDURES =
+  new Set([
+    "veneers",
+    "dental-bonding",
+    "teeth-whitening",
+    "gum-contouring",
+    "smile-makeover"
+  ]);
+
+function usesDentalMesh(procedure) {
+  return DENTAL_MESH_PROCEDURES.has(
+    procedure
+  );
+}
 
 function usesGeometryWarp(procedure) {
   return [
@@ -512,7 +532,10 @@ function createWarpedLandmarks(
       landmarks,
       level,
       fillerProduct,
-      fillerGoal
+      fillerGoal,
+      neuromodulatorProduct,
+      procedureOption,
+      dentalMesh
     );
 
   case "cheek-implants":
@@ -842,7 +865,8 @@ function createSimulationLevel({
 
   const {
     polygons,
-    maskCanvas
+    maskCanvas:
+      generatedMaskCanvas
   } = generateMaskData(
     normalizedProcedure,
     workingLandmarks,
@@ -853,6 +877,45 @@ function createSimulationLevel({
       mirrorX
     }
   );
+
+  let maskCanvas =
+    generatedMaskCanvas;
+
+  let dentalMesh = null;
+
+  if (
+    usesDentalMesh(
+      normalizedProcedure
+    )
+  ) {
+    dentalMesh =
+      buildDentalMesh(
+        workingLandmarks,
+        workingCanvas.width,
+        workingCanvas.height,
+        mirrorX
+      );
+
+    if (
+      dentalMesh?.valid &&
+      normalizedProcedure !==
+        "gum-contouring"
+    ) {
+      maskCanvas =
+        createDentalMeshMask(
+          dentalMesh,
+          generatedMaskCanvas,
+          {
+            upperOnly:
+              normalizedProcedure ===
+                "veneers" ||
+              normalizedProcedure ===
+                "dental-bonding"
+          }
+        ) ||
+        generatedMaskCanvas;
+    }
+  }
 
   if (!maskCanvas) {
     return {
