@@ -32,7 +32,7 @@ import {
   warpUpperBlepharoplasty,
   warpLowerBlepharoplasty,
   warpLipLift
-} from "./faceWarp.js?v=22";
+} from "./faceWarp.js?v=23";
 
 import {
   renderWarp,
@@ -557,7 +557,8 @@ function createWarpedLandmarks(
       warpFacelift(
         landmarks,
         level,
-        false
+        false,
+        procedureOption
       ),
       constraints
     );
@@ -568,7 +569,8 @@ function createWarpedLandmarks(
       warpFacelift(
         landmarks,
         level,
-        true
+        true,
+        procedureOption
       ),
       constraints
     );
@@ -578,7 +580,8 @@ function createWarpedLandmarks(
       landmarks,
       warpBrowLift(
         landmarks,
-        level
+        level,
+        procedureOption
       ),
       constraints
     );
@@ -588,7 +591,8 @@ function createWarpedLandmarks(
       landmarks,
       warpUpperBlepharoplasty(
         landmarks,
-        level
+        level,
+        procedureOption
       ),
       constraints
     );
@@ -598,7 +602,8 @@ function createWarpedLandmarks(
       landmarks,
       warpLowerBlepharoplasty(
         landmarks,
-        level
+        level,
+        procedureOption
       ),
       constraints
     );
