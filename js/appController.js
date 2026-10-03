@@ -36,10 +36,6 @@ import {
 } from "./multiAngleCapture.js";
 
 import {
-  analyzeMultiAngleCaptures
-} from "./anatomyFusion.js";
-
-import {
   buildAnatomyProfile
 } from "./anatomyProfile.js";
 
@@ -85,8 +81,6 @@ let capturedCanvas = null;
 let simulationResults = null;
 let selectedLevel = "balanced";
 let viewingOriginal = false;
-
-let precisionAnatomy = null;
 
 const smoothLandmarks =
   createLandmarkSmoother(0.75);
@@ -717,11 +711,47 @@ function handlePrecisionScanComplete(
     }
   );
 
+  /*
+   * Build the personalized anatomy and
+   * tissue models from all three Precision
+   * Scan captures before simulation.
+   */
+  let anatomyProfile = null;
+  let tissueModel = null;
+
+  try {
+    anatomyProfile =
+      buildAnatomyProfile(captures);
+
+    tissueModel =
+      buildTissueModel(
+        anatomyProfile
+      );
+
+    console.log(
+      "[AesthetIQ] Precision anatomy ready",
+      {
+        anatomyProfile,
+        tissueModel
+      }
+    );
+  } catch (error) {
+    /*
+     * The visual preview should still work
+     * with neutral defaults if anatomy
+     * analysis ever fails.
+     */
+    console.warn(
+      "[AesthetIQ] Precision anatomy analysis failed:",
+      error
+    );
+  }
+
   generateSimulation(
     straightCapture.imageCanvas,
     straightCapture.landmarks,
-    null,
-    null
+    anatomyProfile,
+    tissueModel
   );
 }
 
