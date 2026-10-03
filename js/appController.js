@@ -32,6 +32,10 @@ import {
 } from "./fillerGoals.js?v=1";
 
 import {
+  getNeuromodulatorProduct
+} from "./neuromodulatorProfiles.js?v=1";
+
+import {
   drawPolygonOutline
 } from "./maskUtils.js";
 
@@ -80,6 +84,11 @@ const selectedFillerProduct =
 const selectedFillerGoal =
   params.get("goal") ||
   "balanced";
+
+const selectedNeuromodulatorProduct =
+  params.get("neuromodulator") ||
+  selectedOption ||
+  "botox";
 
 const selectedPreviewIntensity =
   params.get("intensity") ||
@@ -462,6 +471,18 @@ function updateProcedureInformation() {
         goalName
           ? `${productName} • ${goalName}`
           : productName;
+    } else if (
+      [
+        "forehead-neuromodulator",
+        "glabella-neuromodulator",
+        "crows-feet-neuromodulator",
+        "lip-flip"
+      ].includes(currentProcedure)
+    ) {
+      selectedTreatmentElement.textContent =
+        getNeuromodulatorProduct(
+          selectedNeuromodulatorProduct
+        ).name;
     } else {
       selectedTreatmentElement.textContent =
         getSelectedTreatmentLabel(
@@ -1295,18 +1316,22 @@ function generateSimulation(
 
     // Set the ACTIVE result level before
     // running or rendering the simulation.
-    const isFillerProcedure =
+    const usesSelectedPreviewIntensity =
       [
         "lip-filler",
         "cheek-filler",
         "chin-filler",
         "jawline-filler",
         "under-eye-filler",
-        "temple-filler"
+        "temple-filler",
+        "forehead-neuromodulator",
+        "glabella-neuromodulator",
+        "crows-feet-neuromodulator",
+        "lip-flip"
       ].includes(currentProcedure);
 
     selectedLevel =
-      isFillerProcedure
+      usesSelectedPreviewIntensity
         ? selectedPreviewIntensity
         : "balanced";
 
@@ -1347,6 +1372,9 @@ function generateSimulation(
 
         fillerGoal:
           selectedFillerGoal,
+
+        neuromodulatorProduct:
+          selectedNeuromodulatorProduct,
 
         blurPx: 8,
 
