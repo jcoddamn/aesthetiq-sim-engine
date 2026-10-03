@@ -435,55 +435,62 @@ export function simulateForeheadBotox(
   level = "balanced",
   neuromodulatorProduct = "botox"
 ) {
-  const intensity =
-    getIntensityValue(level);
-
   const productStrength =
     getNeuromodulatorEffectStrength(
       neuromodulatorProduct
     );
 
+  const profiles = {
+    natural: {
+      blur: 1.15,
+      brightness: 1.006,
+      contrast: 0.985,
+      opacity: 0.22,
+      feather: 14
+    },
+    balanced: {
+      blur: 1.55,
+      brightness: 1.01,
+      contrast: 0.97,
+      opacity: 0.34,
+      feather: 16
+    },
+    enhanced: {
+      blur: 2,
+      brightness: 1.014,
+      contrast: 0.955,
+      opacity: 0.46,
+      feather: 18
+    }
+  };
+
+  const profile =
+    profiles[level] ||
+    profiles.balanced;
+
   const featheredMask =
-    featherMask(maskCanvas, 18);
+    featherMask(
+      maskCanvas,
+      profile.feather
+    );
 
-  const blurAmount =
-    level === "natural"
-      ? 2.5
-      : level === "balanced"
-      ? 5
-      : 7.5;
-
-  const smoothLayer =
+  const effectCanvas =
     createEffectLayer(
       sourceCanvas,
-      `blur(${blurAmount}px) contrast(${1 - intensity * 0.1})`
+      [
+        `brightness(${profile.brightness})`,
+        `contrast(${profile.contrast})`,
+        `blur(${profile.blur}px)`
+      ].join(" ")
     );
 
-  const matteLayer =
-    createEffectLayer(
-      sourceCanvas,
-      `brightness(${1 + intensity * 0.03}) contrast(${1 - intensity * 0.06}) saturate(${1 - intensity * 0.03})`
-    );
-
-  let result =
-    applyMaskedLayer(
-      sourceCanvas,
-      smoothLayer,
-      featheredMask,
-      (0.26 + intensity * 0.32) *
-        productStrength
-    );
-
-  result =
-    applyMaskedLayer(
-      result,
-      matteLayer,
-      featheredMask,
-      (0.12 + intensity * 0.18) *
-        productStrength
-    );
-
-  return result;
+  return applyMaskedLayer(
+    sourceCanvas,
+    effectCanvas,
+    featheredMask,
+    profile.opacity *
+      productStrength
+  );
 }
 
 // ---------------------------------------------------------
