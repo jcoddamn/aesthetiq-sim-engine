@@ -23,6 +23,10 @@ import {
   getFillerVisualProfile
 } from "./fillerProfiles.js?v=1";
 
+import {
+  getFillerGoalVisualProfile
+} from "./fillerGoals.js?v=1";
+
 /*
 =========================================================
  AesthetIQ Face Warp Engine
@@ -47,6 +51,7 @@ export function getCenter(points) {
 
 export function movePoint(point, center, amount) {
   return {
+    ...point,
     x: center.x + (point.x - center.x) * amount,
     y: center.y + (point.y - center.y) * amount
   };
@@ -1449,13 +1454,20 @@ Chin Projection
 export function warpChin(
   landmarks,
   intensity = "balanced",
-  fillerProduct = "provider"
+  fillerProduct = "provider",
+  fillerGoal = "balanced"
 ){
 
   const fillerProfile =
     getFillerVisualProfile(
       fillerProduct,
       "chin-filler"
+    );
+
+  const goalProfile =
+    getFillerGoalVisualProfile(
+      "chin-filler",
+      fillerGoal
     );
 
   const baseAmount =
@@ -1469,7 +1481,9 @@ export function warpChin(
     1 +
     baseAmount *
       (Number(fillerProfile.projection) || 1) *
-      (Number(fillerProfile.definition) || 1);
+      (Number(fillerProfile.definition) || 1) *
+      (Number(goalProfile.projection) || 1) *
+      (Number(goalProfile.definition) || 1);
 
   const chin = [
     152,
@@ -1488,10 +1502,41 @@ export function warpChin(
       amount
     );
 
-  return mergeWarp(
-    landmarks,
-    warped
-  );
+  const result =
+    mergeWarp(
+      landmarks,
+      warped
+    );
+
+  const lengthShift =
+    (
+      intensity === "natural"
+        ? 0.0015
+        : intensity === "enhanced"
+        ? 0.004
+        : 0.0026
+    ) *
+    (
+      (Number(goalProfile.length) || 1) -
+      1
+    );
+
+  if (lengthShift !== 0) {
+    [152, 148, 176].forEach(
+      (index) => {
+        const point = result[index];
+
+        if (!point) return;
+
+        result[index] = {
+          ...point,
+          y: point.y + lengthShift
+        };
+      }
+    );
+  }
+
+  return result;
 }
 
 /*
@@ -1503,7 +1548,8 @@ Jawline Definition
 export function warpJawline(
   landmarks,
   intensity = "balanced",
-  fillerProduct = "provider"
+  fillerProduct = "provider",
+  fillerGoal = "balanced"
 ) {
   if (
     !Array.isArray(landmarks) ||
@@ -1518,6 +1564,12 @@ export function warpJawline(
       "jawline-filler"
     );
 
+  const goalProfile =
+    getFillerGoalVisualProfile(
+      "jawline-filler",
+      fillerGoal
+    );
+
   const strength =
     (
       intensity === "natural"
@@ -1527,7 +1579,8 @@ export function warpJawline(
         : 0.035
     ) *
     (Number(fillerProfile.definition) || 1) *
-    (Number(fillerProfile.projection) || 1);
+    (Number(fillerProfile.projection) || 1) *
+    (Number(goalProfile.definition) || 1);
 
   const result = landmarks.map(
     (landmark) => ({
@@ -1606,7 +1659,13 @@ export function warpJawline(
       ...landmark,
       x:
         landmark.x -
-        strength * leftWeights[position]
+        strength *
+        leftWeights[position] *
+        (
+          position < 4
+            ? (Number(goalProfile.angle) || 1)
+            : (Number(goalProfile.chinTransition) || 1)
+        )
     };
   });
 
@@ -1621,7 +1680,13 @@ export function warpJawline(
       ...landmark,
       x:
         landmark.x +
-        strength * rightWeights[position]
+        strength *
+        rightWeights[position] *
+        (
+          position < 4
+            ? (Number(goalProfile.angle) || 1)
+            : (Number(goalProfile.chinTransition) || 1)
+        )
     };
   });
 
@@ -1671,13 +1736,20 @@ Cheek Volume
 export function warpCheeks(
   landmarks,
   intensity="balanced",
-  fillerProduct = "provider"
+  fillerProduct = "provider",
+  fillerGoal = "balanced"
 ){
 
   const fillerProfile =
     getFillerVisualProfile(
       fillerProduct,
       "cheek-filler"
+    );
+
+  const goalProfile =
+    getFillerGoalVisualProfile(
+      "cheek-filler",
+      fillerGoal
     );
 
   const baseAmount =
@@ -1691,7 +1763,10 @@ export function warpCheeks(
     1 +
     baseAmount *
       (Number(fillerProfile.volume) || 1) *
-      (Number(fillerProfile.projection) || 1);
+      (Number(fillerProfile.projection) || 1) *
+      (Number(goalProfile.volume) || 1) *
+      (Number(goalProfile.projection) || 1) *
+      (Number(goalProfile.definition) || 1);
 
   const leftCheek=[
     234,93,132,58
@@ -1715,13 +1790,45 @@ export function warpCheeks(
       amount
     );
 
-  return mergeWarp(
+  const result =
     mergeWarp(
-      landmarks,
-      left
-    ),
-    right
-  );
+      mergeWarp(
+        landmarks,
+        left
+      ),
+      right
+    );
+
+  const liftShift =
+    (
+      intensity === "natural"
+        ? 0.0012
+        : intensity === "enhanced"
+        ? 0.003
+        : 0.002
+    ) *
+    (
+      (Number(goalProfile.lift) || 1) -
+      1
+    );
+
+  if (liftShift !== 0) {
+    [
+      ...leftCheek,
+      ...rightCheek
+    ].forEach((index) => {
+      const point = result[index];
+
+      if (!point) return;
+
+      result[index] = {
+        ...point,
+        y: point.y - liftShift
+      };
+    });
+  }
+
+  return result;
 }
 
 
