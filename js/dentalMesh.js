@@ -543,3 +543,439 @@ export function createDentalMeshMask(
 
   return canvas;
 }
+
+
+// ---------------------------------------------------------
+// TOOTH-BY-TOOTH VISUAL GEOMETRY
+// ---------------------------------------------------------
+
+function getDentalIntensity(
+  level = "balanced"
+) {
+  switch (
+    String(level).toLowerCase()
+  ) {
+    case "natural":
+      return 0.68;
+
+    case "enhanced":
+      return 1.18;
+
+    default:
+      return 1;
+  }
+}
+
+function getDentalGeometryProfile(
+  procedure,
+  goal = ""
+) {
+  const normalizedGoal =
+    String(goal || "")
+      .trim()
+      .toLowerCase();
+
+  const profiles = {
+    veneers: {
+      default: {
+        width: 1.018,
+        height: 1.025,
+        verticalShift: -0.002,
+        centralEmphasis: 1
+      },
+      "length-refinement": {
+        width: 1.01,
+        height: 1.045,
+        verticalShift: -0.004,
+        centralEmphasis: 1.08
+      },
+      "width-refinement": {
+        width: 1.035,
+        height: 1.018,
+        verticalShift: -0.001,
+        centralEmphasis: 1
+      },
+      "symmetry-refinement": {
+        width: 1.022,
+        height: 1.028,
+        verticalShift: -0.002,
+        centralEmphasis: 1.1
+      }
+    },
+
+    "dental-bonding": {
+      default: {
+        width: 1.01,
+        height: 1.014,
+        verticalShift: -0.001,
+        centralEmphasis: 1
+      },
+      "edge-refinement": {
+        width: 1.006,
+        height: 1.025,
+        verticalShift: -0.002,
+        centralEmphasis: 1.08
+      },
+      "spacing-refinement": {
+        width: 1.025,
+        height: 1.01,
+        verticalShift: 0,
+        centralEmphasis: 1.08
+      },
+      "symmetry-refinement": {
+        width: 1.015,
+        height: 1.018,
+        verticalShift: -0.001,
+        centralEmphasis: 1.1
+      }
+    },
+
+    "smile-makeover": {
+      default: {
+        width: 1.02,
+        height: 1.03,
+        verticalShift: -0.002,
+        centralEmphasis: 1.05
+      },
+      "balanced-smile": {
+        width: 1.02,
+        height: 1.03,
+        verticalShift: -0.002,
+        centralEmphasis: 1.05
+      },
+      "symmetry-refinement": {
+        width: 1.025,
+        height: 1.032,
+        verticalShift: -0.002,
+        centralEmphasis: 1.12
+      },
+      "broader-smile": {
+        width: 1.035,
+        height: 1.02,
+        verticalShift: -0.001,
+        centralEmphasis: 0.96
+      }
+    }
+  };
+
+  const procedureProfiles =
+    profiles[procedure];
+
+  if (!procedureProfiles) {
+    return null;
+  }
+
+  return (
+    procedureProfiles[
+      normalizedGoal
+    ] ||
+    procedureProfiles.default
+  );
+}
+
+function polygonBounds(
+  polygon
+) {
+  const xs =
+    polygon.map(point => point.x);
+
+  const ys =
+    polygon.map(point => point.y);
+
+  const left =
+    Math.min(...xs);
+
+  const right =
+    Math.max(...xs);
+
+  const top =
+    Math.min(...ys);
+
+  const bottom =
+    Math.max(...ys);
+
+  return {
+    left,
+    right,
+    top,
+    bottom,
+    width:
+      Math.max(
+        1,
+        right - left
+      ),
+    height:
+      Math.max(
+        1,
+        bottom - top
+      )
+  };
+}
+
+function scaledPolygon(
+  polygon,
+  center,
+  scaleX,
+  scaleY,
+  shiftY = 0
+) {
+  return polygon.map(point => ({
+    x:
+      center.x +
+      (point.x - center.x) *
+        scaleX,
+    y:
+      center.y +
+      (point.y - center.y) *
+        scaleY +
+      shiftY
+  }));
+}
+
+function clipPolygon(
+  context,
+  polygon
+) {
+  if (
+    !Array.isArray(polygon) ||
+    polygon.length < 3
+  ) {
+    return false;
+  }
+
+  context.beginPath();
+  context.moveTo(
+    polygon[0].x,
+    polygon[0].y
+  );
+
+  for (
+    let index = 1;
+    index < polygon.length;
+    index += 1
+  ) {
+    context.lineTo(
+      polygon[index].x,
+      polygon[index].y
+    );
+  }
+
+  context.closePath();
+  context.clip();
+
+  return true;
+}
+
+export function renderDentalGeometry(
+  sourceCanvas,
+  dentalMesh,
+  baseMaskCanvas,
+  level = "balanced",
+  procedure = "veneers",
+  goal = ""
+) {
+  if (
+    !sourceCanvas ||
+    !dentalMesh?.valid ||
+    !baseMaskCanvas
+  ) {
+    return sourceCanvas;
+  }
+
+  const profile =
+    getDentalGeometryProfile(
+      procedure,
+      goal
+    );
+
+  if (!profile) {
+    return sourceCanvas;
+  }
+
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width =
+    sourceCanvas.width;
+
+  canvas.height =
+    sourceCanvas.height;
+
+  const context =
+    canvas.getContext("2d");
+
+  if (!context) {
+    return sourceCanvas;
+  }
+
+  context.drawImage(
+    sourceCanvas,
+    0,
+    0
+  );
+
+  const intensity =
+    getDentalIntensity(level);
+
+  const confidence =
+    clamp(
+      Number(
+        dentalMesh.confidence
+      ) || 0,
+      0,
+      1
+    );
+
+  // Geometry is intentionally small. Low-confidence smiles
+  // automatically receive less tooth-shape manipulation.
+  const confidenceScale =
+    0.35 +
+    confidence * 0.65;
+
+  const upperTeeth =
+    dentalMesh.upperTeeth || [];
+
+  const count =
+    upperTeeth.length;
+
+  upperTeeth.forEach(
+    (zone, index) => {
+      if (!zone?.polygon) {
+        return;
+      }
+
+      const distanceFromCenter =
+        Math.abs(
+          index -
+          (count - 1) / 2
+        ) /
+        Math.max(
+          1,
+          count / 2
+        );
+
+      const centralWeight =
+        1 +
+        (
+          profile.centralEmphasis -
+          1
+        ) *
+          (1 - distanceFromCenter);
+
+      const scaleX =
+        1 +
+        (
+          profile.width - 1
+        ) *
+          intensity *
+          confidenceScale *
+          centralWeight;
+
+      const scaleY =
+        1 +
+        (
+          profile.height - 1
+        ) *
+          intensity *
+          confidenceScale *
+          centralWeight;
+
+      const mouthOpening =
+        dentalMesh
+          .mouthBounds
+          ?.opening || 1;
+
+      const shiftY =
+        profile.verticalShift *
+        mouthOpening *
+        intensity *
+        confidenceScale *
+        centralWeight;
+
+      const sourceBounds =
+        polygonBounds(
+          zone.polygon
+        );
+
+      const targetPolygon =
+        scaledPolygon(
+          zone.polygon,
+          zone.center,
+          scaleX,
+          scaleY,
+          shiftY
+        );
+
+      const targetBounds =
+        polygonBounds(
+          targetPolygon
+        );
+
+      const layer =
+        document.createElement(
+          "canvas"
+        );
+
+      layer.width =
+        canvas.width;
+
+      layer.height =
+        canvas.height;
+
+      const layerContext =
+        layer.getContext("2d");
+
+      if (!layerContext) {
+        return;
+      }
+
+      layerContext.save();
+
+      if (
+        !clipPolygon(
+          layerContext,
+          targetPolygon
+        )
+      ) {
+        layerContext.restore();
+        return;
+      }
+
+      layerContext.drawImage(
+        sourceCanvas,
+        sourceBounds.left,
+        sourceBounds.top,
+        sourceBounds.width,
+        sourceBounds.height,
+        targetBounds.left,
+        targetBounds.top,
+        targetBounds.width,
+        targetBounds.height
+      );
+
+      layerContext.restore();
+
+      // The original mouth/teeth mask remains the hard
+      // safety boundary for every estimated tooth transform.
+      layerContext.globalCompositeOperation =
+        "destination-in";
+
+      layerContext.drawImage(
+        baseMaskCanvas,
+        0,
+        0
+      );
+
+      layerContext.globalCompositeOperation =
+        "source-over";
+
+      context.drawImage(
+        layer,
+        0,
+        0
+      );
+    }
+  );
+
+  return canvas;
+}
