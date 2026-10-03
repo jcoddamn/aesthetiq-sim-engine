@@ -748,7 +748,8 @@ function createSimulationLevel({
       normalizedProcedure,
       workingCanvas,
       maskCanvas,
-      level
+      level,
+      fillerProduct
     );
 
   if (
