@@ -2,6 +2,10 @@ import {
   getFillerVisualProfile
 } from "./fillerProfiles.js?v=1";
 
+import {
+  getFillerGoalVisualProfile
+} from "./fillerGoals.js?v=1";
+
 // =========================================================
 // AESTHETIQ — TREATMENT EFFECTS
 // File: js/treatmentEffects.js
@@ -206,7 +210,8 @@ export function simulateUnderEyeFiller(
   sourceCanvas,
   maskCanvas,
   level = "balanced",
-  fillerProduct = "provider"
+  fillerProduct = "provider",
+  fillerGoal = "balanced"
 ) {
   const intensity =
     getIntensityValue(level);
@@ -217,10 +222,18 @@ export function simulateUnderEyeFiller(
       "under-eye-filler"
     );
 
+  const goalProfile =
+    getFillerGoalVisualProfile(
+      "under-eye-filler",
+      fillerGoal
+    );
+
   const productStrength =
     (
-      (Number(fillerProfile.volume) || 1) +
-      (Number(fillerProfile.spread) || 1)
+      (Number(fillerProfile.volume) || 1) *
+        (Number(goalProfile.volume) || 1) +
+      (Number(fillerProfile.spread) || 1) *
+        (Number(goalProfile.blend) || 1)
     ) / 2;
 
   const featheredMask =
@@ -723,7 +736,8 @@ export function simulateVolumeSupport(
   maskCanvas,
   level = "balanced",
   fillerProduct = "provider",
-  procedure = ""
+  procedure = "",
+  fillerGoal = "balanced"
 ) {
   const intensity =
     getIntensityValue(level);
@@ -734,10 +748,19 @@ export function simulateVolumeSupport(
       procedure
     );
 
+  const goalProfile =
+    getFillerGoalVisualProfile(
+      procedure,
+      fillerGoal
+    );
+
   const productStrength =
     (
-      (Number(fillerProfile.volume) || 1) +
-      (Number(fillerProfile.projection) || 1)
+      (Number(fillerProfile.volume) || 1) *
+        (Number(goalProfile.volume) || 1) +
+      (Number(fillerProfile.projection) || 1) *
+        (Number(goalProfile.projection) || 1) *
+        (Number(goalProfile.definition) || 1)
     ) / 2;
 
   const featheredMask =
@@ -867,7 +890,8 @@ export function applyTreatmentEffect(
   sourceCanvas,
   maskCanvas,
   level = "balanced",
-  fillerProduct = "provider"
+  fillerProduct = "provider",
+  fillerGoal = "balanced"
 ) {
   switch (procedure) {
     // Under-eye filler
@@ -877,7 +901,8 @@ export function applyTreatmentEffect(
         sourceCanvas,
         maskCanvas,
         level,
-        fillerProduct
+        fillerProduct,
+        fillerGoal
       );
 
     // Laser resurfacing
@@ -977,7 +1002,8 @@ export function applyTreatmentEffect(
         maskCanvas,
         level,
         fillerProduct,
-        procedure
+        procedure,
+        fillerGoal
       );
 
     // Contour / reduction procedures
