@@ -385,6 +385,18 @@ function applyLandmarkConstraints(
   );
 }
 
+function constrainWarpResult(
+  originalLandmarks,
+  warpedLandmarks,
+  constraints
+) {
+  return applyLandmarkConstraints(
+    originalLandmarks,
+    warpedLandmarks,
+    constraints
+  );
+}
+
 function createWarpedLandmarks(
   procedure,
   landmarks,
@@ -459,53 +471,85 @@ function createWarpedLandmarks(
 
   case "rhinoplasty":
   case "revision-rhinoplasty":
-    return warpRhinoplasty(
+    return constrainWarpResult(
       landmarks,
-      level
+      warpRhinoplasty(
+        landmarks,
+        level
+      ),
+      constraints
     );
 
   case "buccal-fat-removal":
-    return warpBuccalSlimming(
+    return constrainWarpResult(
       landmarks,
-      level
+      warpBuccalSlimming(
+        landmarks,
+        level
+      ),
+      constraints
     );
 
   case "facelift":
-    return warpFacelift(
+    return constrainWarpResult(
       landmarks,
-      level,
-      false
+      warpFacelift(
+        landmarks,
+        level,
+        false
+      ),
+      constraints
     );
 
   case "mini-facelift":
-    return warpFacelift(
+    return constrainWarpResult(
       landmarks,
-      level,
-      true
+      warpFacelift(
+        landmarks,
+        level,
+        true
+      ),
+      constraints
     );
 
   case "brow-lift":
-    return warpBrowLift(
+    return constrainWarpResult(
       landmarks,
-      level
+      warpBrowLift(
+        landmarks,
+        level
+      ),
+      constraints
     );
 
   case "upper-blepharoplasty":
-    return warpUpperBlepharoplasty(
+    return constrainWarpResult(
       landmarks,
-      level
+      warpUpperBlepharoplasty(
+        landmarks,
+        level
+      ),
+      constraints
     );
 
   case "lower-blepharoplasty":
-    return warpLowerBlepharoplasty(
+    return constrainWarpResult(
       landmarks,
-      level
+      warpLowerBlepharoplasty(
+        landmarks,
+        level
+      ),
+      constraints
     );
 
   case "lip-lift":
-    return warpLipLift(
+    return constrainWarpResult(
       landmarks,
-      level
+      warpLipLift(
+        landmarks,
+        level
+      ),
+      constraints
     );
 
   default:
