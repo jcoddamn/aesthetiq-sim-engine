@@ -425,7 +425,8 @@ function createWarpedLandmarks(
       landmarks,
       level,
       fillerProduct,
-      fillerGoal
+      fillerGoal,
+      neuromodulatorProduct
     );
 
   case "chin-implant":
