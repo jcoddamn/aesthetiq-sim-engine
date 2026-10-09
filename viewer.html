@@ -38,10 +38,10 @@ a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
 <label>Intensity <span id="intensityValue">1.00×</span><input id="intensitySlider" type="range" min="0" max="1.6" value="1" step=".02"></label>
 <label>Result development <span id="recoveryValue">100%</span><input id="recoverySlider" type="range" min="0" max="100" value="100" step="1"></label>
 <div class="controls">
-<button id="resetView">Reset camera</button><button id="resetModel">Reset model</button>
+<button id="resetView">Reset camera</button><button id="resetModel">Reset model</button><button id="deleteScan">Delete local scan</button>
 <button id="save">Save image</button><button id="back">Back</button>
 </div>
 <p id="previewNote"></p>
-<small>Model: MediaPipe canonical face geometry, Apache 2.0. Photo fitting uses 2D facial landmarks; depth, skin, bone and actual procedure results are not recovered from one image. The ear, skull and neck surfaces are schematic.</small>
+<small>Model: MediaPipe canonical face geometry, Apache 2.0. Three-angle scanning estimates geometry and projects photo textures onto the facial surface. Depth and occluded areas remain approximations, not a clinical 3D scan. The ear, skull and neck surfaces are schematic.</small>
 </div>
-</main><script type="module" src="./faceViewer.js?v=2"></script></body></html>
+</main><script type="module" src="./faceViewer.js?v=3"></script></body></html>
