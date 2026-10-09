@@ -5,6 +5,7 @@ import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
 import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=2";
 import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=2";
+import {inspectScan} from "./js/twinCaptureQuality.js?v=1";
 const names={
 "rhinoplasty":"Rhinoplasty","revision-rhinoplasty":"Revision Rhinoplasty",
 "lip-filler":"Lip Filler","lip-flip":"Lip Flip","cheek-filler":"Cheek Filler",
@@ -176,11 +177,18 @@ function setTexture(captures){
 }
 async function applyPersonalizedCaptures(captures){
  if(!mesh)throw Error("3D model is not loaded.");
- const model=reconstruct3DFromCaptures(captures,mesh.geometry.userData.canonical);
+ const review=inspectScan(captures);
+ const model=reconstruct3DFromCaptures(review.captures,mesh.geometry.userData.canonical);
+ // Build texture first; only update the displayed identity if it succeeds.
+ setTexture(review.captures);
  base=Float32Array.from(model.positions);
- setTexture(captures);
- photoFitted=true;morph();
- status("Personalized scan loaded ("+model.quality.poseCount+" angle(s)). Geometry and texture are approximate.");
+ photoFitted=true;
+ morph();
+ const quality=Math.round(review.quality*100);
+ $("scanQuality").textContent="Scan quality: "+quality+"% · "+model.quality.poseCount+" angle(s)";
+ $("scanWarnings").textContent=review.warnings.length?review.warnings.join(" "):
+  "Capture passed basic lighting, framing and sharpness checks.";
+ status("Personalized facial geometry and photo texture loaded. Rotate to inspect likeness.");
 }
 async function fitPhoto(file){
  if(!file||!mesh)return;
@@ -216,12 +224,25 @@ $("wireframe").addEventListener("change",e=>{if(mesh)mesh.material.wireframe=e.t
 $("resetView").addEventListener("click",reset);
 $("resetModel").addEventListener("click",()=>{if(!mesh)return;base=Float32Array.from(mesh.geometry.userData.canonical);photoFitted=false;
  if(scanTexture){scanTexture.dispose();scanTexture=null;}mesh.material.map=null;mesh.material.color.set(0xc58b73);mesh.material.needsUpdate=true;
+ $("scanQuality").textContent="Canonical reference model";
+ $("scanWarnings").textContent="No personalized scan is active.";
  morph();status("Canonical face restored.");});
 $("photo").addEventListener("change",async e=>{try{await fitPhoto(e.target.files?.[0]);}catch(err){status(err.message||String(err),true);}});
 $("deleteScan").addEventListener("click",async()=>{
  try{await clearApproved3DScan();$("resetModel").click();status("Saved facial scan deleted from this browser.");}
  catch(e){status("Unable to delete local scan: "+(e.message||e),true);}
 });
+let savedIntensity=1;
+$("compareOriginal").addEventListener("pointerdown",()=>{
+ savedIntensity=Number($("intensitySlider").value);
+ $("intensitySlider").value=0;morph();
+});
+function restoreCompare(){
+ $("intensitySlider").value=savedIntensity;morph();
+}
+$("compareOriginal").addEventListener("pointerup",restoreCompare);
+$("compareOriginal").addEventListener("pointercancel",restoreCompare);
+$("compareOriginal").addEventListener("pointerleave",restoreCompare);
 $("save").addEventListener("click",()=>{renderer.render(scene,camera);const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download="aesthetiq-3d-"+procedure+".png";a.click();});
 $("back").addEventListener("click",()=>{history.length>1?history.back():location.assign("index.html");});
 const requested=new URLSearchParams(location.search).get("procedure");
