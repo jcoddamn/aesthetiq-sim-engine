@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "policy": {
+    "image_reuse": "Verify the license on each figure, check third-party exclusions, confirm appropriate patient permissions, retain source and attribution, and review intended commercial use before downloading or displaying any clinical photograph.",
+    "measurement": "Use standardized, same-person before/after photographs, compatible camera angles, expression and timing. Never treat observed deltas as an individual outcome guarantee.",
+    "automated_training": false,
+    "downloaded_images": 0
+  },
+  "geometry": {
+    "name": "MediaPipe canonical 468-vertex face OBJ",
+    "repository_path": "models/mediapipe_canonical_face.obj",
+    "source": "https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/modules/face_geometry/data/canonical_face_model.obj",
+    "license": "Apache-2.0",
+    "note": "Reference geometry, not a full head scan or a person-specific depth reconstruction."
+  },
+  "candidates": [
+    {
+      "procedures": [
+        "revision-rhinoplasty",
+        "rhinoplasty"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10978561/",
+      "title": "Enhanced revision rhinoplasty with processed costal cartilage guided by preoperative computed tomography and 3D scanning",
+      "license": "CC BY 4.0 (article)",
+      "figure_status": "Individual figure credits require verification",
+      "status": "source identified; image rights/consent review pending"
+    },
+    {
+      "procedures": [
+        "rhinoplasty"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9781909/",
+      "title": "3D Printing Technique Assisted Autologous Costal Cartilage Augmentation Rhinoplasty",
+      "license": "CC BY 4.0 (article)",
+      "figure_status": "Review Figure 3 and third-party credits",
+      "status": "source identified; image rights/consent review pending"
+    },
+    {
+      "procedures": [
+        "facelift",
+        "upper-blepharoplasty",
+        "lower-blepharoplasty",
+        "facial-fat-transfer"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7159970/",
+      "title": "Clinical Evaluation of 225 Sub-SMAS Facelifts with No Temporal Incision",
+      "license": "Verify article and figure reuse terms",
+      "figure_status": "Review Figures 5 and 6; multiple simultaneous treatments",
+      "status": "source identified; not suitable for single-procedure calibration without controlling confounders"
+    },
+    {
+      "procedures": [
+        "upper-blepharoplasty",
+        "lower-blepharoplasty"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10494781/",
+      "title": "Lower Eyelid Blepharoplasty With Volume Preservation Using the Skin Flap",
+      "license": "Verify figure-specific reuse terms",
+      "figure_status": "Figures 1-4 include concurrent procedures",
+      "status": "source identified; image rights/consent review pending"
+    },
+    {
+      "procedures": [
+        "breast-augmentation",
+        "breast-lift",
+        "breast-reduction"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6157947/",
+      "title": "Photometric Evaluation of Long-term Changes in Breast Shape after Breast Augmentation and Vertical Mammaplasty",
+      "license": "CC BY 4.0 (article)",
+      "figure_status": "Review figures and standardized measurement methodology",
+      "status": "source identified; numeric outcomes usable as literature context, not automatic visual targets"
+    },
+    {
+      "procedures": [
+        "breast-augmentation",
+        "facial-fat-transfer"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12386413/",
+      "title": "Breast Augmentation in Body Contouring Using Autologous Stem Cell-Enriched Fat Grafting",
+      "license": "CC BY 4.0 (article)",
+      "figure_status": "Review figure credits",
+      "status": "source identified; image rights/consent review pending"
+    },
+    {
+      "procedures": [
+        "facial-anatomy"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4841760/",
+      "title": "3D Facial Norms Database",
+      "license": "Controlled access for individual 3D surfaces",
+      "figure_status": "Access to individual geometry requires credentials",
+      "status": "source identified; no data downloaded"
+    },
+    {
+      "procedures": [
+        "head-model"
+      ],
+      "url": "https://opengameart.org/content/3d-human-parts-pack",
+      "title": "3D Human Parts Pack",
+      "license": "CC0 per source page",
+      "figure_status": "Alternative non-clinical model assets; evaluate topology and suitability",
+      "status": "source identified; not downloaded"
+    }
+  ]
+}
