@@ -85,34 +85,42 @@ function affine(s,t){
  (d.y*(b.x*c.y-c.x*b.y)+e.y*(c.x*a.y-a.x*c.y)+f.y*(a.x*b.y-b.x*a.y))/det
  ];
 }
-function drawTriangle(ctx,image,src,target){
+function drawTriangle(ctx,image,src,target,alpha=1){
  const m=affine(src,target);if(!m)return;
- ctx.save();ctx.beginPath();ctx.moveTo(target[0].x,target[0].y);
- ctx.lineTo(target[1].x,target[1].y);ctx.lineTo(target[2].x,target[2].y);ctx.closePath();ctx.clip();
+ // A tiny overlap avoids subpixel gaps between adjacent atlas triangles.
+ const cx=(target[0].x+target[1].x+target[2].x)/3;
+ const cy=(target[0].y+target[1].y+target[2].y)/3;
+ const clip=target.map(p=>{
+  const dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy)||1;
+  return {x:p.x+dx/d*.7,y:p.y+dy/d*.7};
+ });
+ ctx.save();ctx.globalAlpha=alpha;ctx.beginPath();ctx.moveTo(clip[0].x,clip[0].y);
+ ctx.lineTo(clip[1].x,clip[1].y);ctx.lineTo(clip[2].x,clip[2].y);ctx.closePath();ctx.clip();
  ctx.setTransform(...m);ctx.drawImage(image,0,0);ctx.restore();
 }
-export function makeMultiAngleTexture(captures,triangles,uvs,canonical,size=1024){
+export function makeMultiAngleTexture(captures,triangles,uvs,canonical,size=1536){
  if(!captures?.straight?.imageCanvas||!valid(captures.straight.landmarks))throw Error("Frontal texture capture is missing.");
  const atlas=document.createElement("canvas");atlas.width=size;atlas.height=size;
  const ctx=atlas.getContext("2d");
  ctx.fillStyle="#b58b78";ctx.fillRect(0,0,size,size);
- const faces=triangles;
- // Paint all triangles from frontal capture, then overwrite lateral-facing
- // triangles with corresponding side photos. This is an approximate atlas:
- // no calibrated camera projection, exposure matching or occlusion recovery.
  const jobs=[];
- for(let k=0;k<faces.length;k+=3){
-  const ids=[faces[k],faces[k+1],faces[k+2]];
+ for(let k=0;k<triangles.length;k+=3){
+  const ids=[triangles[k],triangles[k+1],triangles[k+2]];
   const meanX=ids.reduce((sum,id)=>sum+canonical[id*3],0)/3;
-  const capture=(meanX< -2.1?captures.left:meanX>2.1?captures.right:null);
-  jobs.push({ids,capture:captures.straight});
-  if(capture?.imageCanvas&&valid(capture.landmarks))jobs.push({ids,capture});
+  jobs.push({ids,capture:captures.straight,alpha:1});
+  // Side views are restricted to the far lateral surface, where frontal
+  // photos lose detail. Soft partial coverage avoids hard image boundaries.
+  const side=meanX< -3.8?captures.left:meanX>3.8?captures.right:null;
+  if(side?.imageCanvas&&valid(side.landmarks)){
+   const opacity=clamp((Math.abs(meanX)-3.8)/2.8,0,.8);
+   if(opacity>.04)jobs.push({ids,capture:side,alpha:opacity});
+  }
  }
- for(const {ids,capture} of jobs){
+ for(const {ids,capture,alpha} of jobs){
   const image=capture.imageCanvas,landmarks=capture.landmarks;
   const src=ids.map(i=>({x:landmarks[i].x*image.width,y:landmarks[i].y*image.height}));
   const target=ids.map(i=>({x:uvs[i*2]*size,y:(1-uvs[i*2+1])*size}));
-  drawTriangle(ctx,image,src,target);
+  drawTriangle(ctx,image,src,target,alpha);
  }
  return atlas;
 }
