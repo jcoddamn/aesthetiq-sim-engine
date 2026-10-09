@@ -18,7 +18,7 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 </head><body>
 <a href="index.html">← AesthetIQ</a>
 <h1>Procedure evidence audit</h1>
-<p>This development-only research tool compares <strong>same-person, authorized</strong> before/after photographs against the app's Natural, Balanced and Enhanced outputs. It measures normalized 2D facial geometry—not volume, tissue response or medical accuracy. Photos are processed locally and are not added to the GitHub repository.</p>
+<p>This development-only research tool compares <strong>same-person, authorized</strong> before/after photographs against the app's Natural, Balanced and Enhanced outputs. It measures normalized 2D facial geometry—not volume, tissue response or medical accuracy. Photos are processed locally; this tool does not upload images. Use Discard to clear temporary canvases and selected files. Browser memory release is not guaranteed to be immediate.</p>
 <div class="panel">
 <div class="controls">
 <label>Procedure<select id="procedure"></select></label>
@@ -112,8 +112,10 @@ $("run").addEventListener("click",async()=>{
  clearTemporaryPhotos(false);
  $("run").disabled=true;$("export").disabled=true;report=null;$("status").textContent="Analyzing photographs…";
  try{
-  const before=await prepare($("before").files[0]),after=await prepare($("after").files[0]);
-  temporaryCanvases.push(before,after);
+  const before=await prepare($("before").files[0]);
+  temporaryCanvases.push(before);
+  const after=await prepare($("after").files[0]);
+  temporaryCanvases.push(after);
   const original=await detectFaceLandmarksFromImage(before);
   const observed=await detectFaceLandmarksFromImage(after);
   if(!Array.isArray(original)||!Array.isArray(observed))throw Error("A face could not be detected in both photographs.");
