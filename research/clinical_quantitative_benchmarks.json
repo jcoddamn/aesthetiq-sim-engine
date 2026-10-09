@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "date": "2026-10-09",
+  "use": "Research sanity checks only; NOT automatic calibration or outcome prediction",
+  "studies": [
+    {
+      "procedure": "lip-filler",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9369503/",
+      "study_design": "36 patients enrolled, 34 analyzed; fixed 1 mL hyaluronic acid injection protocol; 3D VECTRA photography",
+      "observations": [
+        {
+          "metric": "total_lip_volume_ml",
+          "baseline": 3.1,
+          "week4": 4.1,
+          "week12": 3.8,
+          "unit": "mL",
+          "measurement_type": "3D_volume"
+        },
+        {
+          "metric": "lip_fullness_scale_upper",
+          "baseline": 2.1,
+          "week4": 3,
+          "week12": 2.8,
+          "unit": "0-4 ordinal scale",
+          "measurement_type": "clinical_score"
+        },
+        {
+          "metric": "lip_fullness_scale_lower",
+          "baseline": 2,
+          "week4": 3.1,
+          "week12": 2.8,
+          "unit": "0-4 ordinal scale",
+          "measurement_type": "clinical_score"
+        }
+      ],
+      "compatibility": "NOT directly comparable to normalized 2D MediaPipe landmark ratios; requires validated 3D volume calibration",
+      "source_license": "CC BY 4.0 article, figure rights must be checked",
+      "calibration_applied": false
+    },
+    {
+      "procedure": "microneedling-and-chemical-peel",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8501429/",
+      "study_design": "Randomized study of microneedling, chemical peeling, and combination for atrophic acne scars",
+      "observations": [
+        {
+          "metric": "Goodman-Baron_score_combination",
+          "baseline": 2.87,
+          "followup": 2.03,
+          "unit": "ordinal clinical scale",
+          "measurement_type": "clinical_score"
+        }
+      ],
+      "compatibility": "NOT directly comparable to AesthetIQ brightness/blur filters; requires independent skin texture and scar scoring",
+      "source_license": "CC BY-NC-SA 4.0 — no commercial image reuse without permission",
+      "calibration_applied": false
+    }
+  ]
+}
