@@ -33,7 +33,7 @@
 - `clinical-evidence-audit.html`: local same-person image pair and simulation comparison for procedures with available facial metrics.
 - `js/procedureEvidenceComparison.js`: normalized metric residuals and camera alignment flags.
 - `js/evidenceCalibrationReview.js`: summary of independent cases, requires >=20 before expert review and does not auto-adjust coefficients.
-- `research/procedure_evidence_audit_v2.json`: all 54 procedures, 17 candidate source links, source-specific or gallery-only coverage, and licensing flags.
+- `research/procedure_evidence_audit_v2.json`: all 54 procedures, 23 candidate source links, source-specific or gallery-only coverage, and licensing flags.
 - `research/clinical_quantitative_benchmarks.json`: selected published numeric findings, **not** direct simulation calibration.
 
 ## Not completed
