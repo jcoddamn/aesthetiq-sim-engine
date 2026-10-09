@@ -1,0 +1,954 @@
+{
+  "version": 2,
+  "generated_date": "2026-10-09",
+  "procedures_total": 54,
+  "scope": "All procedures in js/procedureData.js",
+  "sources": {
+    "lip3d": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9369503/",
+      "type": "clinical_quantitative",
+      "license": "CC BY 4.0 article; check figure credits",
+      "figure": "Figure 5 before/after and Figure 6 displacement vectors",
+      "numeric": true
+    },
+    "lip3d2": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11635368/",
+      "type": "clinical_quantitative",
+      "license": "figure-level rights review pending",
+      "figure": "Figure 3 before/after 3D lips",
+      "numeric": true
+    },
+    "rhinoplasty": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12493035/",
+      "type": "clinical_quantitative",
+      "license": "figure-level rights review pending",
+      "figure": "Figures 1–3 before/after and measurements",
+      "numeric": true
+    },
+    "rhinoplasty2": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11278402/",
+      "type": "clinical_quantitative",
+      "license": "figure-level rights review pending",
+      "figure": "Figures 2–3 standardized 3D scans",
+      "numeric": true
+    },
+    "facelift": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7159970/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figures 5–6; combined treatments are confounded",
+      "numeric": false
+    },
+    "eyes": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10494781/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figures 1–4; combined treatments may be confounded",
+      "numeric": false
+    },
+    "skin": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8501429/",
+      "type": "clinical_photo_and_score",
+      "license": "figure-level rights review pending",
+      "figure": "Figure 1, microneedling and chemical peel",
+      "numeric": true
+    },
+    "laser": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12228042/",
+      "type": "clinical_photo_and_score",
+      "license": "figure-level rights review pending",
+      "figure": "Figure 2 split-face RF microneedling vs CO2 laser",
+      "numeric": true
+    },
+    "breast": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6157947/",
+      "type": "clinical_quantitative",
+      "license": "CC BY 4.0 article; check figure credits",
+      "figure": "Long-term breast photometry figures",
+      "numeric": true
+    },
+    "body": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7288879/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figure 2; multiple concurrent procedures",
+      "numeric": false
+    },
+    "thigh": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4147459/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figures 2–3 thigh lift",
+      "numeric": false
+    },
+    "hair": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7759062/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figures 1–4 hair transplant",
+      "numeric": false
+    },
+    "eyebrow": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8647866/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figures 2–4 eyebrow transplant",
+      "numeric": false
+    },
+    "beard": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5965333/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figure 9 beard transplant",
+      "numeric": false
+    },
+    "dental": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6597372/",
+      "type": "clinical_photo",
+      "license": "figure-level rights review pending",
+      "figure": "Figure 1 multi-treatment veneers, whitening and gum contouring",
+      "numeric": false
+    },
+    "asps": {
+      "url": "https://www.plasticsurgery.org/photo-gallery",
+      "type": "professional_gallery",
+      "license": "No automated image reuse authorization; viewing only",
+      "figure": "Procedure-specific galleries",
+      "numeric": false
+    },
+    "realself": {
+      "url": "https://www.realself.com/photos",
+      "type": "professional_gallery",
+      "license": "No automated image reuse authorization; viewing only",
+      "figure": "Procedure-specific galleries",
+      "numeric": false
+    }
+  },
+  "procedures": [
+    {
+      "id": "rhinoplasty",
+      "area": "Face",
+      "evidence_sources": [
+        "rhinoplasty",
+        "rhinoplasty2"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "revision-rhinoplasty",
+      "area": "Face",
+      "evidence_sources": [
+        "rhinoplasty",
+        "rhinoplasty2"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "chin-implant",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "cheek-implants",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "buccal-fat-removal",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "facelift",
+      "area": "Face",
+      "evidence_sources": [
+        "facelift"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "mini-facelift",
+      "area": "Face",
+      "evidence_sources": [
+        "facelift"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "brow-lift",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "upper-blepharoplasty",
+      "area": "Face",
+      "evidence_sources": [
+        "eyes"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "lower-blepharoplasty",
+      "area": "Face",
+      "evidence_sources": [
+        "eyes"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "neck-lift",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "lip-lift",
+      "area": "Face",
+      "evidence_sources": [
+        "lip3d"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "otoplasty",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "facial-fat-transfer",
+      "area": "Face",
+      "evidence_sources": [
+        "facelift"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "lip-filler",
+      "area": "Face",
+      "evidence_sources": [
+        "lip3d",
+        "lip3d2"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "cheek-filler",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "chin-filler",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "jawline-filler",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "under-eye-filler",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "temple-filler",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "forehead-neuromodulator",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "glabella-neuromodulator",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "crows-feet-neuromodulator",
+      "area": "Face",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "lip-flip",
+      "area": "Face",
+      "evidence_sources": [
+        "lip3d"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "chemical-peel",
+      "area": "Skin",
+      "evidence_sources": [
+        "skin"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "laser-resurfacing",
+      "area": "Skin",
+      "evidence_sources": [
+        "laser"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "microneedling",
+      "area": "Skin",
+      "evidence_sources": [
+        "skin"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "rf-microneedling",
+      "area": "Skin",
+      "evidence_sources": [
+        "laser"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "ipl",
+      "area": "Skin",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "co2-laser",
+      "area": "Skin",
+      "evidence_sources": [
+        "laser"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "breast-augmentation",
+      "area": "Body",
+      "evidence_sources": [
+        "breast"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "breast-lift",
+      "area": "Body",
+      "evidence_sources": [
+        "breast"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "breast-reduction",
+      "area": "Body",
+      "evidence_sources": [
+        "breast"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "liposuction",
+      "area": "Body",
+      "evidence_sources": [
+        "body"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "tummy-tuck",
+      "area": "Body",
+      "evidence_sources": [
+        "body"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "mini-tummy-tuck",
+      "area": "Body",
+      "evidence_sources": [
+        "body"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "brazilian-butt-lift",
+      "area": "Body",
+      "evidence_sources": [
+        "body"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "butt-implants",
+      "area": "Body",
+      "evidence_sources": [
+        "body"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "mommy-makeover",
+      "area": "Body",
+      "evidence_sources": [
+        "body"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "arm-lift",
+      "area": "Body",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "thigh-lift",
+      "area": "Body",
+      "evidence_sources": [
+        "thigh",
+        "body"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "male-breast-reduction",
+      "area": "Body",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "pectoral-implants",
+      "area": "Body",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "calf-implants",
+      "area": "Body",
+      "evidence_sources": [
+        "asps"
+      ],
+      "evidence_specificity": "gallery_only_no_study",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "No directly applicable standardized paired-image study verified yet"
+    },
+    {
+      "id": "fue-hair-transplant",
+      "area": "Hair",
+      "evidence_sources": [
+        "hair"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "fut-hair-transplant",
+      "area": "Hair",
+      "evidence_sources": [
+        "hair"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "beard-transplant",
+      "area": "Hair",
+      "evidence_sources": [
+        "beard",
+        "hair"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "eyebrow-transplant",
+      "area": "Hair",
+      "evidence_sources": [
+        "eyebrow",
+        "hair"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "hairline-lowering",
+      "area": "Hair",
+      "evidence_sources": [
+        "hair"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "veneers",
+      "area": "Smile",
+      "evidence_sources": [
+        "dental"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "dental-bonding",
+      "area": "Smile",
+      "evidence_sources": [
+        "dental"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "teeth-whitening",
+      "area": "Smile",
+      "evidence_sources": [
+        "dental"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "gum-contouring",
+      "area": "Smile",
+      "evidence_sources": [
+        "dental"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    },
+    {
+      "id": "smile-makeover",
+      "area": "Smile",
+      "evidence_sources": [
+        "dental"
+      ],
+      "evidence_specificity": "procedure_or_adjacent",
+      "clinical_image_status": "source_identified_not_downloaded",
+      "image_license_status": "figure_and_patient_rights_review_required",
+      "measured_pairs": 0,
+      "simulation_pair_comparisons": 0,
+      "calibrated": false,
+      "clinical_validation": false,
+      "limitations": "Source may include multiple procedures, differing views, or incompatible outcome metrics"
+    }
+  ],
+  "calibration_policy": "No clinical photos in public GitHub without verified commercial reuse and patient permissions. Do not fit procedure coefficients to isolated images or population means. Numerical literature benchmarks are observational checks only.",
+  "evidence_statistics": {
+    "total": 54,
+    "source_specific": 35,
+    "gallery_only": 19,
+    "image_files_downloaded": 0,
+    "paired_images_measured": 0,
+    "procedures_clinically_calibrated": 0
+  }
+}
