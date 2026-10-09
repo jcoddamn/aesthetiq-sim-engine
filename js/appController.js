@@ -9,7 +9,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=27";
+} from "./simulationPipeline.js?v=28";
 
 import {
   getProcedureLabel,
