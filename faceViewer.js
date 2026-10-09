@@ -4,7 +4,7 @@ import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccal
 import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
 import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=2";
-import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=1";
+import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=2";
 const names={
 "rhinoplasty":"Rhinoplasty","revision-rhinoplasty":"Revision Rhinoplasty",
 "lip-filler":"Lip Filler","lip-flip":"Lip Flip","cheek-filler":"Cheek Filler",
