@@ -123,6 +123,48 @@
       "license": "No automated image reuse authorization; viewing only",
       "figure": "Procedure-specific galleries",
       "numeric": false
+    },
+    "otoplasty2026": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13207221/",
+      "type": "clinical_photo_and_measurement",
+      "license": "Article/figure reuse rights unverified; do not download",
+      "figure": "Figures 6–7 before/after otoplasty; includes ear projection measures",
+      "numeric": true
+    },
+    "neuro2021": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8570655/",
+      "type": "clinical_photo_and_score",
+      "license": "Article/figure reuse rights unverified; do not download",
+      "figure": "Figures 3–4 glabella, forehead and crow's feet before/after",
+      "numeric": true
+    },
+    "contour2024": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11452099/",
+      "type": "clinical_photo_multi_treatment",
+      "license": "Article/figure reuse rights unverified; do not download",
+      "figure": "Figure 4 cheek/chin/jawline combined fillers; cannot attribute changes to one treatment",
+      "numeric": false
+    },
+    "periorbital2025": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12423213/",
+      "type": "clinical_photo_multi_treatment",
+      "license": "Article/figure reuse rights unverified; do not download",
+      "figure": "Figure 7 tear trough and outer canthus; other concurrent treatments",
+      "numeric": false
+    },
+    "gynecomastia2023": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10456205/",
+      "type": "clinical_photo_and_measurement",
+      "license": "Article/figure reuse rights unverified; do not download",
+      "figure": "Figures 2 and 4, anthropometric before/after measurements",
+      "numeric": true
+    },
+    "ipl2010": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2921742/",
+      "type": "clinical_photo_and_score",
+      "license": "Article/figure reuse rights unverified; do not download",
+      "figure": "Figures 2–4 and photoaging scale; combination PDT-IPL is a confounder",
+      "numeric": true
     }
   },
   "procedures": [
@@ -312,16 +354,16 @@
       "id": "otoplasty",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "otoplasty2026"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "facial-fat-transfer",
@@ -358,121 +400,121 @@
       "id": "cheek-filler",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "contour2024"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "chin-filler",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "contour2024"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "jawline-filler",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "contour2024"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "under-eye-filler",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "periorbital2025"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "temple-filler",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "contour2024"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "forehead-neuromodulator",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "neuro2021"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "glabella-neuromodulator",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "neuro2021"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "crows-feet-neuromodulator",
       "area": "Face",
       "evidence_sources": [
-        "asps"
+        "neuro2021"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "lip-flip",
@@ -553,16 +595,16 @@
       "id": "ipl",
       "area": "Skin",
       "evidence_sources": [
-        "asps"
+        "ipl2010"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "co2-laser",
@@ -749,16 +791,16 @@
       "id": "male-breast-reduction",
       "area": "Body",
       "evidence_sources": [
-        "asps"
+        "gynecomastia2023"
       ],
-      "evidence_specificity": "gallery_only_no_study",
+      "evidence_specificity": "procedure_or_adjacent",
       "clinical_image_status": "source_identified_not_downloaded",
       "image_license_status": "figure_and_patient_rights_review_required",
       "measured_pairs": 0,
       "simulation_pair_comparisons": 0,
       "calibrated": false,
       "clinical_validation": false,
-      "limitations": "No directly applicable standardized paired-image study verified yet"
+      "limitations": "Candidate study identified; images not acquired; reuse rights unverified; multiple procedures or different metrics may prevent direct calibration."
     },
     {
       "id": "pectoral-implants",
@@ -946,12 +988,12 @@
   "calibration_policy": "No clinical photos in public GitHub without verified commercial reuse and patient permissions. Do not fit procedure coefficients to isolated images or population means. Numerical literature benchmarks are observational checks only. Study numerical outcomes may inform sanity checks, but not determine individual patient predictions.",
   "evidence_statistics": {
     "total": 54,
-    "source_specific": 35,
-    "gallery_only": 19,
+    "source_specific": 46,
+    "gallery_only": 8,
     "image_files_downloaded": 0,
     "paired_images_measured": 0,
     "procedures_clinically_calibrated": 0,
-    "source_count": 17,
+    "source_count": 23,
     "source_links_not_image_files": true,
     "restricted_datasets_identified": 3
   },
