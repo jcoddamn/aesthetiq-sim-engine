@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12283507/",
+    "doi": "10.1186/s40902-025-00472-x",
+    "license": "CC BY 4.0 article, subject to individual figure exclusions",
+    "table": "Table 1",
+    "accessed": "2026-10-09"
+  },
+  "scope": "Published adult-only summary; congenital cleft nasal reconstruction, not typical elective cosmetic rhinoplasty.",
+  "age_filter": "18 years or older; exclude cases 2 (17) and 8 (15)",
+  "cases": [
+    {
+      "case": 1,
+      "age": 24,
+      "tip_projection_before": 0.55,
+      "tip_projection_after": 0.65,
+      "alar_width_before": 1.18,
+      "alar_width_after": 0.96,
+      "concurrent_lip_surgery": true
+    },
+    {
+      "case": 3,
+      "age": 22,
+      "tip_projection_before": 0.55,
+      "tip_projection_after": 0.66,
+      "alar_width_before": 1.17,
+      "alar_width_after": 0.95,
+      "concurrent_lip_surgery": false
+    },
+    {
+      "case": 4,
+      "age": 23,
+      "tip_projection_before": 0.55,
+      "tip_projection_after": 0.66,
+      "alar_width_before": 1.18,
+      "alar_width_after": 0.95,
+      "concurrent_lip_surgery": false
+    },
+    {
+      "case": 5,
+      "age": 21,
+      "tip_projection_before": 0.56,
+      "tip_projection_after": 0.66,
+      "alar_width_before": 1.19,
+      "alar_width_after": 0.97,
+      "concurrent_lip_surgery": false
+    },
+    {
+      "case": 6,
+      "age": 18,
+      "tip_projection_before": 0.55,
+      "tip_projection_after": 0.64,
+      "alar_width_before": 1.16,
+      "alar_width_after": 0.94,
+      "concurrent_lip_surgery": true
+    },
+    {
+      "case": 7,
+      "age": 28,
+      "tip_projection_before": 0.55,
+      "tip_projection_after": 0.65,
+      "alar_width_before": 1.19,
+      "alar_width_after": 0.96,
+      "concurrent_lip_surgery": true
+    }
+  ],
+  "note": "Transcribed published ratio values; not photo-derived or independently validated. Tip projection is a side-view metric not captured by current 2D front-view AesthetIQ ratios. Avoid using these six cases to set population targets.",
+  "patient_images_downloaded": 0,
+  "patient_images_stored": 0,
+  "coefficients_changed": false,
+  "adult_only_summary": {
+    "cases": 6,
+    "mean_tip_projection_delta": 0.10166666666666668,
+    "mean_alar_width_delta": -0.2233333333333333,
+    "tip_projection_direction": "increase",
+    "alar_width_direction": "decrease",
+    "metric_compatibility": "Published alar width ratio may not use exactly the same landmarks as AesthetIQ alarToIntercanthal; direction-only sanity check."
+  }
+}
