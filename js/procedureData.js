@@ -971,8 +971,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking increased breast volume who understand implant maintenance, alternatives, and long-term follow-up.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "breast-augmentation",
     featured: true
   },
 
@@ -1002,8 +1002,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with breast sagging who have stable weight and realistic expectations about scars.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "breast-lift",
     featured: false
   },
 
@@ -1033,8 +1033,8 @@ export const procedures = [
     ],
     candidate:
       "Adults experiencing physical or cosmetic concerns related to breast size.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "breast-reduction",
     featured: false
   },
 
@@ -1064,8 +1064,8 @@ export const procedures = [
     ],
     candidate:
       "Adults near a stable weight with localized fat deposits and reasonable skin elasticity.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "liposuction",
     featured: true
   },
 
@@ -1095,8 +1095,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with loose abdominal skin or muscle separation who are near a stable weight and do not plan major future weight changes.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "tummy-tuck",
     featured: true
   },
 
@@ -1126,8 +1126,8 @@ export const procedures = [
     ],
     candidate:
       "Adults whose concerns are mainly limited to the lower abdomen.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "mini-tummy-tuck",
     featured: false
   },
 
@@ -1157,8 +1157,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with enough donor fat who understand the serious safety considerations and need for a properly trained surgeon.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "brazilian-butt-lift",
     featured: true
   },
 
@@ -1188,8 +1188,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking buttock augmentation who do not have enough donor fat or prefer implants after reviewing risks.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "butt-implants",
     featured: false
   },
 
@@ -1219,8 +1219,8 @@ export const procedures = [
     ],
     candidate:
       "Adults who have completed pregnancy and breastfeeding, have stable weight, and are healthy enough for combined surgery.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "mommy-makeover",
     featured: false
   },
 
@@ -1250,8 +1250,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with significant upper-arm skin laxity, often after major weight loss.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "arm-lift",
     featured: false
   },
 
@@ -1281,8 +1281,8 @@ export const procedures = [
     ],
     candidate:
       "Adults with significant thigh skin laxity and stable weight.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "thigh-lift",
     featured: false
   },
 
@@ -1312,8 +1312,8 @@ export const procedures = [
     ],
     candidate:
       "Adult men with persistent enlarged breast tissue after medical causes have been considered.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "male-breast-reduction",
     featured: false
   },
 
@@ -1343,8 +1343,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking structural chest enhancement who understand implant-related risks.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "pectoral-implants",
     featured: false
   },
 
@@ -1374,8 +1374,8 @@ export const procedures = [
     ],
     candidate:
       "Adults seeking calf enhancement for cosmetic or reconstructive reasons.",
-    simulation: "Educational",
-    cameraProcedure: null,
+    simulation: "Experimental 2D",
+    cameraProcedure: "calf-implants",
     featured: false
   },
 
