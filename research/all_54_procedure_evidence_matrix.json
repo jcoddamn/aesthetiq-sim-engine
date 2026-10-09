@@ -1,7 +1,7 @@
 {
   "schema_version": 3,
   "date": "2026-10-09",
-  "policy": "Only CC BY/CC0 article references are in verified_article_sources. Figures require separate rights and adult patient checks. No image assets stored in production or Git.",
+  "policy": "Study URLs are research leads; CC BY/CC0 article licenses and individual figure permissions must be confirmed separately before image processing. No image files are stored.",
   "open_license_studies": [
     {
       "id": "lip_3d_ccby",
@@ -11,7 +11,8 @@
         "lip-filler"
       ],
       "metric": "3D lip volume, upper lip projection and clinical fullness scale",
-      "suitability": "Direct procedure, 3D metrics incompatible with 2D-only geometric ratios"
+      "suitability": "Direct procedure, 3D metrics incompatible with 2D-only geometric ratios",
+      "license_verification_status": "pending_independent_figure_and_article_review"
     },
     {
       "id": "bleph_2026_ccby",
@@ -21,7 +22,8 @@
         "upper-blepharoplasty"
       ],
       "metric": "Upper eyelid fullness and infrabrow surgery assessment",
-      "suitability": "Related technique; not a general blepharoplasty target"
+      "suitability": "Related technique; not a general blepharoplasty target",
+      "license_verification_status": "pending_independent_figure_and_article_review"
     },
     {
       "id": "periocular_2026_ccby",
@@ -33,7 +35,8 @@
         "under-eye-filler"
       ],
       "metric": "Periocular imaging measurement methodology",
-      "suitability": "Measurement validation, not direct cosmetic outcome data"
+      "suitability": "Measurement validation, not direct cosmetic outcome data",
+      "license_verification_status": "pending_independent_figure_and_article_review"
     },
     {
       "id": "jawline_2025_ccby",
@@ -44,7 +47,8 @@
         "jawline-filler"
       ],
       "metric": "3D contour and cephalometric evaluation",
-      "suitability": "Direct but combined chin and jawline treatment; no independent procedure coefficients"
+      "suitability": "Direct but combined chin and jawline treatment; no independent procedure coefficients",
+      "license_verification_status": "pending_independent_figure_and_article_review"
     },
     {
       "id": "glabella_2026_ccby",
@@ -54,7 +58,8 @@
         "glabella-neuromodulator"
       ],
       "metric": "3D glabellar wrinkle depth",
-      "suitability": "Direct objective wrinkle measurement, cannot infer from static FaceMesh landmarks"
+      "suitability": "Direct objective wrinkle measurement, cannot infer from static FaceMesh landmarks",
+      "license_verification_status": "pending_independent_figure_and_article_review"
     },
     {
       "id": "fut_2026_ccby",
@@ -64,7 +69,8 @@
         "fut-hair-transplant"
       ],
       "metric": "Graft count and visible scar coverage at one year",
-      "suitability": "Single scar reconstruction case, not typical cosmetic hairline outcomes"
+      "suitability": "Single scar reconstruction case, not typical cosmetic hairline outcomes",
+      "license_verification_status": "pending_independent_figure_and_article_review"
     },
     {
       "id": "fue_2024_ccby_review",
@@ -74,7 +80,8 @@
         "fue-hair-transplant"
       ],
       "metric": "Density and graft survival",
-      "suitability": "Scarred scalp and stem-cell adjunct; not typical FUE"
+      "suitability": "Scarred scalp and stem-cell adjunct; not typical FUE",
+      "license_verification_status": "article_license_unverified"
     },
     {
       "id": "bleph_2011_ccby",
@@ -85,7 +92,8 @@
         "lower-blepharoplasty"
       ],
       "metric": "Blepharoplasty complication outcomes",
-      "suitability": "Clinical safety context, not a quantified cosmetic shape target"
+      "suitability": "Clinical safety context, not a quantified cosmetic shape target",
+      "license_verification_status": "pending_independent_figure_and_article_review"
     }
   ],
   "procedures": [
@@ -94,7 +102,6 @@
       "area": "Face",
       "target_measurement": "Nasal alar width ratio, tip projection, bridge curvature",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "rhinoplasty_ccby_2025",
         "rhinoplasty_ccby_2021",
@@ -106,17 +113,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "revision-rhinoplasty",
       "area": "Face",
       "target_measurement": "Nasal alar width ratio, tip projection, bridge curvature",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "rhinoplasty_ccby_2025",
         "rhinoplasty_ccby_2021",
@@ -128,17 +135,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "chin-implant",
       "area": "Face",
       "target_measurement": "Pogonion projection and chin depth",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -147,17 +154,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "cheek-implants",
       "area": "Face",
       "target_measurement": "Malar projection and midface volume",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -166,17 +173,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "buccal-fat-removal",
       "area": "Face",
       "target_measurement": "Mid-cheek depth and lower-face width",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -185,17 +192,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "facelift",
       "area": "Face",
       "target_measurement": "Lower-face contour, tissue displacement, jawline angle",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "facelift"
       ],
@@ -204,17 +211,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "mini-facelift",
       "area": "Face",
       "target_measurement": "Lower-face contour and tissue displacement",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "facelift"
       ],
@@ -223,17 +230,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "brow-lift",
       "area": "Face",
       "target_measurement": "Brow position relative to orbit and upper lid",
       "measurement_modality": "2d_and_3d_landmarks",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -242,21 +249,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "partial_landmark_metrics_possible",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "upper-blepharoplasty",
       "area": "Face",
       "target_measurement": "Upper eyelid skin fold, aperture, lid crease",
       "measurement_modality": "2d_and_3d_landmarks",
-      "verified_article_sources": [
-        "bleph_2026_ccby",
-        "periocular_2026_ccby",
-        "bleph_2011_ccby"
-      ],
       "candidate_sources": [
         "eyes"
       ],
@@ -265,20 +268,21 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "partial_landmark_metrics_possible",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "bleph_2026_ccby",
+        "periocular_2026_ccby",
+        "bleph_2011_ccby"
+      ]
     },
     {
       "procedure_id": "lower-blepharoplasty",
       "area": "Face",
       "target_measurement": "Lower lid contour and lid-cheek junction",
       "measurement_modality": "2d_and_3d_landmarks",
-      "verified_article_sources": [
-        "periocular_2026_ccby",
-        "bleph_2011_ccby"
-      ],
       "candidate_sources": [
         "eyes"
       ],
@@ -287,17 +291,20 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "partial_landmark_metrics_possible",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "periocular_2026_ccby",
+        "bleph_2011_ccby"
+      ]
     },
     {
       "procedure_id": "neck-lift",
       "area": "Face",
       "target_measurement": "Cervicomental angle and neck silhouette",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -306,17 +313,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "lip-lift",
       "area": "Face",
       "target_measurement": "Philtrum height and upper vermilion show",
       "measurement_modality": "2d_and_3d_landmarks",
-      "verified_article_sources": [],
       "candidate_sources": [
         "lip3d"
       ],
@@ -325,17 +332,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "partial_landmark_metrics_possible",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "otoplasty",
       "area": "Face",
       "target_measurement": "Ear projection and auriculocephalic angle",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "otoplasty2026"
       ],
@@ -344,17 +351,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "facial-fat-transfer",
       "area": "Face",
       "target_measurement": "Regional facial 3D volume changes",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "facelift"
       ],
@@ -363,19 +370,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "lip-filler",
       "area": "Face",
       "target_measurement": "3D lip volume, upper/lower vermilion height, projection, Cupid's bow",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [
-        "lip_3d_ccby"
-      ],
       "candidate_sources": [
         "lip3d",
         "lip3d2"
@@ -385,17 +390,19 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "lip_3d_ccby"
+      ]
     },
     {
       "procedure_id": "cheek-filler",
       "area": "Face",
       "target_measurement": "Malar projection and midface volume",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "contour2024"
       ],
@@ -404,19 +411,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "chin-filler",
       "area": "Face",
       "target_measurement": "Pogonion projection, chin width/height and profile angle",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [
-        "jawline_2025_ccby"
-      ],
       "candidate_sources": [
         "contour2024"
       ],
@@ -425,19 +430,19 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "jawline_2025_ccby"
+      ]
     },
     {
       "procedure_id": "jawline-filler",
       "area": "Face",
       "target_measurement": "Bigonial width and mandibular contour",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [
-        "jawline_2025_ccby"
-      ],
       "candidate_sources": [
         "contour2024"
       ],
@@ -446,19 +451,19 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "jawline_2025_ccby"
+      ]
     },
     {
       "procedure_id": "under-eye-filler",
       "area": "Face",
       "target_measurement": "Tear trough contour depth and lower-lid junction",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [
-        "periocular_2026_ccby"
-      ],
       "candidate_sources": [
         "periorbital2025"
       ],
@@ -467,17 +472,19 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "periocular_2026_ccby"
+      ]
     },
     {
       "procedure_id": "temple-filler",
       "area": "Face",
       "target_measurement": "Temple hollow depth and 3D volume",
       "measurement_modality": "3d_geometry",
-      "verified_article_sources": [],
       "candidate_sources": [
         "contour2024"
       ],
@@ -486,17 +493,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "forehead-neuromodulator",
       "area": "Face",
       "target_measurement": "Forehead dynamic wrinkle depth and severity",
       "measurement_modality": "dynamic_skin_surface",
-      "verified_article_sources": [],
       "candidate_sources": [
         "neuro2021"
       ],
@@ -505,19 +512,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "glabella-neuromodulator",
       "area": "Face",
       "target_measurement": "Glabellar dynamic wrinkle depth and severity",
       "measurement_modality": "dynamic_skin_surface",
-      "verified_article_sources": [
-        "glabella_2026_ccby"
-      ],
       "candidate_sources": [
         "neuro2021"
       ],
@@ -526,17 +531,19 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "glabella_2026_ccby"
+      ]
     },
     {
       "procedure_id": "crows-feet-neuromodulator",
       "area": "Face",
       "target_measurement": "Lateral canthal dynamic wrinkle depth and severity",
       "measurement_modality": "dynamic_skin_surface",
-      "verified_article_sources": [],
       "candidate_sources": [
         "neuro2021"
       ],
@@ -545,17 +552,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "lip-flip",
       "area": "Face",
       "target_measurement": "Upper-lip vermilion show and smile dynamics",
       "measurement_modality": "2d_and_3d_landmarks",
-      "verified_article_sources": [],
       "candidate_sources": [
         "lip3d"
       ],
@@ -564,17 +571,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "partial_landmark_metrics_possible",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "chemical-peel",
       "area": "Skin",
       "target_measurement": "Pigmentation, erythema and texture/clinical scar scores",
       "measurement_modality": "skin_texture",
-      "verified_article_sources": [],
       "candidate_sources": [
         "skin"
       ],
@@ -583,17 +590,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "laser-resurfacing",
       "area": "Skin",
       "target_measurement": "Texture, wrinkle depth, pigment and erythema",
       "measurement_modality": "skin_texture",
-      "verified_article_sources": [],
       "candidate_sources": [
         "laser"
       ],
@@ -602,17 +609,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "microneedling",
       "area": "Skin",
       "target_measurement": "Scar grade and skin surface texture",
       "measurement_modality": "skin_texture",
-      "verified_article_sources": [],
       "candidate_sources": [
         "skin"
       ],
@@ -621,17 +628,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "rf-microneedling",
       "area": "Skin",
       "target_measurement": "Skin texture and scar depth",
       "measurement_modality": "skin_texture",
-      "verified_article_sources": [],
       "candidate_sources": [
         "laser"
       ],
@@ -640,17 +647,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "ipl",
       "area": "Skin",
       "target_measurement": "Pigment contrast and erythema distribution",
       "measurement_modality": "skin_texture",
-      "verified_article_sources": [],
       "candidate_sources": [
         "ipl2010"
       ],
@@ -659,17 +666,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "co2-laser",
       "area": "Skin",
       "target_measurement": "Wrinkle depth, texture and erythema",
       "measurement_modality": "skin_texture",
-      "verified_article_sources": [],
       "candidate_sources": [
         "laser"
       ],
@@ -678,17 +685,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "breast-augmentation",
       "area": "Body",
       "target_measurement": "3D breast volume and projection",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "breast"
       ],
@@ -697,17 +704,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "breast-lift",
       "area": "Body",
       "target_measurement": "Nipple-to-inframammary-fold distance and ptosis",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "breast"
       ],
@@ -716,17 +723,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "breast-reduction",
       "area": "Body",
       "target_measurement": "Breast volume and nipple position",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "breast"
       ],
@@ -735,17 +742,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "liposuction",
       "area": "Body",
       "target_measurement": "3D regional circumference and volume",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "body"
       ],
@@ -754,17 +761,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "tummy-tuck",
       "area": "Body",
       "target_measurement": "Abdominal contour, skin fold and waist circumference",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "body"
       ],
@@ -773,17 +780,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "mini-tummy-tuck",
       "area": "Body",
       "target_measurement": "Lower abdominal skin contour",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "body"
       ],
@@ -792,17 +799,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "brazilian-butt-lift",
       "area": "Body",
       "target_measurement": "Buttock volume and projection",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "body"
       ],
@@ -811,17 +818,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "butt-implants",
       "area": "Body",
       "target_measurement": "Buttock projection and shape",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "body"
       ],
@@ -830,17 +837,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "mommy-makeover",
       "area": "Body",
       "target_measurement": "Multi-region measurements; concurrent procedure attribution",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "body"
       ],
@@ -849,17 +856,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "arm-lift",
       "area": "Body",
       "target_measurement": "Upper-arm circumference and skin contour",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -868,17 +875,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "thigh-lift",
       "area": "Body",
       "target_measurement": "Thigh circumference and skin laxity",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "thigh",
         "body"
@@ -888,17 +895,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "male-breast-reduction",
       "area": "Body",
       "target_measurement": "Chest volume and projection",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "gynecomastia2023"
       ],
@@ -907,17 +914,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "pectoral-implants",
       "area": "Body",
       "target_measurement": "Chest projection and shape",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -926,17 +933,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "calf-implants",
       "area": "Body",
       "target_measurement": "Calf circumference and projection",
       "measurement_modality": "body_3d_shape",
-      "verified_article_sources": [],
       "candidate_sources": [
         "asps"
       ],
@@ -945,19 +952,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "fue-hair-transplant",
       "area": "Hair",
       "target_measurement": "Follicular density, hairline position and graft survival",
       "measurement_modality": "hair_segmentation",
-      "verified_article_sources": [
-        "fue_2024_ccby_review"
-      ],
       "candidate_sources": [
         "hair"
       ],
@@ -966,19 +971,19 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "fue_2024_ccby_review"
+      ]
     },
     {
       "procedure_id": "fut-hair-transplant",
       "area": "Hair",
       "target_measurement": "Follicular density, scar and graft survival",
       "measurement_modality": "hair_segmentation",
-      "verified_article_sources": [
-        "fut_2026_ccby"
-      ],
       "candidate_sources": [
         "hair"
       ],
@@ -987,17 +992,19 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "open_license_article_identified_not_image_cleared",
+      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Verify each relevant figure's licensing, adult status, consent, standardized capture, and metric definitions",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": [
+        "fut_2026_ccby"
+      ]
     },
     {
       "procedure_id": "beard-transplant",
       "area": "Hair",
       "target_measurement": "Facial hair density and coverage",
       "measurement_modality": "hair_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "beard",
         "hair"
@@ -1007,17 +1014,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "eyebrow-transplant",
       "area": "Hair",
       "target_measurement": "Eyebrow density and coverage",
       "measurement_modality": "hair_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "eyebrow",
         "hair"
@@ -1027,17 +1034,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "hairline-lowering",
       "area": "Hair",
       "target_measurement": "Hairline-to-brow distance and scalp contour",
       "measurement_modality": "hair_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "hair"
       ],
@@ -1046,17 +1053,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "veneers",
       "area": "Smile",
       "target_measurement": "Tooth width-to-length ratio and incisal edge",
       "measurement_modality": "tooth_gum_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "dental"
       ],
@@ -1065,17 +1072,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "dental-bonding",
       "area": "Smile",
       "target_measurement": "Tooth surface contour and interdental spacing",
       "measurement_modality": "tooth_gum_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "dental"
       ],
@@ -1084,17 +1091,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "teeth-whitening",
       "area": "Smile",
       "target_measurement": "Standardized dental shade/color difference",
       "measurement_modality": "tooth_gum_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "dental"
       ],
@@ -1103,17 +1110,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "gum-contouring",
       "area": "Smile",
       "target_measurement": "Gingival margin and crown length",
       "measurement_modality": "tooth_gum_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "dental"
       ],
@@ -1122,17 +1129,17 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     },
     {
       "procedure_id": "smile-makeover",
       "area": "Smile",
       "target_measurement": "Multi-procedure dental geometry and shade",
       "measurement_modality": "tooth_gum_segmentation",
-      "verified_article_sources": [],
       "candidate_sources": [
         "dental"
       ],
@@ -1141,18 +1148,20 @@
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
-      "benchmark_status": "license_and_procedure_specific_evidence_pending",
+      "benchmark_status": "targeted_evidence_pending",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Locate a directly relevant CC BY/CC0 adult outcome study with compatible measurements",
-      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure"
+      "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
+      "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
+      "article_license_candidate_sources": []
     }
   ],
   "summary": {
     "procedures": 54,
     "article_license_candidates": 8,
-    "procedures_with_verified_article_candidates": 9,
     "clinical_images_downloaded": 0,
     "real_pair_simulation_comparisons": 0,
-    "procedures_clinically_calibrated": 0
+    "procedures_clinically_calibrated": 0,
+    "procedures_with_article_candidates": 9,
+    "articles_with_figure_reuse_verified": 0
   }
 }
