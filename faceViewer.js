@@ -2,6 +2,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccalSlimming,warpFacelift,warpBrowLift,warpUpperBlepharoplasty,warpLowerBlepharoplasty,warpLipLift} from "./js/faceWarp.js?v=24";
 import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=1";
+import {getSharedIntensity} from "./js/sharedProcedureMath.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
 import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=3";
 import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=2";
@@ -221,6 +222,13 @@ for(const [id,label] of Object.entries(names)){const option=document.createEleme
 $("procedureSelect").addEventListener("change",e=>setProcedure(e.target.value));
 $("goalSelect").addEventListener("change",e=>{goal=e.target.value;morph();});
 $("intensitySlider").addEventListener("input",morph);
+for(const [id,level] of [["presetNatural","natural"],["presetBalanced","balanced"],["presetEnhanced","enhanced"]]){
+ const button=$(id);
+ if(button)button.addEventListener("click",()=>{
+  $("intensitySlider").value=getSharedIntensity(level);
+  morph();
+ });
+}
 $("recoverySlider").addEventListener("input",morph);
 $("wireframe").addEventListener("change",e=>{if(mesh)mesh.material.wireframe=e.target.checked;});
 $("resetView").addEventListener("click",reset);
