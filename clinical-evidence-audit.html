@@ -36,6 +36,13 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 <pre id="report">No measured image pairs yet.</pre>
 <button id="export" disabled>Export measurements (no photographs)</button>
 </div>
+<div class="panel">
+<h2>Multi-case calibration review</h2>
+<p>Import a JSON array of measurement reports exported from independent, consented cases. The summary requires at least 20 aligned cases per procedure before it even becomes eligible for expert review. It never changes the app's procedure parameters automatically.</p>
+<input id="reportsFile" type="file" accept="application/json,.json" aria-label="Upload measurement report collection">
+<button id="aggregate">Summarize collected cases</button>
+<pre id="aggregateResults">No clinical measurement reports imported.</pre>
+</div>
 <div class="panel"><h2>Important limitations</h2>
 <p>Clinical photos from publications and galleries are not automatically licensed for commercial reuse. Do not upload copyrighted or non-consensual patient images. Results require matching camera angle, expression, lighting and time after treatment. Skin, hair, dental and body procedures need different measurement models and will be reported as not yet quantitatively comparable.</p>
 </div>
@@ -44,6 +51,7 @@ import {procedures} from "./js/procedureData.js?v=3";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
 import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=29";
 import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=1";
+import {summarizeCalibrationEvidence} from "./js/evidenceCalibrationReview.js?v=1";
 const $=id=>document.getElementById(id);
 const ids=procedures.map(p=>p.id);
 for(const p of procedures){
@@ -114,5 +122,15 @@ $("export").addEventListener("click",()=>{
  const url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="aesthetiq-evidence-comparison.json";a.click();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+$("aggregate").addEventListener("click",async()=>{
+ try{
+  const file=$("reportsFile").files[0];
+  if(!file)throw Error("Select a JSON file of measurement reports.");
+  const parsed=JSON.parse(await file.text());
+  const reports=Array.isArray(parsed)?parsed:parsed.reports;
+  const summary=summarizeCalibrationEvidence(reports);
+  $("aggregateResults").textContent=JSON.stringify(summary,null,2);
+ }catch(e){$("aggregateResults").textContent=e.message||String(e);}
 });
 </script></body></html>
