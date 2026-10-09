@@ -3,7 +3,7 @@ import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccalSlimming,warpFacelift,warpBrowLift,warpUpperBlepharoplasty,warpLowerBlepharoplasty,warpLipLift} from "./js/faceWarp.js?v=24";
 import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
-import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=2";
+import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=3";
 import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=2";
 import {inspectScan} from "./js/twinCaptureQuality.js?v=1";
 const names={
@@ -41,6 +41,8 @@ const canvas=$("viewer");
 const camera=new THREE.PerspectiveCamera(40,1,.1,150);camera.position.set(0,0,34);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
 const controls=new OrbitControls(camera,canvas);controls.enableDamping=true;controls.enablePan=false;
 controls.minDistance=17;controls.maxDistance=60;controls.target.set(0,-.5,0);
 scene.add(new THREE.HemisphereLight(0xffffff,0x27344f,2));
@@ -164,7 +166,7 @@ function setTexture(captures){
    mesh.geometry.index.array,
    mesh.geometry.attributes.uv.array,
    mesh.geometry.userData.canonical,
-   1024
+   1536
  );
  const texture=new THREE.CanvasTexture(textureCanvas);
  texture.colorSpace=THREE.SRGBColorSpace;
