@@ -952,6 +952,30 @@
     "paired_images_measured": 0,
     "procedures_clinically_calibrated": 0,
     "source_count": 17,
-    "source_links_not_image_files": true
-  }
+    "source_links_not_image_files": true,
+    "restricted_datasets_identified": 3
+  },
+  "restricted_datasets": [
+    {
+      "name": "HDA Plastic Surgery Face Database",
+      "url": "https://dasec.h-da.de/research/biometrics/hda-plastic-surgery-face-database/",
+      "access": "request",
+      "commercial_use": "prohibited",
+      "status": "not acquired"
+    },
+    {
+      "name": "FaceScape",
+      "url": "https://nju-3dv.github.io/projects/FaceScape/",
+      "access": "signed agreement",
+      "commercial_use": "prohibited without separate commercial license",
+      "status": "not acquired"
+    },
+    {
+      "name": "IAB Plastic Surgery Face Database",
+      "url": "https://www.iab-rubric.org/resources/biometric-datasets/face",
+      "access": "signed institutional agreement",
+      "commercial_use": "research and educational only",
+      "status": "not acquired"
+    }
+  ]
 }
