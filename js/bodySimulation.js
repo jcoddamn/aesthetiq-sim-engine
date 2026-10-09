@@ -60,23 +60,42 @@ function bodyWarp(source,mask,pose,procedure,intensity){
  const segmentation=maskCtx.getImageData(0,0,w,h);
  const output=ctx.createImageData(w,h);output.data.set(input.data);
  const [cy,ry]=regions(pose,procedure);
- const base=Math.min(w*.027,Math.max(1,pose.shoulderWidth*.095));
+ const base=Math.min(w*.022,Math.max(1,pose.shoulderWidth*.085));
  const amplitude=base*intensity*procedure.direction;
- // Horizontal remapping keeps the source texture and only changes the visible silhouette.
- // Restrict deformation to person segmentation; fade edges instead of moving the background.
+ // Row-wise, segmentation-bounded 2D silhouette resampling.
+ // This approximates a contour only. It does not reconstruct 3D tissue.
  for(let y=Math.max(0,Math.floor(cy-ry*1.8));y<Math.min(h,Math.ceil(cy+ry*1.8));y++){
    const influence=gaussian(y,cy,ry);
-   if(influence<.01)continue;
-   for(let x=0;x<w;x++){
+   if(influence<.015)continue;
+   const center=Math.round(pose.centerX);
+   const limit=Math.max(20,Math.round(Math.max(pose.shoulderWidth,pose.hipWidth)*.85));
+   let left=-1,right=-1;
+   for(let x=Math.max(0,center-limit);x<Math.min(w,center+limit);x++){
      const i=(y*w+x)*4;
-     const person=segmentation.data[i+3]/255;
-     if(person<.12)continue;
-     const sign=x<pose.centerX?-1:1;
-     const xSource=clamp(Math.round(x-sign*amplitude*influence),0,w-1);
-     const si=(y*w+xSource)*4;
-     const sourcePerson=segmentation.data[si+3]/255;
-     const alpha=smooth(Math.min(person,sourcePerson))*Math.min(1,influence*1.6);
-     for(let c=0;c<3;c++)output.data[i+c]=Math.round(input.data[i+c]*(1-alpha)+input.data[si+c]*alpha);
+     if(segmentation.data[i+3]>150){if(left<0)left=x;right=x;}
+   }
+   if(left<0||right-left<16)continue;
+   const middle=(left+right)/2;
+   const half=(right-left)/2;
+   const targetHalf=Math.max(6,half+amplitude*influence);
+   const begin=Math.max(0,Math.floor(Math.min(left,middle-targetHalf)-3));
+   const finish=Math.min(w-1,Math.ceil(Math.max(right,middle+targetHalf)+3));
+   const leftBackground=Math.max(0,left-5),rightBackground=Math.min(w-1,right+5);
+   for(let x=begin;x<=finish;x++){
+     const i=(y*w+x)*4;
+     const inside=Math.abs(x-middle)<=targetHalf;
+     if(inside){
+       const sx=Math.max(0,Math.min(w-1,Math.round(middle+(x-middle)*half/targetHalf)));
+       const si=(y*w+sx)*4;
+       const alpha=segmentation.data[si+3]/255;
+       const bgx=x<middle?leftBackground:rightBackground;
+       const bi=(y*w+bgx)*4;
+       for(let c=0;c<3;c++)output.data[i+c]=Math.round(input.data[si+c]*alpha+input.data[bi+c]*(1-alpha));
+     }else if(x>=left&&x<=right){
+       const bgx=x<middle?leftBackground:rightBackground;
+       const bi=(y*w+bgx)*4;
+       for(let c=0;c<3;c++)output.data[i+c]=input.data[bi+c];
+     }
    }
  }
  ctx.putImageData(output,0,0);
