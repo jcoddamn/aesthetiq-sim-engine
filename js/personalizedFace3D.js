@@ -98,8 +98,41 @@ function drawTriangle(ctx,image,src,target,alpha=1){
  ctx.lineTo(clip[1].x,clip[1].y);ctx.lineTo(clip[2].x,clip[2].y);ctx.closePath();ctx.clip();
  ctx.setTransform(...m);ctx.drawImage(image,0,0);ctx.restore();
 }
+function facialExposure(image,landmarks){
+ const p=landmarks[1];
+ const sample=document.createElement("canvas");sample.width=48;sample.height=48;
+ const c=sample.getContext("2d",{willReadFrequently:true});
+ if(!c)return 128;
+ const x=Math.max(0,Math.min(image.width-1,Math.round((p?.x??.5)*image.width)));
+ const y=Math.max(0,Math.min(image.height-1,Math.round((p?.y??.5)*image.height)));
+ const span=Math.max(8,Math.round(Math.min(image.width,image.height)*.14));
+ c.drawImage(image,Math.max(0,x-span),Math.max(0,y-span),Math.min(image.width-x+span,span*2),Math.min(image.height-y+span,span*2),0,0,48,48);
+ const rgba=c.getImageData(0,0,48,48).data;
+ let sum=0;
+ for(let i=0;i<rgba.length;i+=4)sum+=.2126*rgba[i]+.7152*rgba[i+1]+.0722*rgba[i+2];
+ return sum/(48*48);
+}
+function exposureMatchedCapture(capture,targetExposure){
+ if(!capture?.imageCanvas)return capture;
+ const source=capture.imageCanvas;
+ const current=facialExposure(source,capture.landmarks);
+ const gain=clamp(targetExposure/Math.max(20,current),.82,1.22);
+ if(Math.abs(gain-1)<.035)return capture;
+ const canvas=document.createElement("canvas");canvas.width=source.width;canvas.height=source.height;
+ const ctx=canvas.getContext("2d");
+ if(!ctx)return capture;
+ ctx.filter="brightness("+gain.toFixed(3)+")";
+ ctx.drawImage(source,0,0);
+ return {...capture,imageCanvas:canvas};
+}
 export function makeMultiAngleTexture(captures,triangles,uvs,canonical,size=1536){
  if(!captures?.straight?.imageCanvas||!valid(captures.straight.landmarks))throw Error("Frontal texture capture is missing.");
+ const frontExposure=facialExposure(captures.straight.imageCanvas,captures.straight.landmarks);
+ const matched={
+  ...captures,
+  left:exposureMatchedCapture(captures.left,frontExposure),
+  right:exposureMatchedCapture(captures.right,frontExposure)
+ };
  const atlas=document.createElement("canvas");atlas.width=size;atlas.height=size;
  const ctx=atlas.getContext("2d");
  ctx.fillStyle="#b58b78";ctx.fillRect(0,0,size,size);
@@ -110,7 +143,7 @@ export function makeMultiAngleTexture(captures,triangles,uvs,canonical,size=1536
   jobs.push({ids,capture:captures.straight,alpha:1});
   // Side views are restricted to the far lateral surface, where frontal
   // photos lose detail. Soft partial coverage avoids hard image boundaries.
-  const side=meanX< -3.8?captures.left:meanX>3.8?captures.right:null;
+  const side=meanX< -3.8?matched.left:meanX>3.8?matched.right:null;
   if(side?.imageCanvas&&valid(side.landmarks)){
    const opacity=clamp((Math.abs(meanX)-3.8)/2.8,0,.8);
    if(opacity>.04)jobs.push({ids,capture:side,alpha:opacity});
