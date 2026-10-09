@@ -1,5 +1,5 @@
-import * as THREE from "./js/three.module.js";
-import {OrbitControls} from "./js/OrbitControls.js";
+import * as THREE from "three";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccalSlimming,warpFacelift,warpBrowLift,warpUpperBlepharoplasty,warpLowerBlepharoplasty,warpLipLift} from "./js/faceWarp.js?v=24";
 import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
