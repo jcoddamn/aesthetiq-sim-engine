@@ -1977,16 +1977,32 @@ function saveCurrentSimulation() {
   );
 }
 
-function open3DViewer() {
-  const mappedProcedure =
-    getViewerProcedure(
-      currentProcedure
-    );
+async function open3DViewer() {
+  const mappedProcedure = getViewerProcedure(currentProcedure);
+  const destination = "viewer.html?procedure=" + encodeURIComponent(mappedProcedure);
 
-  window.location.href =
-    `viewer.html?procedure=${encodeURIComponent(
-      mappedProcedure
-    )}`;
+  if (!latest3DCaptures?.straight) {
+    window.location.href = destination;
+    return;
+  }
+
+  const approved = window.confirm(
+    "Create a personalized 3D preview using your face captures? Your photos will remain in this browser for up to 30 minutes. You can delete the scan from the 3D viewer. Cancel opens the generic model."
+  );
+
+  if (!approved) {
+    window.location.href = destination;
+    return;
+  }
+
+  try {
+    setStatus("Preparing your 3D scan…", "loading");
+    await saveApproved3DScan(latest3DCaptures);
+    window.location.href = destination + "&scan=local";
+  } catch (error) {
+    console.error("[AesthetIQ] 3D scan preparation failed:", error);
+    setStatus("Could not prepare the personalized 3D scan.", "error");
+  }
 }
 
 // =========================================================
