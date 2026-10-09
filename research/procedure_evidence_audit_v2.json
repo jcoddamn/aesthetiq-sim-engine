@@ -165,6 +165,38 @@
       "license": "Article/figure reuse rights unverified; do not download",
       "figure": "Figures 2–4 and photoaging scale; combination PDT-IPL is a confounder",
       "numeric": true
+    },
+    "rhinoplasty_ccby_2025": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12283507/",
+      "title": "Secondary open structural rhinoplasty with costal cartilage grafts",
+      "article_license": "CC BY 4.0 (verified in article)",
+      "image_license": "Images covered by article CC BY unless otherwise credited; inspect individual figure credits before any image processing",
+      "publication_consent": "Written informed consent for clinical data and images documented, including guardian consent for a minor",
+      "photo_use_clearance": "NOT YET CLEARED for model-development reuse; publication consent is not necessarily development consent",
+      "adult_figure_candidates": [
+        "Fig. 2 (24-year-old)",
+        "Fig. 4 (22-year-old)",
+        "Fig. 5 (23-year-old)",
+        "Fig. 6 (21-year-old)",
+        "Fig. 7 (18-year-old)",
+        "Fig. 8 (28-year-old)"
+      ],
+      "excluded_figures": [
+        "Fig. 3 (17-year-old)",
+        "Case 8 (15-year-old)"
+      ],
+      "study_limitations": "Cleft-lip revision reconstruction, not representative of routine aesthetic rhinoplasty; several combined lip and nose procedures; retrospective photography not standardized",
+      "measurements": "Published alar width ratio and tip projection ratio, not equivalent to all AesthetIQ normalized MediaPipe metrics",
+      "status": "source_verified_article_only_no_photos_downloaded",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "rhinoplasty_ccby_2021": {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7954385/",
+      "title": "Aesthetic Rhinoplasty: Technique, 3-Dimensional Simulation, and Outcome Assessment",
+      "article_license": "CC BY 4.0 reported by journal",
+      "image_license": "Figure-level credits and identifiable-patient processing permissions pending",
+      "status": "source_identified_not_downloaded",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
     }
   },
   "procedures": [
@@ -172,6 +204,8 @@
       "id": "rhinoplasty",
       "area": "Face",
       "evidence_sources": [
+        "rhinoplasty_ccby_2025",
+        "rhinoplasty_ccby_2021",
         "rhinoplasty",
         "rhinoplasty2"
       ],
@@ -188,6 +222,8 @@
       "id": "revision-rhinoplasty",
       "area": "Face",
       "evidence_sources": [
+        "rhinoplasty_ccby_2025",
+        "rhinoplasty_ccby_2021",
         "rhinoplasty",
         "rhinoplasty2"
       ],
@@ -993,7 +1029,7 @@
     "image_files_downloaded": 0,
     "paired_images_measured": 0,
     "procedures_clinically_calibrated": 0,
-    "source_count": 23,
+    "source_count": 25,
     "source_links_not_image_files": true,
     "restricted_datasets_identified": 3
   },
