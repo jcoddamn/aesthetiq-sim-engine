@@ -35,7 +35,7 @@ import {
   getNeuromodulatorProduct
 } from "./neuromodulatorProfiles.js?v=1";
 
-import {saveApproved3DScan} from "./precision3dStore.js?v=1";
+import {saveApproved3DScan} from "./precision3dStore.js?v=2";
 
 import {
   getRecoveryTimeline,
