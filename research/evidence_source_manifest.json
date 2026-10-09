@@ -101,6 +101,20 @@
       "license": "CC0 per source page",
       "figure_status": "Alternative non-clinical model assets; evaluate topology and suitability",
       "status": "source identified; not downloaded"
+    },
+    {
+      "procedures": [
+        "complex-multi-procedure-case",
+        "rhinoplasty",
+        "blepharoplasty",
+        "cheek-implants",
+        "lip-lift"
+      ],
+      "url": "https://commons.wikimedia.org/wiki/File:An_adult_female_with_Barber-Say_Syndrome,_before_and_after_plastic_surgery.jpg",
+      "title": "Adult patient with Barber-Say syndrome before and after multiple facial procedures",
+      "license": "CC0 1.0 per Wikimedia Commons",
+      "figure_status": "Publicly reusable image; multiple simultaneous procedures, rare craniofacial condition, not representative for isolated cosmetic procedure effects",
+      "status": "reference identified; ethical suitability review required; not downloaded or used for calibration"
     }
   ]
 }
