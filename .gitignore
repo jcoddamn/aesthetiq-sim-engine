@@ -137,3 +137,21 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+
+# AesthetIQ: never commit temporary clinical/patient reference photos,
+# private analysis files or locally exported case reports.
+research/private/
+research/reference_images/
+research/clinical_photos/
+research/temp/
+research/raw_cases/
+private-clinical-data/
+clinical-data/
+*.clinical-photo.jpg
+*.clinical-photo.jpeg
+*.clinical-photo.png
+*.patient-case.json
+*.clinical-case.json
+aesthetiq-evidence-comparison*.json
+aesthetiq-clinical-case*.json
