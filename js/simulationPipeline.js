@@ -67,6 +67,8 @@ import {
 } from "./dentalMesh.js?v=2";
 import {refineProcedureMask} from "./anatomicalMask2D.js?v=1";
 import {inspectWarp,moderateWarp,inspectRender} from "./simulationQuality2D.js?v=1";
+import {preserveSkinDetail} from "./skinDetail2D.js?v=1";
+import {refineDentalAppearanceMask} from "./dentalAppearanceMask2D.js?v=1";
 
 const meshRenderer =
   new MeshRenderer();
@@ -951,6 +953,12 @@ function createSimulationLevel({
     maskCanvas,normalizedProcedure,workingLandmarks,mirrorX
   );
 
+  if (dentalMesh?.valid) {
+    maskCanvas = refineDentalAppearanceMask(
+      workingCanvas,maskCanvas,normalizedProcedure
+    );
+  }
+
   if (!maskCanvas) {
     return {
       canvas:
@@ -1015,6 +1023,17 @@ function createSimulationLevel({
         maskCanvas,
         level
       );
+  }
+
+  if ([
+    "chemical-peel","laser-resurfacing","co2-laser",
+    "microneedling","rf-microneedling","ipl",
+    "forehead-neuromodulator","glabella-neuromodulator",
+    "crows-feet-neuromodulator"
+  ].includes(normalizedProcedure) && resultCanvas) {
+    resultCanvas = preserveSkinDetail(
+      sourceCanvas,resultCanvas,maskCanvas,level,normalizedProcedure
+    );
   }
 
   const quality = inspectRender(sourceCanvas,resultCanvas||workingCanvas);
