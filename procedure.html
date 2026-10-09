@@ -913,7 +913,7 @@ body.sheet-open {
 <script type="module">
   import {
     getProcedureById
-  } from "./js/procedureData.js?v=2";
+  } from "./js/procedureData.js?v=3";
 
   import {
     getFillerProductsForProcedure
@@ -1962,6 +1962,10 @@ function getProcedureOptionData(procedureId) {
       return "Interactive";
     }
 
+    if (simulation.includes("experimental 2d")) {
+      return "Experimental 2D";
+    }
+
     if (
       simulation.includes("camera preview") ||
       item.cameraProcedure
@@ -1975,6 +1979,10 @@ function getProcedureOptionData(procedureId) {
   function getStatusClass(status) {
     if (status === "Interactive") {
       return "status-interactive";
+    }
+
+    if (status === "Experimental 2D") {
+      return "status-preview";
     }
 
     if (status === "Camera Preview") {
@@ -2007,6 +2015,16 @@ function getProcedureOptionData(procedureId) {
   }
 
   function getCameraInformation(item, status) {
+    if (status === "Experimental 2D") {
+      return {
+        title: "Experimental body preview",
+        description:
+          "Use a photo for an illustrative MediaPipe body-contour preview. This is not a surgical outcome prediction.",
+        buttonText: "Open Body Preview",
+        disabled: false
+      };
+    }
+
     if (status === "Interactive") {
       return {
         title: "Interactive preview available",
@@ -2037,6 +2055,13 @@ function getProcedureOptionData(procedureId) {
   }
 
   function buildCameraUrl(item, status) {
+    if (status === "Experimental 2D") {
+      return (
+        "body-simulation.html?procedure=" +
+        encodeURIComponent(item.id)
+      );
+    }
+
     if (
       status === "Interactive" &&
       item.cameraProcedure
@@ -2316,6 +2341,11 @@ function getProcedureOptionData(procedureId) {
   }
 
   function openTreatmentOptions() {
+  if (getDisplayStatus(procedure) === "Experimental 2D") {
+    window.location.href = selectedCameraUrl;
+    return;
+  }
+
   if (
     usesFillerGoalWizard(
       procedureId
