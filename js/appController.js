@@ -35,6 +35,8 @@ import {
   getNeuromodulatorProduct
 } from "./neuromodulatorProfiles.js?v=1";
 
+import {saveApproved3DScan} from "./precision3dStore.js?v=1";
+
 import {
   getRecoveryTimeline,
   getRecoveryStage
@@ -107,6 +109,7 @@ let currentProcedure =
 
 let latestLandmarks = null;
 let capturedCanvas = null;
+let latest3DCaptures = null;
 let simulationResults = null;
 let selectedLevel = "balanced";
 let selectedRecoveryStage = "final";
@@ -808,6 +811,7 @@ function handlePrecisionScanComplete(
 
   capturedCanvas =
     straightCapture.imageCanvas;
+  latest3DCaptures = captures;
 
   console.log(
     "[AesthetIQ] Precision capture ready",
@@ -1315,6 +1319,7 @@ function captureAndGenerate() {
 
   capturedCanvas =
     captureCurrentVideoFrame();
+  latest3DCaptures = {straight:{imageCanvas:capturedCanvas,landmarks:latestLandmarks}};
 
   generateSimulation(
     capturedCanvas,
@@ -1732,6 +1737,7 @@ function updateCompareButtons() {
 
 function resetSimulation() {
   capturedCanvas = null;
+  latest3DCaptures = null;
   simulationResults = null;
   selectedRecoveryStage = "final";
   viewingOriginal = false;
@@ -1864,6 +1870,7 @@ async function handlePhotoUpload(event) {
           "Face detected — generating preview…",
           "loading"
         );
+        latest3DCaptures = {straight:{imageCanvas:capturedCanvas,landmarks:uploadedLandmarks}};
 
         /*
          * Use the uploaded photo's landmarks,
