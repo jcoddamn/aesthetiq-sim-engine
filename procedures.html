@@ -891,9 +891,13 @@
         return "Interactive";
       }
 
+      if (simulation.includes("experimental 2d")) {
+        return "Experimental 2D";
+      }
+
       if (
         simulation.includes("camera preview") ||
-        procedure.cameraProcedure === null
+        Boolean(procedure.cameraProcedure)
       ) {
         return "Camera Preview";
       }
@@ -904,6 +908,10 @@
     function getStatusClass(status) {
       if (status === "Interactive") {
         return "status-interactive";
+      }
+
+      if (status === "Experimental 2D") {
+        return "status-preview";
       }
 
       if (status === "Camera Preview") {
