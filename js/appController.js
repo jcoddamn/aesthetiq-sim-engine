@@ -1,9 +1,10 @@
+import {preparePreviewSource} from './previewInput.js';
 import {renderMeasurementCoverage,renderPreviewMeasurements} from './measurementCoverageUI.js';
 import {
   startFaceTracking,
   stopFaceTracking,
   detectFaceLandmarksFromImage
-} from "./mediapipeRunner.js";
+} from "./mediapipeRunner.js?v=2";
 
 import {
   runProcedureSimulationFromImage,
@@ -109,6 +110,8 @@ const selectedLipIntensity =
 let currentProcedure =
   normalizeProcedureId(requestedProcedure);
 
+let processingPhoto = false;
+let generatingPreview = false;
 let latestLandmarks = null;
 let capturedCanvas = null;
 let latest3DCaptures = null;
@@ -427,17 +430,11 @@ function initApp() {
 },
 
     (statusText) => {
+      if (processingPhoto || generatingPreview || simulationResults) return;
       const normalizedStatus =
         String(statusText || "");
 
-      if (
-        normalizedStatus
-          .toLowerCase()
-          .includes("denied") ||
-        normalizedStatus
-          .toLowerCase()
-          .includes("error")
-      ) {
+      if (/denied|error|blocked|could not|no camera/i.test(normalizedStatus)) {
         setStatus(
           normalizedStatus,
           "error"
@@ -1136,6 +1133,7 @@ function drawSelectedProcedureRegion(
 // =========================================================
 
 function updateCameraReadiness() {
+  if (processingPhoto || generatingPreview) return;
   const hasFace =
     Array.isArray(latestLandmarks) &&
     latestLandmarks.length >= 468;
@@ -1361,8 +1359,12 @@ function generateSimulation(
   anatomyProfile = null,
   tissueModel = null
 ) {
+  if (generatingPreview) return;
+  generatingPreview = true;
   try {
     setCaptureLoading(true);
+    capturedCanvas = preparePreviewSource(imageSource);
+    imageSource = capturedCanvas;
 
     setStatus(
       "Generating preview…",
@@ -1523,7 +1525,8 @@ viewingOriginal = false;
     "error"
   );
 } finally {
-    setCaptureLoading(false);
+    generatingPreview = false;
+    setCaptureLoading(processingPhoto);
   }
 }
 
@@ -1784,9 +1787,12 @@ async function handlePhotoUpload(event) {
   const file =
     event.target.files?.[0];
 
-  if (!file) {
+  if (!file || processingPhoto || generatingPreview) {
     return;
   }
+  processingPhoto = true;
+  setCaptureLoading(true);
+  setStatus("Opening photo…", "loading");
 
   const image =
     new Image();
@@ -1802,35 +1808,7 @@ async function handlePhotoUpload(event) {
           "loading"
         );
 
-        capturedCanvas =
-          document.createElement(
-            "canvas"
-          );
-
-        capturedCanvas.width =
-          image.naturalWidth;
-
-        capturedCanvas.height =
-          image.naturalHeight;
-
-        const context =
-          capturedCanvas.getContext(
-            "2d"
-          );
-
-        if (!context) {
-          throw new Error(
-            "Could not prepare uploaded photo."
-          );
-        }
-
-        context.drawImage(
-          image,
-          0,
-          0,
-          capturedCanvas.width,
-          capturedCanvas.height
-        );
+        capturedCanvas = preparePreviewSource(image);
 
         /*
          * IMPORTANT:
@@ -1886,6 +1864,8 @@ async function handlePhotoUpload(event) {
         );
 
       } finally {
+        processingPhoto = false;
+        setCaptureLoading(false);
         URL.revokeObjectURL(
           objectUrl
         );
@@ -1902,6 +1882,8 @@ async function handlePhotoUpload(event) {
 
   image.onerror =
     () => {
+      processingPhoto = false;
+      setCaptureLoading(false);
       URL.revokeObjectURL(
         objectUrl
       );
@@ -2002,10 +1984,10 @@ async function open3DViewer() {
 function setCaptureLoading(
   loading
 ) {
-  if (!captureButton) {
-    return;
+  for (const button of [uploadButton, retakeButton, precisionScanButton]) {
+    if (button) button.disabled = loading;
   }
-
+  if (!captureButton) return;
   captureButton.disabled =
     loading;
 

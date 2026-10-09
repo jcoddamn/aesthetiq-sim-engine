@@ -3,6 +3,7 @@ let rafId = null;
 let faceMesh = null;
 let imageFaceMesh = null;
 let running = false;
+let imageAnalysisPending = false;
 
 export async function startFaceTracking(videoElement, onLandmarks, onStatus) {
   if (!videoElement) {
@@ -11,7 +12,7 @@ export async function startFaceTracking(videoElement, onLandmarks, onStatus) {
   }
 
   if (typeof window.FaceMesh === 'undefined') {
-    console.error('FaceMesh is not loaded. Check your script tag in index.html');
+    onStatus?.('Face tracking could not load. Check your connection and reload the page.');
     return;
   }
 
@@ -86,7 +87,7 @@ export async function startFaceTracking(videoElement, onLandmarks, onStatus) {
     rafId = requestAnimationFrame(loop);
   } catch (error) {
     console.error('Camera start failed:', error);
-    onStatus?.('Camera permission denied');
+    onStatus?.(error?.name === 'NotFoundError' ? 'No camera found. Use Upload Photo to create a preview.' : error?.name === 'NotAllowedError' ? 'Camera access is blocked. Allow camera access or use Upload Photo.' : 'Camera could not start. Use Upload Photo or try again.');
   }
 }
 
@@ -123,46 +124,26 @@ export async function detectFaceLandmarksFromImage(
     });
   }
 
-  return new Promise(
-    async (resolve, reject) => {
-      let resolved = false;
-
-      imageFaceMesh.onResults(
-        (results) => {
-          if (resolved) {
-            return;
-          }
-
-          resolved = true;
-
-          if (
-            results.multiFaceLandmarks &&
-            results.multiFaceLandmarks
-              .length > 0
-          ) {
-            resolve(
-              results.multiFaceLandmarks[0]
-            );
-
-            return;
-          }
-
-          resolve(null);
-        }
-      );
-
-      try {
-        await imageFaceMesh.send({
-          image: imageSource
-        });
-      } catch (error) {
-        if (!resolved) {
-          resolved = true;
-          reject(error);
-        }
-      }
-    }
-  );
+  if (imageAnalysisPending) throw new Error("A photo is already being analyzed. Please wait.");
+  imageAnalysisPending = true;
+  const detector = imageFaceMesh;
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (error, landmarks) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      imageAnalysisPending = false;
+      if (error) {
+        if (imageFaceMesh === detector) imageFaceMesh = null;
+        Promise.resolve().then(() => detector.close()).catch(() => {});
+        reject(error);
+      } else resolve(landmarks);
+    };
+    const timer = setTimeout(() => finish(new Error("Face analysis timed out. Check your connection and try a clear front-facing photo.")), 20000);
+    detector.onResults(results => finish(null, results.multiFaceLandmarks?.[0] || null));
+    Promise.resolve().then(() => detector.send({image:imageSource})).catch(error => finish(error));
+  });
 }
 
 // Research utilities call this after a temporary image pair so the detector
