@@ -44,3 +44,15 @@
 - 2D MediaPipe landmark ratios are not interchangeable with measured 3D volume, millimeters, clinical scales or surgical outcomes.
 
 **Release gate:** Keep AesthetIQ previews educational and nonpredictive until independent visual and clinical validation is complete.
+
+
+## Temporary-only analysis and data minimization (2026-10-09)
+- Clinical photos are **development-only inputs**, never product assets, marketing imagery, seed data, public example faces, or app content.
+- Analyze authorized pairs locally in an isolated development environment; do not commit them, attach them to bug reports, or send them to public issue trackers.
+- Do not retain identifiable landmark arrays, original file names, EXIF, facial embeddings, individual photographs, or raw per-person reports in production.
+- After measurements are reviewed, delete temporary source photos, cropped faces, previews, browser-held canvases and any authorized scratch files. Clear local trash and backups where possible; verify the actual retention/deletion behavior of the development environment.
+- The audit tool provides a **Discard temporary photos** action and clears canvas references on page exit. It does not guarantee immediate secure erasure from browser memory or external caches.
+- Keep only licensed, de-identified, aggregate procedure statistics, uncertainty ranges, provenance records and approved code/parameter changes. Small groups can still be re-identifiable; suppress or combine sparse strata.
+- The current HTML research tool resides in the repository. A `noindex` directive and absence from app navigation **do not constitute access control**. Before public deployment, exclude the research tool and any temporary analysis data from the deployed build or put it behind authenticated developer-only access.
+- If any image has already been committed, `.gitignore` will not remove it from Git history; history and hosting caches require separate remediation.
+- The clinical audit does **not** upload reference photos itself, but MediaPipe scripts are loaded from a CDN; review third-party runtime and privacy policies before handling sensitive clinical material.
