@@ -43,8 +43,23 @@ export function reconstruct3DFromCaptures(captures,canonical){
   const x=(p.x-fm.cx)/fm.w*faceWidth;
   const y=-(p.y-fm.cy)/fm.h*faceHeight;
   const zNorm=clamp((zCenter-frontZ[i])/zRange,-1.2,1.2);
+  const sideSignals=[];
+  for(const name of ["left","right"]){
+    const view=captures[name]?.landmarks;
+    if(!valid(view))continue;
+    const noseZ=view[168]?.z;
+    const pointZ=view[i]?.z;
+    if(Number.isFinite(noseZ)&&Number.isFinite(pointZ)){
+      const st=stats(view);
+      sideSignals.push(clamp((noseZ-pointZ)/Math.max(.05,st.w),-1.5,1.5));
+    }
+  }
+  const sideSignal=sideSignals.length
+    ?sideSignals.reduce((sum,v)=>sum+v,0)/sideSignals.length
+    :zNorm;
+  const blendedDepth=zNorm*.72+sideSignal*.28;
   const baseZ=canonical[i*3+2];
-  const estimatedZ=baseZ+zNorm*sideStrength*(2.2+depthSignal);
+  const estimatedZ=baseZ+blendedDepth*sideStrength*(2.2+depthSignal);
   // Blend 2D fit to avoid extreme landmark distortions on poor photos.
   result[i*3]=clamp(x,canonical[i*3]-.85,canonical[i*3]+.85);
   result[i*3+1]=clamp(y,canonical[i*3+1]-.9,canonical[i*3+1]+.9);
