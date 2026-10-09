@@ -9,7 +9,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=25";
+} from "./simulationPipeline.js?v=26";
 
 import {
   getProcedureLabel,
@@ -41,6 +41,7 @@ import {
   getRecoveryTimeline,
   getRecoveryStage
 } from "./recoveryTimeline.js?v=1";
+import {renderRecoveryIllustration} from "./recoveryIllustration2D.js?v=1";
 
 import {
   drawPolygonOutline
@@ -205,6 +206,7 @@ const resultsSection =
 
 const resultLabel =
   document.getElementById("resultLabel");
+const qualityNote = document.getElementById("qualityNote");
 
 const showOriginalButton =
   document.getElementById("showOriginalButton");
@@ -1489,8 +1491,17 @@ viewingOriginal = false;
     updateCompareButtons();
     renderSelectedResult();
 
+    const reviews = simulationResults?.quality || {};
+    const warnings = Object.entries(reviews).flatMap(([level,review]) =>
+      (review?.warnings || []).map(warning => level + ": " + warning)
+    );
+    if (qualityNote) {
+      qualityNote.textContent = warnings.length
+        ? "Preview quality notice: " + [...new Set(warnings)].slice(0,3).join(" • ")
+        : "Automated image checks passed. This is an educational visualization, not a prediction.";
+    }
     setStatus(
-      "Preview ready",
+      warnings.length ? "Preview ready — review quality notice" : "Preview ready",
       "ready"
     );
 
@@ -1621,26 +1632,10 @@ function renderRecoveryAdjustedResult(
     targetCanvas.height
   );
 
-  context.drawImage(
-    capturedCanvas,
-    0,
-    0,
-    targetCanvas.width,
-    targetCanvas.height
+  const illustrated = renderRecoveryIllustration(
+    capturedCanvas,sourceCanvas,stage,currentProcedure
   );
-
-  context.save();
-  context.globalAlpha = progress;
-
-  context.drawImage(
-    sourceCanvas,
-    0,
-    0,
-    targetCanvas.width,
-    targetCanvas.height
-  );
-
-  context.restore();
+  context.drawImage(illustrated,0,0,targetCanvas.width,targetCanvas.height);
 }
 
 function renderSelectedResult() {
