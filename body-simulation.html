@@ -40,7 +40,7 @@ small{color:#cbd5e1}
 </div>
 <div class="panel"><strong>Limitations</strong><p>These simulations use a 2D silhouette approximation. MediaPipe Pose estimates skeletal landmarks; person segmentation does not identify breast tissue, fat, muscle, skin laxity, surgical planes, or implant shape. Clothing, occlusion, camera angle, and lighting can affect results. No uploaded photo is sent to AesthetIQ by this page, but third-party MediaPipe assets load from a CDN.</p></div>
 <script type="module">
-import {BODY_PROCEDURES,renderBodyLevels} from "./js/bodySimulation.js?v=1";
+import {BODY_PROCEDURES,renderBodyLevels} from "./js/bodySimulation.js?v=2";
 const query=new URLSearchParams(location.search);
 const procedureId=query.get("procedure")||"liposuction";
 const names={
