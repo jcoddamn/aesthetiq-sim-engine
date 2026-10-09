@@ -43,7 +43,7 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 import {procedures} from "./js/procedureData.js?v=3";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
 import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=29";
-import {compareProcedureLandmarks} from "./js/procedureEvidenceComparison.js?v=1";
+import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=1";
 const $=id=>document.getElementById(id);
 const ids=procedures.map(p=>p.id);
 for(const p of procedures){
@@ -53,6 +53,8 @@ let report=null,audit=null;
 fetch("./research/procedure_evidence_audit_v2.json").then(r=>r.ok?r.json():null).then(data=>{audit=data;updateLinks();}).catch(()=>{});
 function updateLinks(){
  $("sourceLinks").replaceChildren();
+ $("run").disabled=!METRIC_GROUPS[$("procedure").value];
+ $("run").title=METRIC_GROUPS[$("procedure").value]?"Compare facial landmark metrics":"No validated quantitative landmark metric exists for this procedure";
  const row=audit?.procedures?.find(p=>p.id===$("procedure").value);
  if(!row)return;
  const title=document.createElement("strong");title.textContent="Research references: ";$("sourceLinks").append(title);
@@ -63,6 +65,7 @@ function updateLinks(){
  }
 }
 $("procedure").addEventListener("change",updateLinks);
+updateLinks();
 async function prepare(file){
  if(!file)throw Error("Choose both images.");
  const bitmap=await createImageBitmap(file);
@@ -85,6 +88,7 @@ $("run").addEventListener("click",async()=>{
   const observed=await detectFaceLandmarksFromImage(after);
   if(!Array.isArray(original)||!Array.isArray(observed))throw Error("A face could not be detected in both photographs.");
   const procedure=$("procedure").value;
+  if(!METRIC_GROUPS[procedure])throw Error("This procedure does not yet have a compatible quantitative facial landmark metric.");
   const sim=runProcedureSimulationFromLandmarks({procedure,landmarks:original,imageSource:before,blurPx:8,mirrorX:false});
   report=compareProcedureLandmarks({
    beforeLandmarks:original,afterLandmarks:observed,
