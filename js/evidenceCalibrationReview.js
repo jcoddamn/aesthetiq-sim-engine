@@ -1,6 +1,6 @@
 // Local research aggregation. Counts pseudonymous cases, never report files.
 // Twenty is an internal review floor, not a clinical validation threshold.
-import {COMPARISON_LEVELS, COMPARISON_VERSION, METRIC_GROUPS} from "./procedureEvidenceComparison.js?v=3";
+import {COMPARISON_LEVELS, COMPARISON_VERSION, METRIC_GROUPS} from "./procedureEvidenceComparison.js?v=4";
 const finite=Number.isFinite;
 const median=values=>{
  const a=values.filter(finite).sort((x,y)=>x-y), k=Math.floor(a.length/2);
@@ -23,7 +23,7 @@ export function summarizeCalibrationEvidence(records,{minimumCases=20}={}){
  }
  for(const [index,record] of records.entries()){
   const c=record?.caseContext, metrics=METRIC_GROUPS[record?.procedure], reasons=[];
-  if(record?.schemaVersion!==COMPARISON_VERSION||record?.measurementProtocol!=="square_pixel_eye_aligned_2d_v2")reasons.push("incompatible_measurement_protocol");
+  if(record?.schemaVersion!==COMPARISON_VERSION||record?.measurementProtocol!=="square_pixel_eye_aligned_2d_v3")reasons.push("incompatible_measurement_protocol");
   if(record?.status!=="comparison_available"||!Array.isArray(record?.warnings)||record.warnings.length)reasons.push("comparison_not_ready");
   if(!c||!["caseId",...contexts].every(k=>token(c[k]))||
      !FOLLOWUP_WINDOWS.includes(c.followupWindow)||!["development","holdout"].includes(c.split))reasons.push("missing_case_context");

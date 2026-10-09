@@ -135,3 +135,7 @@ The native render regression can be run with `node --test tests/simulation-pipel
 ## Second source-screening batch — 2026-10-09
 
 See `source_screening_batch_2.json` and `sources_available_now.md`. Seven article licenses were verified, including one anatomy-only source whose pictured patient ages remain unconfirmed. Three additional adult under-eye surgical figure files were acquired, visually inspected, and deleted. All omit the mouth/chin required by the current full-face metrics; none adds a simulator comparison. Historical acquired figure files now total eight across both batches; retained images remain zero. The original lip batch remains two comparisons from one person. Two aggregate literature benchmarks were added without changing simulation coefficients. Other new image candidates remain unmeasured, and lip-image retrieval was unavailable in this session.
+
+## Measurement specification update — 2026-10-09
+
+The current comparison protocol is v3 with 11 supported facial procedure groups. It replaces the earlier 17-group proxy mapping; historical v2 reports above remain historical and require remeasurement. See [measurement_protocol_v3.md](measurement_protocol_v3.md) for the 54-procedure calibrated endpoint registry, local workbench, source limitations and protocol migration. No procedure is clinically validated.

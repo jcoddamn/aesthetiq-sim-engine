@@ -1,3 +1,4 @@
+import {measurePreviewGeometry} from './previewMeasurements.js';
 // =========================================================
 // AESTHETIQ — SIMULATION PIPELINE
 // File: js/simulationPipeline.js
@@ -54,7 +55,7 @@ import {
 import {
   constrainWarpByFaceScale,
   compareFaceMorphometrics
-} from "./faceMorphometrics.js?v=2";
+} from "./faceMorphometrics.js?v=3";
 
 import {
   repairLowerLipTexture
@@ -1202,6 +1203,9 @@ export function runProcedureSimulation({
       enhanced: enhancedResult?.quality || null
     },
 
+    measurements: measurePreviewGeometry({procedure:normalizedProcedure,original:landmarks,
+      imageSize:{width:sourceCanvas.width,height:sourceCanvas.height},
+      levels:{natural:naturalResult?.landmarks||landmarks,balanced:balancedResult?.landmarks||landmarks,enhanced:enhancedResult?.landmarks||landmarks}}),
     // Research audit data; not presented as clinical outcome measurements.
     landmarksByLevel: {
       natural: naturalResult?.landmarks || landmarks,

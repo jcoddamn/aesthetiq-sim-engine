@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive">
+<title>AesthetIQ — Measurement workbench</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui;background:#0b1222;color:#f8fafc}body{max-width:1050px;margin:auto;padding:20px}a{color:#c4b5fd}p{line-height:1.6;color:#cbd5e1}.panel{background:#172033;border:1px solid #34435c;border-radius:14px;padding:18px;margin:18px 0}textarea{width:100%;min-height:280px;box-sizing:border-box;font:13px monospace}button,select,textarea{background:#252f48;color:white;border:1px solid #66738d;border-radius:7px;padding:10px;margin:6px 0}button{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere}li{margin:8px 0}.controls{display:flex;gap:12px;flex-wrap:wrap}h1{font-size:1.8rem}
+</style></head><body>
+<a href="clinical-evidence-audit.html">← Evidence audit</a>
+<h1>Calibrated measurement workbench</h1>
+<p>Development-only comparison of observed measurements. This tool does not diagnose, recommend treatment, set injection doses or predict healing. Requirements cover all catalog procedures but are not a complete clinical examination. Missing measurements stay missing.</p>
+<div class="panel"><label for="procedure">Procedure</label> <select id="procedure"></select><div id="requirements"></div><ul id="sources"></ul></div>
+<div class="panel"><h2>Before/after observations</h2>
+<p>Use random study and case codes, never names or medical record numbers. Keep each region, side and expression separate. Enter measurements from authorized adult cases using a documented capture and calibration protocol. Replace template null values and confirm context only after review. Delete unmeasured observation rows; the report will identify missing endpoints.</p>
+<div class="controls"><button id="template">Load blank procedure template</button><button id="downloadTemplate">Download template</button></div>
+<label for="observations">Measurement JSON</label><textarea id="observations" spellcheck="false"></textarea>
+<div class="controls"><button id="compare">Compare measurements</button><button id="export" disabled>Export report</button><button id="clear">Clear observations and report</button></div>
+<pre id="report" role="status" aria-live="polite">No measurements entered.</pre></div>
+<div class="panel"><h2>Calibrated geometry calculator</h2>
+<p>Pixels need a documented scale in the same plane. Metric 3D data must come from a verified scanner; FaceMesh depth is not millimeters. Angle uses the second point as vertex. Ratio uses four endpoints. Area is a simple 2D polygon. Circumference requires a complete planar 3D section. Volume requires a closed, consistently oriented, connected triangle mesh with verified absence of self-intersections and a fixed closure protocol. These checks do not validate the scanner.</p>
+<label for="operation">Calculation</label><select id="operation"><option>distance</option><option>angle</option><option>ratio</option><option>area</option><option>circumference</option><option>volume</option><option>density</option><option>color</option></select>
+<label for="geometry">Geometry JSON</label><textarea id="geometry" spellcheck="false"></textarea><button id="calculate">Calculate</button><pre id="geometryReport" role="status" aria-live="polite">No calculation.</pre>
+<p>Color accepts calibrated CIELAB, not RGB. The result is ΔE76, not ΔE2000 or a whitening shade score. Density distinguishes hair shafts from follicular units.</p></div>
+<p>Inputs remain in this page's memory until cleared or closed. Nothing is uploaded or saved automatically. Exported files are your responsibility. <a href="research/measurement_protocol_v3.md">Read methods and limitations</a>.</p>
+<script type="module" src="./js/measurementWorkbench.js"></script>
+</body></html>

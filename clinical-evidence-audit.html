@@ -18,6 +18,7 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 </head><body>
 <a href="index.html">← AesthetIQ</a>
 <h1>Procedure evidence audit</h1>
+<p><a href="measurement-workbench.html">Open calibrated measurements for all 54 procedures</a></p>
 <p>This development-only research tool compares <strong>same-person, authorized</strong> before/after photographs against the app's Natural, Balanced and Enhanced outputs. It measures normalized 2D facial geometry—not volume, tissue response or medical accuracy. Photos are processed locally; this tool does not upload images. Use Discard to clear temporary canvases and selected files. Browser memory release is not guaranteed to be immediate.</p>
 <div class="panel">
 <div class="controls">
@@ -78,9 +79,9 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 <script type="module">
 import {procedures} from "./js/procedureData.js?v=3";
 import {detectFaceLandmarksFromImage,releaseImageFaceLandmarker} from "./js/mediapipeRunner.js";
-import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=30";
-import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=3";
-import {summarizeCalibrationEvidence} from "./js/evidenceCalibrationReview.js?v=2";
+import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=31";
+import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=4";
+import {summarizeCalibrationEvidence} from "./js/evidenceCalibrationReview.js?v=3";
 import {auditEvidenceReadiness} from "./js/evidenceReadinessAudit.js?v=2";
 import {createTemporaryPhotoSession} from "./js/temporaryPhotoSession.js";
 const isLocalResearchHost=["localhost","127.0.0.1","[::1]"].includes(location.hostname);
@@ -171,7 +172,7 @@ fetch("./research/procedure_evidence_audit_v2.json").then(r=>r.ok?r.json():null)
 function updateLinks(){
  $("sourceLinks").replaceChildren();
  $("run").disabled=busy||!METRIC_GROUPS[$("procedure").value];
- $("run").title=METRIC_GROUPS[$("procedure").value]?"Compare facial landmark metrics":"No validated quantitative landmark metric exists for this procedure";
+ $("run").title=METRIC_GROUPS[$("procedure").value]?"Compare facial landmark metrics":"This procedure requires measurements beyond the current 2D comparison";
  const row=audit?.procedures?.find(p=>p.id===$("procedure").value);
  if(!row)return;
  const title=document.createElement("strong");title.textContent="Research references: ";$("sourceLinks").append(title);
@@ -210,7 +211,7 @@ function caseContext(){
   if(!/^[a-zA-Z0-9_-]{1,80}$/.test(context[id]))throw Error("Enter random case/study codes and treatment protocol codes using letters, numbers, hyphens or underscores.");
  }
  if(!context.followupWindow)throw Error("Choose the follow-up period.");
- return {...context,simulationConfigId:"default-goal-products-blur8-pipeline30",
+ return {...context,simulationConfigId:"default-goal-products-blur8-pipeline31",
   referenceLandmarksVisible:$("referenceVisible").checked,
   adultConfirmed:$("adult").checked,isolatedProcedureConfirmed:$("isolated").checked,
   samePersonConfirmed:$("permission").checked,standardizedCaptureConfirmed:$("permission").checked,

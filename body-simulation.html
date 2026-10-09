@@ -40,10 +40,13 @@ small{color:#cbd5e1}
 <canvas id="preview" aria-label="Body preview image"></canvas>
 </div>
 <div class="panel"><strong>Limitations</strong><p>These simulations use a 2D silhouette approximation. MediaPipe Pose estimates skeletal landmarks; person segmentation does not identify breast tissue, fat, muscle, skin laxity, surgical planes, or implant shape. Clothing, occlusion, camera angle, and lighting can affect results. No uploaded photo is sent to AesthetIQ by this page, but third-party MediaPipe assets load from a CDN.</p></div>
+<div class="panel" id="measurementCoverage"></div>
 <script type="module">
+import {renderMeasurementCoverage} from "./js/measurementCoverageUI.js";
 import {BODY_PROCEDURES,renderBodyLevels} from "./js/bodySimulation.js?v=2";
 const query=new URLSearchParams(location.search);
 const procedureId=query.get("procedure")||"liposuction";
+renderMeasurementCoverage(document.getElementById("measurementCoverage"),procedureId);
 const names={
  "breast-augmentation":"Breast Augmentation","breast-lift":"Breast Lift",
  "breast-reduction":"Breast Reduction",liposuction:"Liposuction",

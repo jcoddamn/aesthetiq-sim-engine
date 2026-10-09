@@ -1,3 +1,4 @@
+import {renderMeasurementCoverage,renderPreviewMeasurements} from './measurementCoverageUI.js';
 import {
   startFaceTracking,
   stopFaceTracking,
@@ -9,7 +10,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=30";
+} from "./simulationPipeline.js?v=31";
 
 import {
   getProcedureLabel,
@@ -459,6 +460,7 @@ function initApp() {
 
 // =========================================================
 function updateProcedureInformation() {
+  renderMeasurementCoverage(document.getElementById("measurementCoverage"),currentProcedure);
   const procedureData =
     getProcedureById(currentProcedure);
 
@@ -1639,6 +1641,7 @@ function renderRecoveryAdjustedResult(
 }
 
 function renderSelectedResult() {
+  renderPreviewMeasurements(document.getElementById("previewMeasurements"),viewingOriginal?null:simulationResults?.measurements,selectedLevel);
   if (
     !resultCanvas ||
     !capturedCanvas

@@ -22,8 +22,19 @@ export function measureFaceMorphometrics(landmarks){
  const chinLength=pair(l,17,152);
  const upperLidLeft=pair(l,159,145);
  const upperLidRight=pair(l,386,374);
- const upperVermilion=pair(l,0,13);
- const lowerVermilion=pair(l,17,14);
+ // Project thickness onto the mouth normal; mouth opening is a separate metric.
+ const mouthA=l[61],mouthB=l[291];
+ const mouthNormal=mouthWidth>1e-6?{x:-(mouthB.y-mouthA.y)/mouthWidth,y:(mouthB.x-mouthA.x)/mouthWidth}:null;
+ const projected=(a,b)=>mouthNormal&&finite(l[a])&&finite(l[b])?Math.abs((l[a].x-l[b].x)*mouthNormal.x+(l[a].y-l[b].y)*mouthNormal.y):null;
+ const upperVermilion=projected(0,13);
+ const lowerVermilion=projected(17,14);
+ const philtrum=projected(2,0);
+ const opening=projected(13,14);
+ const pointLine=(i,a,b)=>{
+  if(!finite(l[i])||!finite(l[a])||!finite(l[b]))return null;
+  const width=pair(l,a,b);if(width<=1e-6)return null;
+  return Math.abs((l[b].x-l[a].x)*(l[a].y-l[i].y)-(l[a].x-l[i].x)*(l[b].y-l[a].y))/width;
+ };
  const leftCupid=finite(l[37])&&finite(l[0])?l[0].y-l[37].y:null;
  const rightCupid=finite(l[267])&&finite(l[0])?l[0].y-l[267].y:null;
  const cupidDip=leftCupid!==null&&rightCupid!==null?(leftCupid+rightCupid)/2:null;
@@ -44,6 +55,10 @@ export function measureFaceMorphometrics(landmarks){
    mouthToFaceWidth:safeRatio(mouthWidth,faceWidth),
    upperLidApertureLeft:safeRatio(upperLidLeft,faceHeight),
    upperLidApertureRight:safeRatio(upperLidRight,faceHeight),
+   philtrumToMouth:safeRatio(philtrum,mouthWidth),
+   mouthOpeningToMouth:safeRatio(opening,mouthWidth),
+   lowerLidToCanthalLineLeft:safeRatio(pointLine(145,33,133),pair(l,33,133)),
+   lowerLidToCanthalLineRight:safeRatio(pointLine(374,362,263),pair(l,362,263)),
    upperVermilionToMouth:safeRatio(upperVermilion,mouthWidth),
    lowerVermilionToMouth:safeRatio(lowerVermilion,mouthWidth),
    cupidBowDipToMouth:safeRatio(cupidDip,mouthWidth),

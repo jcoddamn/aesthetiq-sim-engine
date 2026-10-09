@@ -30,6 +30,9 @@ test('actual lip pipeline renders three finite intensity levels from synthetic r
    assert.ok(result.landmarksByLevel[level].every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)));
    assert.ok(canvas.toBuffer('image/png').length>100);
   }
+  assert.equal(result.measurements.status,'illustrative_geometry_only');
+  assert.equal(result.measurements.clinicalValidationComplete,false);
+  assert.ok(Number.isFinite(result.measurements.levels.balanced.upperVermilionToMouth.delta));
   assert.notDeepEqual(result.landmarksByLevel.natural,result.landmarksByLevel.enhanced);
  }finally{for(const c of canvases){c.width=1;c.height=1;}}
 });

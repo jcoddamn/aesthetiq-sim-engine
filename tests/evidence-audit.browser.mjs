@@ -31,7 +31,7 @@ try{
  await upload();await page.click('#run');
  await page.waitForFunction(()=>!document.querySelector('#export').disabled);
  const report=JSON.parse(await page.locator('#report').innerText());
- assert.equal(report.schemaVersion,2);assert.equal(report.caseContext.caseId,'case-001');
+ assert.equal(report.schemaVersion,3);assert.equal(report.caseContext.caseId,'case-001');
  assert.equal(report.status,'comparison_available');
  assert.equal(await page.locator('#preview canvas').count(),5);
  await page.click('#discard');assert.equal(await page.locator('#preview canvas').count(),0);

@@ -1,30 +1,24 @@
 // AesthetIQ reference-to-simulation comparison.
 // Compares normalized 2D landmark changes, not millimeters, volumes,
 // medical efficacy, or guaranteed treatment outcomes.
-import {measureFaceMorphometrics} from "./faceMorphometrics.js?v=2";
+import {measureFaceMorphometrics} from "./faceMorphometrics.js?v=3";
 import {standardizePhotoLandmarks} from "./researchPhotoGeometry.js";
 
-export const COMPARISON_VERSION = 2;
+export const COMPARISON_VERSION = 3;
 export const COMPARISON_LEVELS = Object.freeze(["natural", "balanced", "enhanced"]);
 
 export const METRIC_GROUPS = Object.freeze({
  "lip-filler":["upperVermilionToMouth","lowerVermilionToMouth","cupidBowDipToMouth","mouthToFaceWidth"],
- "lip-lift":["upperVermilionToMouth","cupidBowDipToMouth","mouthToFaceWidth"],
+ "lip-lift":["philtrumToMouth","upperVermilionToMouth","cupidBowDipToMouth"],
  "lip-flip":["upperVermilionToMouth","cupidBowDipToMouth"],
  "rhinoplasty":["alarToIntercanthal","alarToFace","noseToFaceLength","tipMidlineToFace"],
  "revision-rhinoplasty":["alarToIntercanthal","alarToFace","noseToFaceLength","tipMidlineToFace"],
  "chin-filler":["chinToFaceLength","jawToFaceWidth"],
  "chin-implant":["chinToFaceLength","jawToFaceWidth"],
  "jawline-filler":["jawToFaceWidth","chinToFaceLength"],
- "cheek-filler":["jawToFaceWidth"],
- "cheek-implants":["jawToFaceWidth"],
- "facelift":["jawToFaceWidth","chinToFaceLength"],
- "mini-facelift":["jawToFaceWidth","chinToFaceLength"],
  "brow-lift":["browHeightLeftToFace","browHeightRightToFace"],
  "upper-blepharoplasty":["upperLidApertureLeft","upperLidApertureRight"],
- "lower-blepharoplasty":["upperLidApertureLeft","upperLidApertureRight"],
- "buccal-fat-removal":["jawToFaceWidth"],
- "facial-fat-transfer":["jawToFaceWidth"]
+ "lower-blepharoplasty":["lowerLidToCanthalLineLeft","lowerLidToCanthalLineRight"]
 });
 const finite=Number.isFinite;
 function angleProxy(l){
@@ -63,6 +57,11 @@ export function compareProcedureLandmarks({
   if(Math.max(Math.abs(p.yaw),Math.abs(q.yaw))>.25)warnings.push("A near-frontal view is required for these 2D metrics.");
   if(Math.abs(original.roll-observed.roll)>.075)warnings.push("Head roll differs between before and after photos.");
  }
+ if(["lip-filler","lip-lift","lip-flip"].includes(procedure)&&
+    finite(before.mouthOpeningToMouth)&&finite(after.mouthOpeningToMouth)&&
+    Math.abs(before.mouthOpeningToMouth-after.mouthOpeningToMouth)>.03){
+  warnings.push("Mouth opening differs; review expression before comparing lip geometry (engineering screen, not a clinical threshold).");
+ }
  const measured={},simulated={},errors={};
  for(const metric of metrics){
   measured[metric]=delta(before,after,metric);
@@ -90,9 +89,12 @@ export function compareProcedureLandmarks({
   metrics.every(metric=>finite(simulated[level]?.[metric])));
  return {
   schemaVersion:COMPARISON_VERSION,
-  measurementProtocol:"square_pixel_eye_aligned_2d_v2",
+  measurementProtocol:"square_pixel_eye_aligned_2d_v3",
   procedure,
   status:warnings.length?"alignment_review_required":complete?"comparison_available":"insufficient_metrics_or_simulations",
+  coverage:"partial_2d_geometry_only",
+  clinicalValidationComplete:false,
+  missingCapabilities:["physical_scale","calibrated_3d_surface","clinical_function_and_tissue_response"],
   measurements:measured,
   simulated,
   errors,

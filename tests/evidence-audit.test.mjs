@@ -22,7 +22,7 @@ function face(){
 }
 const size={width:1000,height:1000};
 function comparison(overrides={}){
- const before=face(), after=face();after[13].y+=.01;
+ const before=face(), after=face();after[0].y-=.01;
  return compareProcedureLandmarks({procedure:'lip-filler',beforeLandmarks:before,afterLandmarks:after,
   beforeImageSize:size,afterImageSize:size,
   simulatedLandmarksByLevel:{natural:after,balanced:after,enhanced:after},...overrides});
@@ -59,7 +59,7 @@ test('missing image sizes, corrupt points and collapsed eye references are rejec
 test('missing output levels cannot be reported as a completed comparison',()=>{
  assert.equal(comparison({simulatedLandmarksByLevel:{natural:face()}}).status,'insufficient_metrics_or_simulations');
 });
-test('all 17 facial procedure comparisons produce finite ratios with valid inputs',()=>{
+test('supported facial procedure comparisons produce finite ratios with valid inputs',()=>{
  for(const procedure of Object.keys(METRIC_GROUPS))assert.equal(comparison({procedure}).status,'comparison_available',procedure);
 });
 test('twenty complete independent development cases reach expert review only',()=>{
@@ -135,4 +135,9 @@ test('lip product settings are initialized before use for every style and intens
   assert.ok(output.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.z)),`${style}/${level}`);
  }
  assert.deepEqual(original,copy);
+});
+
+test('changed oral opening requires expression review',()=>{
+ const after=face();after[13].y+=.02;
+ assert.equal(comparison({afterLandmarks:after}).status,'alignment_review_required');
 });
