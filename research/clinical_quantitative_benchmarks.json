@@ -53,6 +53,61 @@
       "compatibility": "NOT directly comparable to AesthetIQ brightness/blur filters; requires independent skin texture and scar scoring",
       "source_license": "CC BY-NC-SA 4.0 — no commercial image reuse without permission",
       "calibration_applied": false
+    },
+    {
+      "procedure": "lip-filler",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11210068/",
+      "doi": "10.1093/asjof/ojae003",
+      "study_design": "Randomized controlled trial; 20 volunteers, 10 Restylane NASHA and 10 Restylane Kysse OBT; 1 mL injection, same injector and technique; baseline, immediately after and 30-day 3D stereophotogrammetry",
+      "observations": [
+        {
+          "metric": "mean_relative_lip_volume_change_immediate",
+          "product": "Restylane NASHA",
+          "value": 16.14,
+          "standard_deviation": 5.68,
+          "unit": "percent",
+          "timepoint": "immediate"
+        },
+        {
+          "metric": "mean_relative_lip_volume_change_immediate",
+          "product": "Restylane Kysse OBT",
+          "value": 6.81,
+          "standard_deviation": 7.46,
+          "unit": "percent",
+          "timepoint": "immediate"
+        },
+        {
+          "metric": "mean_relative_lip_volume_change_30_day",
+          "product": "Restylane NASHA",
+          "value": 11.53,
+          "standard_deviation": 10.8,
+          "unit": "percent",
+          "timepoint": "30 days"
+        },
+        {
+          "metric": "mean_relative_lip_volume_change_30_day",
+          "product": "Restylane Kysse OBT",
+          "value": 9.98,
+          "standard_deviation": 5.39,
+          "unit": "percent",
+          "timepoint": "30 days"
+        }
+      ],
+      "comparisons": [
+        {
+          "metric": "immediate relative volume change",
+          "p_value": 0.006,
+          "interpretation": "NASHA greater than OBT immediately after treatment"
+        },
+        {
+          "metric": "30-day relative volume change",
+          "p_value": 0.697,
+          "interpretation": "No statistically significant between-group difference at 30 days"
+        }
+      ],
+      "compatibility": "3D relative lip volume is not interchangeable with AesthetIQ's 2D landmark displacement or product visual multipliers. Useful for direction/time-course review only.",
+      "source_license": "Article CC BY 4.0; figure-specific credits and patient permissions must be reviewed separately",
+      "calibration_applied": false
     }
   ]
 }
