@@ -69,6 +69,7 @@ import {refineProcedureMask} from "./anatomicalMask2D.js?v=1";
 import {inspectWarp,moderateWarp,inspectRender} from "./simulationQuality2D.js?v=1";
 import {preserveSkinDetail} from "./skinDetail2D.js?v=1";
 import {refineDentalAppearanceMask} from "./dentalAppearanceMask2D.js?v=1";
+import {depthAwareWarp} from "./depthAwareWarp2D.js?v=1";
 
 const meshRenderer =
   new MeshRenderer();
@@ -813,6 +814,10 @@ function createSimulationLevel({
         workingLandmarks,
         normalizedProcedure
       );
+
+    workingLandmarks = depthAwareWarp(
+      landmarks,workingLandmarks,normalizedProcedure
+    );
 
     const warpReview = inspectWarp(landmarks,workingLandmarks,normalizedProcedure);
     if (!warpReview.valid) {
