@@ -1,185 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AesthetIQ Premium 3D Viewer</title>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AesthetIQ — 3D Procedure Morph Viewer</title>
 
-  <style>
-    :root{
-      --bg:#111827;
-      --panel:rgba(255,255,255,0.07);
-      --border:rgba(255,255,255,0.08);
-      --btn:#1f2937;
-      --btn-hover:#374151;
-      --accent:#6b46c1;
-    }
-
-    *{ box-sizing:border-box; }
-
-    body{
-      margin:0;
-      background:var(--bg);
-      color:#fff;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      text-align:center;
-    }
-
-    .page{
-      max-width:1200px;
-      margin:0 auto;
-      padding:18px 14px 28px;
-    }
-
-    h1{
-      margin:8px 0 6px;
-      font-size:clamp(28px,4vw,36px);
-      line-height:1.1;
-    }
-
-    .premium-badge{
-      display:inline-block;
-      margin-bottom:8px;
-      padding:6px 12px;
-      border-radius:999px;
-      background:var(--accent);
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:0.3px;
-    }
-
-    .subtitle{
-      margin:0 0 16px;
-      color:#d1d5db;
-      font-size:14px;
-    }
-
-    #viewer{
-      width:100%;
-      height:68vh;
-      background:#000;
-      border-radius:16px;
-      border:1px solid var(--border);
-      display:block;
-      margin:0 auto;
-    }
-
-    .controls{
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:18px 14px 14px;
-      margin-top:16px;
-    }
-
-    .top-controls,
-    .procedure-buttons{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:8px;
-    }
-
-    .top-controls{
-      margin-bottom:14px;
-    }
-
-    .procedure-buttons{
-      margin-bottom:16px;
-    }
-
-    button{
-      padding:10px 14px;
-      border:none;
-      border-radius:10px;
-      background:var(--btn);
-      color:white;
-      cursor:pointer;
-      font-size:14px;
-      transition:background 0.15s ease, transform 0.15s ease;
-    }
-
-    button:hover{
-      background:var(--btn-hover);
-      transform:translateY(-1px);
-    }
-
-    button.active{
-      background:var(--accent);
-    }
-
-    .status-row{
-      margin-bottom:14px;
-      font-size:15px;
-      color:#e5e7eb;
-    }
-
-    .slider-block{
-      margin:16px 0;
-    }
-
-    label{
-      display:block;
-      margin-bottom:8px;
-      font-weight:600;
-      font-size:15px;
-    }
-
-    input[type="range"]{
-      width:min(420px,85vw);
-    }
-
-    .footer-note{
-      margin-top:14px;
-      color:#d1d5db;
-      font-size:12px;
-      line-height:1.5;
-    }
-  </style>
-</head>
-<body>
-  <div class="page">
-    <h1>AesthetIQ 3D Simulation</h1>
-    <div class="premium-badge">PREMIUM</div>
-    <p class="subtitle">Interactive 3D exploration from multiple angles</p>
-
-    <canvas id="viewer"></canvas>
-
-    <div class="controls">
-      <div class="top-controls">
-        <button onclick="resetView()">Reset View</button>
-        <button onclick="goBack()">Back</button>
-      </div>
-
-      <div class="status-row">
-        <strong>Selected Procedure:</strong>
-        <span id="selectedProcedureLabel">Forehead Botox</span>
-      </div>
-
-      <div class="procedure-buttons">
-        <button class="viewer-procedure-button active" data-procedure="forehead" onclick="setProcedure('forehead')">Forehead Botox</button>
-        <button class="viewer-procedure-button" data-procedure="glabella" onclick="setProcedure('glabella')">11 Lines</button>
-        <button class="viewer-procedure-button" data-procedure="crowsfeet" onclick="setProcedure('crowsfeet')">Crow’s Feet</button>
-        <button class="viewer-procedure-button" data-procedure="brow" onclick="setProcedure('brow')">Brow Lift</button>
-        <button class="viewer-procedure-button" data-procedure="lip" onclick="setProcedure('lip')">Lip Flip</button>
-      </div>
-
-      <div class="slider-block">
-        <label for="intensitySlider">Intensity</label>
-        <input id="intensitySlider" type="range" min="0" max="2" step="0.01" value="1" />
-      </div>
-
-      <div class="slider-block">
-        <label for="recoverySlider">Recovery Progress</label>
-        <input id="recoverySlider" type="range" min="0" max="100" step="1" value="100" />
-      </div>
-
-      <p class="footer-note">
-        3D simulation is an approximate visualization for exploration and not a guaranteed clinical result.
-      </p>
-    </div>
-  </div>
-
-  <script type="module" src="./faceViewer.js"></script>
-  </body>
-  </html>
+<style>
+:root{color-scheme:dark;background:#0c1120;color:#f5f3ff;font-family:system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box}body{margin:0}main{max-width:1120px;margin:auto;padding:18px}
+h1{font-size:clamp(23px,4vw,34px);margin:8px 0}
+p{line-height:1.45;color:#cbd5e1}
+#viewer{display:block;width:100%;height:min(65vh,640px);min-height:360px;border-radius:18px;background:#101629;border:1px solid #334155;touch-action:none}
+.panel{border:1px solid #334155;border-radius:16px;padding:16px;margin-top:14px;background:#151e32}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+label{display:block;font-size:13px;font-weight:600}select,input[type=file],button{margin-top:7px;padding:10px;width:100%;border-radius:9px;border:1px solid #475569;background:#252b43;color:white}
+input[type=range]{width:100%;margin:14px 0 4px}button{cursor:pointer}button:disabled{opacity:.5}
+a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
+</style>
+<script type="importmap">
+{"imports":{
+"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"
+}}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head><body><main>
+<a href="index.html">← AesthetIQ</a>
+<h1>3D Procedure Explorer</h1>
+<p>Interactive 468-vertex anatomical reference model. Drag to rotate, pinch to zoom, choose a procedure and change intensity. This is an illustrative preview, not a patient-specific medical prediction.</p>
+<canvas id="viewer" aria-label="Interactive 3D facial procedure model"></canvas>
+<div class="panel">
+<p id="status" role="status" aria-live="polite">Preparing 3D viewer…</p>
+<strong id="selectedProcedureLabel">Rhinoplasty</strong>
+<div class="controls">
+<label>Procedure<select id="procedureSelect"></select></label>
+<label>Visual goal<select id="goalSelect"></select></label>
+<label>Reference photo (optional)<input id="photo" type="file" accept="image/*"></label>
+<label><input id="wireframe" type="checkbox"> Show mesh wireframe</label>
+</div>
+<label>Intensity <span id="intensityValue">1.00×</span><input id="intensitySlider" type="range" min="0" max="1.6" value="1" step=".02"></label>
+<label>Result development <span id="recoveryValue">100%</span><input id="recoverySlider" type="range" min="0" max="100" value="100" step="1"></label>
+<div class="controls">
+<button id="resetView">Reset camera</button><button id="resetModel">Reset model</button>
+<button id="save">Save image</button><button id="back">Back</button>
+</div>
+<p id="previewNote"></p>
+<small>Model: MediaPipe canonical face geometry, Apache 2.0. Photo fitting uses 2D facial landmarks; depth, skin, bone and actual procedure results are not recovered from one image. The ear, skull and neck surfaces are schematic.</small>
+</div>
+</main><script type="module" src="./faceViewer.js?v=2"></script></body></html>
