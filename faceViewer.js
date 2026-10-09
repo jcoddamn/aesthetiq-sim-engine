@@ -1,9 +1,10 @@
+import {viewerPresentation,framedCameraDistance} from './js/viewerPresentation.js';
 import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccalSlimming,warpFacelift,warpBrowLift,warpUpperBlepharoplasty,warpLowerBlepharoplasty,warpLipLift} from "./js/faceWarp.js?v=25";
-import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=1";
+import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=3";
 import {getSharedIntensity} from "./js/sharedProcedureMath.js?v=1";
-import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
+import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js?v=2";
 import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=3";
 import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=2";
 import {inspectScan} from "./js/twinCaptureQuality.js?v=1";
@@ -48,19 +49,30 @@ const controls=new OrbitControls(camera,canvas);controls.enableDamping=true;cont
 controls.minDistance=17;controls.maxDistance=60;controls.target.set(0,-.5,0);
 scene.add(new THREE.HemisphereLight(0xffffff,0x27344f,2));
 const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(10,15,18);scene.add(light);
-const rim=new THREE.DirectionalLight(0x8899ff,.75);rim.position.set(-10,4,-12);scene.add(rim);
+const rim=new THREE.DirectionalLight(0xffffff,.35);rim.position.set(-10,4,-12);scene.add(rim);
 const material=new THREE.MeshStandardMaterial({color:0xc58b73,roughness:.78,side:THREE.DoubleSide});
 const group=new THREE.Group();scene.add(group);
-const skull=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),material.clone());
+const skull=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),new THREE.MeshStandardMaterial({color:0x777783,roughness:1}));
 skull.scale.set(7.9,10,5.6);skull.position.set(0,.1,-2.3);group.add(skull);
 const ears=[-1,1].map(side=>{
- const ear=new THREE.Mesh(new THREE.SphereGeometry(1,24,20),material.clone());
+ const ear=new THREE.Mesh(new THREE.SphereGeometry(1,24,20),new THREE.MeshStandardMaterial({color:0x777783,roughness:1}));
  ear.scale.set(1.08,2.4,.85);ear.position.set(side*7.9,-.6,-.3);group.add(ear);return ear;
 });
-const neck=new THREE.Mesh(new THREE.CylinderGeometry(3.6,4,6.5,32),material.clone());
+const neck=new THREE.Mesh(new THREE.CylinderGeometry(3.6,4,6.5,32),new THREE.MeshStandardMaterial({color:0x777783,roughness:1}));
 neck.position.set(0,-11.4,-2.2);group.add(neck);
 let mesh=null,base=null,procedure="rhinoplasty",goal="balanced-refinement",photoFitted=false;
 let scanTexture=null;
+let capturePoseCount=0;
+let contextPreference=true;
+function updatePresentation(){
+ const state=viewerPresentation({personalized:photoFitted,procedure,showContext:contextPreference,poseCount:capturePoseCount});
+ for(const part of [skull,...ears,neck])part.visible=state.showContext;
+ $("showContext").checked=state.showContext;
+ $("showContext").disabled=state.contextRequired||!photoFitted;
+ $("scanQuality").textContent=state.captureLabel;
+ $("modelBoundary").textContent=state.note;
+}
+
 function status(msg,error=false){$("status").textContent=msg;$("status").classList.toggle("error",error);}
 function parseOBJ(data){
  const vertices=[],uvs=[],faces=[],uvByVertex=new Float32Array(468*2);
@@ -152,14 +164,23 @@ function setProcedure(id){
  if(!names[id])return;
  procedure=id;const options=goals[id]||["balanced"];
  $("goalSelect").replaceChildren(...options.map(value=>{const opt=document.createElement("option");opt.value=value;opt.textContent=value.replace(/-/g," ");return opt;}));
- goal=options[0];morph();
+ goal=options[0];morph();updatePresentation();reset();
 }
 function resize(){
  const rect=canvas.getBoundingClientRect();
  renderer.setSize(Math.max(1,rect.width),Math.max(1,rect.height),false);
  camera.aspect=rect.width/Math.max(1,rect.height);camera.updateProjectionMatrix();
 }
-function reset(){camera.position.set(0,0,34);controls.target.set(0,-.5,0);controls.update();}
+function reset(){
+ if(!mesh)return;
+ group.updateMatrixWorld(true);
+ const bounds=new THREE.Box3().setFromObject(mesh);
+ for(const part of [skull,...ears,neck])if(part.visible)bounds.union(new THREE.Box3().setFromObject(part));
+ const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+ const distance=framedCameraDistance({width:size.x,height:size.y,depth:size.z,aspect:camera.aspect,fovDegrees:camera.fov});
+ camera.position.set(center.x,center.y,center.z+distance);controls.target.copy(center);
+ controls.maxDistance=Math.max(60,distance*2);controls.update();
+}
 function setTexture(captures){
  if(!mesh)return;
  const textureCanvas=makeMultiAngleTexture(
@@ -174,9 +195,9 @@ function setTexture(captures){
  texture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
  if(scanTexture)scanTexture.dispose();
  scanTexture=texture;
- mesh.material.map=texture;
- mesh.material.color.set(0xffffff);
- mesh.material.needsUpdate=true;
+ // The photograph already contains lighting; do not shade it a second time.
+ mesh.material.dispose();
+ mesh.material=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,side:THREE.DoubleSide,toneMapped:false,wireframe:$("wireframe").checked});
 }
 async function applyPersonalizedCaptures(captures){
  if(!mesh)throw Error("3D model is not loaded.");
@@ -187,11 +208,12 @@ async function applyPersonalizedCaptures(captures){
  base=Float32Array.from(model.positions);
  photoFitted=true;
  morph();
- const quality=Math.round(review.quality*100);
- $("scanQuality").textContent="Scan quality: "+quality+"% · "+model.quality.poseCount+" angle(s)";
+ capturePoseCount=model.quality.poseCount;
+ contextPreference=false;
+ updatePresentation();reset();
  $("scanWarnings").textContent=review.warnings.length?review.warnings.join(" "):
   "Capture passed basic lighting, framing and sharpness checks.";
- status("Personalized facial geometry and photo texture loaded. Rotate to inspect likeness.");
+ status("Your facial surface is ready. Rotate to inspect the approximate shape.");
 }
 async function fitPhoto(file){
  if(!file||!mesh)return;
@@ -230,10 +252,13 @@ for(const [id,level] of [["presetNatural","natural"],["presetBalanced","balanced
  });
 }
 $("recoverySlider").addEventListener("input",morph);
+$("showContext").addEventListener("change",()=>{contextPreference=$("showContext").checked;updatePresentation();reset();});
 $("wireframe").addEventListener("change",e=>{if(mesh)mesh.material.wireframe=e.target.checked;});
 $("resetView").addEventListener("click",reset);
 $("resetModel").addEventListener("click",()=>{if(!mesh)return;base=Float32Array.from(mesh.geometry.userData.canonical);photoFitted=false;
- if(scanTexture){scanTexture.dispose();scanTexture=null;}mesh.material.map=null;mesh.material.color.set(0xc58b73);mesh.material.needsUpdate=true;
+ if(scanTexture){scanTexture.dispose();scanTexture=null;}
+ mesh.material.dispose();mesh.material=material.clone();mesh.material.wireframe=$("wireframe").checked;
+ capturePoseCount=0;contextPreference=true;updatePresentation();reset();
  $("scanQuality").textContent="Canonical reference model";
  $("scanWarnings").textContent="No personalized scan is active.";
  morph();status("Canonical face restored.");});
@@ -265,7 +290,7 @@ window.addEventListener("resize",resize);resize();
  const geometry=parseOBJ(await res.text());
  base=Float32Array.from(geometry.attributes.position.array);
  geometry.userData.canonical=Float32Array.from(base);
- mesh=new THREE.Mesh(geometry,material.clone());group.add(mesh);morph();
+ mesh=new THREE.Mesh(geometry,material.clone());group.add(mesh);morph();updatePresentation();reset();
  status("468-vertex 3D model ready. Drag to rotate and pinch to zoom.");
  if(new URLSearchParams(location.search).get("scan")==="local"){
   try{await loadStoredScan();}catch(error){status("3D model ready, but saved scan could not be loaded: "+(error.message||error),true);}
