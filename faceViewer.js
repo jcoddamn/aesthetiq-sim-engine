@@ -5,7 +5,7 @@ import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccal
 import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=3";
 import {getSharedIntensity} from "./js/sharedProcedureMath.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js?v=2";
-import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=3";
+import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=4";
 import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=2";
 import {inspectScan} from "./js/twinCaptureQuality.js?v=1";
 const names={
@@ -181,14 +181,14 @@ function reset(){
  camera.position.set(center.x,center.y,center.z+distance);controls.target.copy(center);
  controls.maxDistance=Math.max(60,distance*2);controls.update();
 }
-function setTexture(captures){
+function setTexture(captures,model){
  if(!mesh)return;
  const textureCanvas=makeMultiAngleTexture(
    captures,
    mesh.geometry.index.array,
    mesh.geometry.attributes.uv.array,
    mesh.geometry.userData.canonical,
-   1536
+   1536,model.views,model.positions
  );
  const texture=new THREE.CanvasTexture(textureCanvas);
  texture.colorSpace=THREE.SRGBColorSpace;
@@ -204,15 +204,17 @@ async function applyPersonalizedCaptures(captures){
  const review=inspectScan(captures);
  const model=reconstruct3DFromCaptures(review.captures,mesh.geometry.userData.canonical);
  // Build texture first; only update the displayed identity if it succeeds.
- setTexture(review.captures);
+ const accepted=Object.fromEntries(Object.keys(model.views).map(name=>[name,review.captures[name]]));
+ setTexture(accepted,model);
  base=Float32Array.from(model.positions);
  photoFitted=true;
  morph();
  capturePoseCount=model.quality.poseCount;
  contextPreference=false;
  updatePresentation();reset();
- $("scanWarnings").textContent=review.warnings.length?review.warnings.join(" "):
-  "Capture passed basic lighting, framing and sharpness checks.";
+ const warnings=[...review.warnings,...model.quality.warnings];
+ $("scanWarnings").textContent=warnings.length?warnings.join(" "):"Three distinct views fitted. Physical depth and dimensions remain unverified.";
+ $("fitDiagnostics").textContent=model.quality.diagnostics.map(d=>`${d.name}: estimated turn ${Math.round(d.yawDegrees)}°, landmark fit error ${(d.relativeReprojectionError*100).toFixed(1)}% of face width`).join(" · ")+". Fit error measures image agreement, not anatomical accuracy.";
  status("Your facial surface is ready. Rotate to inspect the approximate shape.");
 }
 async function fitPhoto(file){
@@ -257,6 +259,7 @@ $("wireframe").addEventListener("change",e=>{if(mesh)mesh.material.wireframe=e.t
 $("resetView").addEventListener("click",reset);
 $("resetModel").addEventListener("click",()=>{if(!mesh)return;base=Float32Array.from(mesh.geometry.userData.canonical);photoFitted=false;
  if(scanTexture){scanTexture.dispose();scanTexture=null;}
+ $("fitDiagnostics").textContent="";
  mesh.material.dispose();mesh.material=material.clone();mesh.material.wireframe=$("wireframe").checked;
  capturePoseCount=0;contextPreference=true;updatePresentation();reset();
  $("scanQuality").textContent="Canonical reference model";
