@@ -30,6 +30,7 @@ small{color:#cbd5e1}
 <div class="controls">
 <button id="generate" disabled>Generate preview</button>
 <button id="showOriginal" disabled>Original</button>
+<button id="showMask" disabled>Show body mask</button>
 <button id="showNatural" disabled>Natural</button>
 <button id="showBalanced" disabled>Balanced</button>
 <button id="showEnhanced" disabled>Enhanced</button>
@@ -58,7 +59,7 @@ const source=document.createElement("canvas");
 const mask=document.createElement("canvas");
 const view=$("preview");
 const status=$("status");
-let results=null,current="original",objectURL=null,busy=false;
+let results=null,current="original",objectURL=null,busy=false,posePoints=null,maskVisible=false;
 const buttons=["showOriginal","showNatural","showBalanced","showEnhanced"];
 function setStatus(msg,error=false){status.textContent=msg;status.classList.toggle("error",error);}
 function show(level){
@@ -67,11 +68,23 @@ function show(level){
  current=level;view.width=canvas.width;view.height=canvas.height;
  view.getContext("2d").drawImage(canvas,0,0);
  for(const id of buttons){const b=$(id);b.classList.toggle("active",id.toLowerCase()==="show"+level.toLowerCase());}
+ drawMaskOverlay();
 }
-function setButtons(ready){for(const id of buttons)$(id).disabled=!ready;$("save").disabled=!ready;}
+function setButtons(ready){for(const id of buttons)$(id).disabled=!ready;$("save").disabled=!ready;$("showMask").disabled=!ready;}
+function drawMaskOverlay(){
+ if(!maskVisible||!mask.width)return;
+ const ctx=view.getContext("2d");
+ ctx.save();ctx.globalAlpha=.3;ctx.drawImage(mask,0,0,view.width,view.height);
+ if(posePoints){ctx.globalAlpha=.95;ctx.fillStyle="#22d3ee";
+  for(const point of posePoints){if(!point||point.visibility<.4)continue;
+   ctx.beginPath();ctx.arc(point.x*view.width,point.y*view.height,Math.max(2,view.width*.004),0,Math.PI*2);ctx.fill();
+  }
+ }
+ ctx.restore();
+}
 function loadPhoto(file){
  if(!file)return;
- results=null;setButtons(false);$("generate").disabled=true;
+ results=null;posePoints=null;maskVisible=false;$("showMask").textContent="Show body mask";setButtons(false);$("generate").disabled=true;
  if(objectURL)URL.revokeObjectURL(objectURL);
  objectURL=URL.createObjectURL(file);
  const image=new Image();
@@ -124,6 +137,7 @@ $("generate").addEventListener("click",async()=>{
   setStatus("Detecting body pose…");
   const landmarks=await detectPose();
   if(!landmarks)throw Error("No body pose detected. Use a photo showing the full torso and legs.");
+  posePoints=landmarks;
   setStatus("Building person segmentation…");
   if(!await detectSegmentation())throw Error("Could not segment the body from the background.");
   setStatus("Generating educational previews…");
@@ -136,6 +150,7 @@ $("generate").addEventListener("click",async()=>{
 for(const [id,level] of [["showOriginal","original"],["showNatural","natural"],["showBalanced","balanced"],["showEnhanced","enhanced"]]){
  $(id).addEventListener("click",()=>show(level));
 }
+$("showMask").addEventListener("click",()=>{maskVisible=!maskVisible;$("showMask").textContent=maskVisible?"Hide body mask":"Show body mask";show(current);});
 $("save").addEventListener("click",()=>{
  if(!view.width)return;
  const a=document.createElement("a");
