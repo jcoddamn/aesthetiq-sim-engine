@@ -21,10 +21,12 @@ a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
 }}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-</head><body><main>
+<link rel="stylesheet" href="css/product.css?v=1">
+<meta name="theme-color" content="#15131b">
+</head><body class="aq-dark"><main>
 <a href="index.html">← AesthetIQ</a>
 <h1>3D Procedure Explorer</h1>
-<p>Interactive 468-vertex anatomical reference model. Drag to rotate, pinch to zoom, choose a procedure and change intensity. This is an illustrative preview, not a patient-specific medical prediction.</p>
+<p>Drag to rotate, pinch to zoom and compare a procedure at different intensities. This is an illustrative preview, not a patient-specific medical prediction.</p>
 <canvas id="viewer" aria-label="Interactive 3D facial procedure model"></canvas>
 <div class="panel">
 <p id="status" role="status" aria-live="polite">Preparing 3D viewer…</p>
@@ -47,4 +49,5 @@ a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
 <p id="previewNote"></p>
 <small>Model: MediaPipe canonical face geometry, Apache 2.0. Three-angle scanning estimates geometry and projects photo textures onto the facial surface. Depth and occluded areas remain approximations, not a clinical 3D scan. The ear, skull and neck surfaces are schematic.</small>
 </div>
-</main><script type="module" src="./faceViewer.js?v=9"></script></body></html>
+</main><script type="module" src="./faceViewer.js?v=9"></script><script type="module" src="js/productUI.js?v=1"></script>
+</body></html>

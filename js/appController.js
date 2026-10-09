@@ -1513,21 +1513,13 @@ viewingOriginal = false;
     });
 
    } catch (error) {
-  const message =
-    error?.message ||
-    String(error);
-
   console.error(
     "[AesthetIQ] Simulation failed:",
     error
   );
 
-  alert(
-    `SIMULATION FAILED\n\n${message}`
-  );
-
   setStatus(
-    `Simulation failed: ${message}`,
+    "We couldn’t create this preview. Retake the photo in even lighting or upload another image, then try again.",
     "error"
   );
 } finally {

@@ -3,8 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
-const {createCanvas,ImageData}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES?
- `${process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES}/@napi-rs/canvas`:'@napi-rs/canvas');
+const {createCanvas,ImageData}=require('@napi-rs/canvas');
 test('actual lip pipeline renders three finite intensity levels from synthetic reference geometry',async()=>{
  const obj=await readFile(new URL('../models/mediapipe_canonical_face.obj',import.meta.url),'utf8');
  const lines=obj.split('\n');

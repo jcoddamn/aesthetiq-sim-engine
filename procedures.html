@@ -543,14 +543,16 @@
       }
     }
   </style>
+<link rel="stylesheet" href="css/product.css?v=1">
+<meta name="theme-color" content="#f8f7f4">
 </head>
 
-<body>
+<body class="aq-library">
   <main class="app">
     <header class="topbar">
       <a
         class="back-button"
-        href="home.html"
+        href="index.html"
         aria-label="Return to home"
       >
         ‹
@@ -741,6 +743,7 @@
             Camera Preview
           </button>
 
+          <button class="filter-chip" type="button" data-status="Experimental 2D">Body preview</button>
           <button
             class="filter-chip"
             type="button"
@@ -795,34 +798,12 @@
     </div>
   </main>
 
-  <nav class="bottom-nav" aria-label="Primary navigation">
-    <div class="bottom-nav-inner">
-      <a class="nav-item" href="home.html">
-        <span class="nav-icon">⌂</span>
-        <span>Home</span>
-      </a>
-
-      <a class="nav-item active" href="procedures.html">
-        <span class="nav-icon">▤</span>
-        <span>Library</span>
-      </a>
-
-      <a class="nav-item" href="simulation.html">
-        <span class="nav-icon">📷</span>
-        <span>Camera</span>
-      </a>
-
-      <a class="nav-item" href="#">
-        <span class="nav-icon">♡</span>
-        <span>Journey</span>
-      </a>
-
-      <a class="nav-item" href="#">
-        <span class="nav-icon">⌖</span>
-        <span>Clinics</span>
-      </a>
-    </div>
-  </nav>
+  <nav class="bottom-nav" aria-label="Primary navigation"><div class="bottom-nav-inner">
+    <a class="nav-item" href="index.html">Home</a>
+    <a class="nav-item active" href="procedures.html" aria-current="page">Library</a>
+    <a class="nav-item" href="simulation.html">Preview</a>
+    <a class="nav-item" href="saved.html">Saved</a>
+  </div></nav>
 
   <script type="module">
     import { procedures } from "./js/procedureData.js?v=3";
@@ -990,8 +971,9 @@
       if (state.sort === "status") {
         const statusOrder = {
           Interactive: 1,
-          "Camera Preview": 2,
-          Educational: 3
+          "Experimental 2D": 2,
+          "Camera Preview": 3,
+          Educational: 4
         };
 
         return sorted.sort((a, b) => {
@@ -1088,6 +1070,11 @@
     }
 
     function renderProcedures() {
+      const query = new URLSearchParams();
+      for (const key of ["area", "type", "status"]) if (state[key] !== "All") query.set(key, state[key]);
+      if (state.search) query.set("q", state.search);
+      if (state.sort !== "featured") query.set("sort", state.sort);
+      history.replaceState(null, "", location.pathname + (query.size ? "?" + query : ""));
       const filtered =
         filterProcedures();
 
@@ -1208,23 +1195,18 @@
     }
 
     function applyAreaFromUrl() {
-      const parameters =
-        new URLSearchParams(window.location.search);
-
-      const requestedArea =
-        parameters.get("area");
-
-      const validAreas = [
-        "Face",
-        "Body",
-        "Skin",
-        "Hair",
-        "Smile"
-      ];
-
-      if (validAreas.includes(requestedArea)) {
-        setArea(requestedArea);
+      const parameters = new URLSearchParams(window.location.search);
+      for (const [key, buttons] of [["area", areaButtons], ["type", typeButtons], ["status", statusButtons]]) {
+        const requested = parameters.get(key);
+        if (buttons.some(button => button.dataset[key] === requested)) state[key] = requested;
+        updateActiveButtons(buttons, state[key], key);
       }
+      state.search = (parameters.get("q") || "").slice(0, 200);
+      searchInput.value = state.search;
+      clearSearchButton.classList.toggle("visible", Boolean(state.search));
+      const sort = parameters.get("sort");
+      if (["featured", "alphabetical", "area", "status"].includes(sort)) state.sort = sort;
+      sortSelect.value = state.sort;
     }
 
     searchInput.addEventListener(
@@ -1294,6 +1276,9 @@
     );
 
     try {
+      updateActiveButtons(areaButtons,state.area,"area");
+      updateActiveButtons(typeButtons,state.type,"type");
+      updateActiveButtons(statusButtons,state.status,"status");
       applyAreaFromUrl();
       renderProcedures();
     } catch (error) {
@@ -1307,12 +1292,12 @@
 
       procedureList.innerHTML = `
         <div class="error-state">
-          The procedure database could not be loaded. Confirm that
-          <strong>js/procedureData.js</strong> exists and begins with
-          <strong>export const procedures = [</strong>.
+          We couldn’t load the procedure library. Check your connection and
+          <a href="procedures.html">try again</a>.
         </div>
       `;
     }
   </script>
+<script type="module" src="js/productUI.js?v=1"></script>
 </body>
 </html>

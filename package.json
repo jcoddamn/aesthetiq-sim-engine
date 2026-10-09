@@ -1,0 +1,13 @@
+{
+  "name": "aesthetiq-sim-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22.12.0"},
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:ui": "node --test tests/product-ui.test.mjs",
+    "format:product": "prettier --write css/product.css js/productUI.js js/homePage.js js/savedPage.js index.html home.html saved.html about.html tests/product-ui.test.mjs"
+  },
+  "devDependencies": {"@napi-rs/canvas": "1.0.10", "jsdom": "30.1.2", "prettier": "3.6.2"}
+}
