@@ -236,7 +236,9 @@ window.addEventListener("resize",resize);resize();
  geometry.userData.canonical=Float32Array.from(base);
  mesh=new THREE.Mesh(geometry,material.clone());group.add(mesh);morph();
  status("468-vertex 3D model ready. Drag to rotate and pinch to zoom.");
- try{await loadStoredScan();}catch(error){status("3D model ready, but saved scan could not be loaded: "+(error.message||error),true);}
+ if(new URLSearchParams(location.search).get("scan")==="local"){
+  try{await loadStoredScan();}catch(error){status("3D model ready, but saved scan could not be loaded: "+(error.message||error),true);}
+ }
  }catch(e){status(e.message||String(e),true);}})();
 function frame(){requestAnimationFrame(frame);controls.update();renderer.render(scene,camera);}
 frame();
