@@ -3,6 +3,8 @@ import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccalSlimming,warpFacelift,warpBrowLift,warpUpperBlepharoplasty,warpLowerBlepharoplasty,warpLipLift} from "./js/faceWarp.js?v=24";
 import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
+import {reconstruct3DFromCaptures,makeMultiAngleTexture} from "./js/personalizedFace3D.js?v=1";
+import {loadApproved3DScan,clearApproved3DScan,blobToCanvas} from "./js/precision3dStore.js?v=1";
 const names={
 "rhinoplasty":"Rhinoplasty","revision-rhinoplasty":"Revision Rhinoplasty",
 "lip-filler":"Lip Filler","lip-flip":"Lip Flip","cheek-filler":"Cheek Filler",
@@ -54,19 +56,28 @@ const ears=[-1,1].map(side=>{
 const neck=new THREE.Mesh(new THREE.CylinderGeometry(3.6,4,6.5,32),material.clone());
 neck.position.set(0,-11.4,-2.2);group.add(neck);
 let mesh=null,base=null,procedure="rhinoplasty",goal="balanced-refinement",photoFitted=false;
+let scanTexture=null;
 function status(msg,error=false){$("status").textContent=msg;$("status").classList.toggle("error",error);}
 function parseOBJ(data){
- const vertices=[],faces=[];
+ const vertices=[],uvs=[],faces=[],uvByVertex=new Float32Array(468*2);
  for(const line of data.split(/\r?\n/)){
   if(line.startsWith("v "))vertices.push(line.trim().split(/\s+/).slice(1,4).map(Number));
+  if(line.startsWith("vt "))uvs.push(line.trim().split(/\s+/).slice(1,3).map(Number));
   if(line.startsWith("f ")){
-   const ids=line.trim().split(/\s+/).slice(1).map(v=>Number(v.split("/")[0])-1);
+   const tokens=line.trim().split(/\s+/).slice(1);
+   const ids=tokens.map(v=>Number(v.split("/")[0])-1);
+   const uvIds=tokens.map(v=>Number(v.split("/")[1])-1);
+   for(let j=0;j<ids.length;j++){
+    const uv=uvs[uvIds[j]];
+    if(uv){uvByVertex[ids[j]*2]=uv[0];uvByVertex[ids[j]*2+1]=uv[1];}
+   }
    for(let j=1;j<ids.length-1;j++)faces.push(ids[0],ids[j],ids[j+1]);
   }
  }
- if(vertices.length!==468||faces.length<2600)throw Error("Canonical face model topology mismatch.");
+ if(vertices.length!==468||uvs.length!==468||faces.length<2600)throw Error("Canonical face model topology mismatch.");
  const geo=new THREE.BufferGeometry();
  geo.setAttribute("position",new THREE.Float32BufferAttribute(vertices.flat(),3));
+ geo.setAttribute("uv",new THREE.BufferAttribute(uvByVertex,2));
  geo.setIndex(faces);geo.computeVertexNormals();return geo;
 }
 function landmarks(){
@@ -145,29 +156,56 @@ function resize(){
  camera.aspect=rect.width/Math.max(1,rect.height);camera.updateProjectionMatrix();
 }
 function reset(){camera.position.set(0,0,34);controls.target.set(0,-.5,0);controls.update();}
+function setTexture(captures){
+ if(!mesh)return;
+ const textureCanvas=makeMultiAngleTexture(
+   captures,
+   mesh.geometry.index.array,
+   mesh.geometry.attributes.uv.array,
+   mesh.geometry.userData.canonical,
+   1024
+ );
+ const texture=new THREE.CanvasTexture(textureCanvas);
+ texture.colorSpace=THREE.SRGBColorSpace;
+ texture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
+ if(scanTexture)scanTexture.dispose();
+ scanTexture=texture;
+ mesh.material.map=texture;
+ mesh.material.color.set(0xffffff);
+ mesh.material.needsUpdate=true;
+}
+async function applyPersonalizedCaptures(captures){
+ if(!mesh)throw Error("3D model is not loaded.");
+ const model=reconstruct3DFromCaptures(captures,mesh.geometry.userData.canonical);
+ base=Float32Array.from(model.positions);
+ setTexture(captures);
+ photoFitted=true;morph();
+ status("Personalized scan loaded ("+model.quality.poseCount+" angle(s)). Geometry and texture are approximate.");
+}
 async function fitPhoto(file){
  if(!file||!mesh)return;
- status("Detecting photo landmarks…");
+ status("Detecting facial landmarks…");
  const bitmap=await createImageBitmap(file);
  const temp=document.createElement("canvas");
  const scale=Math.min(1,1200/Math.max(bitmap.width,bitmap.height));
  temp.width=Math.round(bitmap.width*scale);temp.height=Math.round(bitmap.height*scale);
  temp.getContext("2d").drawImage(bitmap,0,0,temp.width,temp.height);bitmap.close();
  const points=await detectFaceLandmarksFromImage(temp);
- if(!points||points.length<468)throw Error("No complete face detected in the photo.");
- const x0=(points[234].x+points[454].x)/2;
- const width=Math.abs(points[454].x-points[234].x);
- const y0=(points[10].y+points[152].y)/2;
- const height=Math.abs(points[152].y-points[10].y);
- if(width<.1||height<.1||Math.abs(points[1].x-x0)>width*.2)throw Error("Use a well-lit, nearly front-facing photo.");
- const canonicalX=Math.abs(base[454*3]-base[234*3]);
- const canonicalY=Math.abs(base[10*3+1]-base[152*3+1]);
- for(let i=0;i<468;i++){
-  base[i*3]=clamp((points[i].x-x0)/width*canonicalX,-9,9);
-  base[i*3+1]=clamp(-(points[i].y-y0)/height*canonicalY,-11,11);
+ if(!points||points.length<468)throw Error("No complete face detected.");
+ await applyPersonalizedCaptures({straight:{imageCanvas:temp,landmarks:points}});
+}
+async function loadStoredScan(){
+ const payload=await loadApproved3DScan();
+ if(!payload)return;
+ const captures={};
+ for(const pose of ["straight","left","right"]){
+  const record=payload.poses?.[pose];
+  if(record?.image&&record?.landmarks)captures[pose]={
+   imageCanvas:await blobToCanvas(record.image),
+   landmarks:record.landmarks
+  };
  }
- photoFitted=true;morph();
- status("Photo-based 2D landmark fit applied to the 3D surface. Depth remains estimated.");
+ await applyPersonalizedCaptures(captures);
 }
 for(const [id,label] of Object.entries(names)){const option=document.createElement("option");option.value=id;option.textContent=label;$("procedureSelect").append(option);}
 $("procedureSelect").addEventListener("change",e=>setProcedure(e.target.value));
@@ -176,8 +214,14 @@ $("intensitySlider").addEventListener("input",morph);
 $("recoverySlider").addEventListener("input",morph);
 $("wireframe").addEventListener("change",e=>{if(mesh)mesh.material.wireframe=e.target.checked;});
 $("resetView").addEventListener("click",reset);
-$("resetModel").addEventListener("click",()=>{if(!mesh)return;base=Float32Array.from(mesh.geometry.userData.canonical);photoFitted=false;morph();status("Canonical face restored.");});
+$("resetModel").addEventListener("click",()=>{if(!mesh)return;base=Float32Array.from(mesh.geometry.userData.canonical);photoFitted=false;
+ if(scanTexture){scanTexture.dispose();scanTexture=null;}mesh.material.map=null;mesh.material.color.set(0xc58b73);mesh.material.needsUpdate=true;
+ morph();status("Canonical face restored.");});
 $("photo").addEventListener("change",async e=>{try{await fitPhoto(e.target.files?.[0]);}catch(err){status(err.message||String(err),true);}});
+$("deleteScan").addEventListener("click",async()=>{
+ try{await clearApproved3DScan();$("resetModel").click();status("Saved facial scan deleted from this browser.");}
+ catch(e){status("Unable to delete local scan: "+(e.message||e),true);}
+});
 $("save").addEventListener("click",()=>{renderer.render(scene,camera);const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download="aesthetiq-3d-"+procedure+".png";a.click();});
 $("back").addEventListener("click",()=>{history.length>1?history.back():location.assign("index.html");});
 const requested=new URLSearchParams(location.search).get("procedure");
@@ -192,6 +236,7 @@ window.addEventListener("resize",resize);resize();
  geometry.userData.canonical=Float32Array.from(base);
  mesh=new THREE.Mesh(geometry,material.clone());group.add(mesh);morph();
  status("468-vertex 3D model ready. Drag to rotate and pinch to zoom.");
+ try{await loadStoredScan();}catch(error){status("3D model ready, but saved scan could not be loaded: "+(error.message||error),true);}
  }catch(e){status(e.message||String(e),true);}})();
 function frame(){requestAnimationFrame(frame);controls.update();renderer.render(scene,camera);}
 frame();
