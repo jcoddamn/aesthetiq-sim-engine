@@ -43,6 +43,12 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 <button id="aggregate">Summarize collected cases</button>
 <pre id="aggregateResults">No clinical measurement reports imported.</pre>
 </div>
+<div class="panel">
+<h2>All 54 procedures — evidence readiness</h2>
+<p>Each procedure has a target measurement. Article candidates are not cleared patient-image datasets. No procedure is clinically calibrated.</p>
+<div id="readinessSummary" role="status">Loading evidence matrix…</div>
+<div style="max-height:360px;overflow:auto"><table id="readinessTable" style="width:100%;border-collapse:collapse;font-size:12px"></table></div>
+</div>
 <div class="panel"><h2>Important limitations</h2>
 <p>Clinical photos from publications and galleries are not automatically licensed for commercial reuse. Do not upload copyrighted or non-consensual patient images. Results require matching camera angle, expression, lighting and time after treatment. Skin, hair, dental and body procedures need different measurement models and will be reported as not yet quantitatively comparable.</p>
 </div>
@@ -52,6 +58,7 @@ import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
 import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=29";
 import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=2";
 import {summarizeCalibrationEvidence} from "./js/evidenceCalibrationReview.js?v=1";
+import {auditEvidenceReadiness} from "./js/evidenceReadinessAudit.js?v=1";
 const isLocalResearchHost=["localhost","127.0.0.1","[::1]"].includes(location.hostname);
 if(!isLocalResearchHost){
  document.body.replaceChildren();
@@ -70,6 +77,33 @@ const ids=procedures.map(p=>p.id);
 for(const p of procedures){
  const o=document.createElement("option");o.value=p.id;o.textContent=p.area+" — "+p.name;$("procedure").append(o);
 }
+async function loadEvidenceReadiness(){
+ try{
+  const response=await fetch("./research/all_54_procedure_evidence_matrix.json",{cache:"no-store"});
+  if(!response.ok)throw Error("Could not load evidence matrix.");
+  const data=auditEvidenceReadiness(await response.json());
+  $("readinessSummary").textContent=
+   data.totalProcedures+" procedures • "+
+   data.withMeasurementDefinitions+" measurement definitions • "+
+   data.withArticleCandidates+" with candidate articles • "+
+   data.readyForExpertCalibrationReview+" eligible for calibration review";
+  const table=$("readinessTable");
+  const header=document.createElement("tr");
+  for(const name of ["Procedure","Metric type","Candidate articles","Real pairs","Status"]){
+   const th=document.createElement("th");th.textContent=name;th.style.cssText="text-align:left;padding:7px;border-bottom:1px solid #4b5874";header.append(th);
+  }
+  table.append(header);
+  for(const row of data.rows){
+   const tr=document.createElement("tr");
+   const values=[row.procedure,row.modality,String(row.candidateStudies),String(row.pairedCasesMeasured),row.calibrationEligibleForExpertReview?"Expert review":"Not calibrated"];
+   for(const value of values){
+    const td=document.createElement("td");td.textContent=value;td.style.cssText="padding:7px;border-bottom:1px solid #34435c";tr.append(td);
+   }
+   table.append(tr);
+  }
+ }catch(error){$("readinessSummary").textContent=error.message||String(error);}
+}
+loadEvidenceReadiness();
 let report=null,audit=null;
 let temporaryCanvases=[];
 function clearTemporaryPhotos(clearInputs=true){
