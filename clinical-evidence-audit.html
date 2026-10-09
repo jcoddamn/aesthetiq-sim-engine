@@ -58,6 +58,26 @@ for(const p of procedures){
  const o=document.createElement("option");o.value=p.id;o.textContent=p.area+" — "+p.name;$("procedure").append(o);
 }
 let report=null,audit=null;
+let temporaryCanvases=[];
+function clearTemporaryPhotos(clearInputs=true){
+ for(const canvas of temporaryCanvases){
+  if(canvas){canvas.width=0;canvas.height=0;}
+ }
+ temporaryCanvases=[];
+ for(const canvas of $("preview").querySelectorAll("canvas")){
+  canvas.width=0;canvas.height=0;
+ }
+ $("preview").replaceChildren();
+ if(clearInputs){$("before").value="";$("after").value="";}
+}
+$("discard").addEventListener("click",()=>{
+ clearTemporaryPhotos();
+ report=null;
+ $("report").textContent="Temporary analysis cleared.";
+ $("export").disabled=true;
+ $("status").textContent="Temporary image canvases cleared. Immediate browser memory erasure cannot be guaranteed.";
+});
+window.addEventListener("pagehide",()=>clearTemporaryPhotos());
 fetch("./research/procedure_evidence_audit_v2.json").then(r=>r.ok?r.json():null).then(data=>{audit=data;updateLinks();}).catch(()=>{});
 function updateLinks(){
  $("sourceLinks").replaceChildren();
