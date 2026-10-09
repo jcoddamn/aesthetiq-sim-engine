@@ -47,7 +47,7 @@ export function compareProcedureLandmarks({
  const before=measureFaceMorphometrics(beforeLandmarks);
  const after=measureFaceMorphometrics(afterLandmarks);
  if(!before||!after)throw Error("Complete before and after facial landmarks are required.");
- const p=angleProxy(before),q=angleProxy(after);
+ const p=angleProxy(beforeLandmarks),q=angleProxy(afterLandmarks);
  const warnings=[];
  if(!p||!q)warnings.push("Unable to verify photo alignment.");
  else{
