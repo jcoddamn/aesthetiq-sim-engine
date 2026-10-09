@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AesthetIQ Body Preview</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0b1120;color:#f5f3ff}
+*{box-sizing:border-box}body{margin:0;padding:18px;max-width:900px;margin-inline:auto}
+a{color:#c4b5fd}h1{font-size:1.7rem;margin:12px 0}p{line-height:1.5;color:#cbd5e1}
+.panel{border:1px solid #334155;border-radius:18px;padding:18px;margin:16px 0;background:#151d31}
+input,button,select{font:inherit}button,select{border-radius:10px;padding:11px;border:1px solid #475569;background:#292b48;color:white}
+button{cursor:pointer}button:disabled{opacity:.5;cursor:default}
+button.active{background:#6d28d9;border-color:#a78bfa}
+canvas{max-width:100%;height:auto;border-radius:12px;background:#111827}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+#status{min-height:1.5em}#status.error{color:#fda4af}
+small{color:#cbd5e1}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="procedures.html?area=Body">← Body procedures</a>
+<h1 id="heading">Body Preview</h1>
+<p>Upload a well-lit front-facing or rear-facing body photo. AesthetIQ uses MediaPipe Pose and person segmentation to create an illustrative contour preview. This is <strong>not</strong> an accurate surgical prediction, medical assessment, or implant sizing tool.</p>
+<div class="panel">
+<label for="photo">Choose a photo (processed on this device)</label>
+<input id="photo" type="file" accept="image/*">
+<div class="controls">
+<button id="generate" disabled>Generate preview</button>
+<button id="showOriginal" disabled>Original</button>
+<button id="showNatural" disabled>Natural</button>
+<button id="showBalanced" disabled>Balanced</button>
+<button id="showEnhanced" disabled>Enhanced</button>
+<button id="save" disabled>Save preview</button>
+</div>
+<p id="status" role="status" aria-live="polite">Select a photo to begin.</p>
+<canvas id="preview" aria-label="Body preview image"></canvas>
+</div>
+<div class="panel"><strong>Limitations</strong><p>These simulations use a 2D silhouette approximation. MediaPipe Pose estimates skeletal landmarks; person segmentation does not identify breast tissue, fat, muscle, skin laxity, surgical planes, or implant shape. Clothing, occlusion, camera angle, and lighting can affect results. No uploaded photo is sent to AesthetIQ by this page, but third-party MediaPipe assets load from a CDN.</p></div>
+<script type="module">
+import {BODY_PROCEDURES,renderBodyLevels} from "./js/bodySimulation.js?v=1";
+const query=new URLSearchParams(location.search);
+const procedureId=query.get("procedure")||"liposuction";
+const names={
+ "breast-augmentation":"Breast Augmentation","breast-lift":"Breast Lift",
+ "breast-reduction":"Breast Reduction",liposuction:"Liposuction",
+ "tummy-tuck":"Tummy Tuck","mini-tummy-tuck":"Mini Tummy Tuck",
+ "brazilian-butt-lift":"Brazilian Butt Lift","butt-implants":"Butt Implants",
+ "mommy-makeover":"Mommy Makeover","arm-lift":"Arm Lift",
+ "thigh-lift":"Thigh Lift","male-breast-reduction":"Male Breast Reduction",
+ "pectoral-implants":"Pectoral Implants","calf-implants":"Calf Implants"
+};
+const $=id=>document.getElementById(id);
+$("heading").textContent=names[procedureId]||"Body Preview";
+const source=document.createElement("canvas");
+const mask=document.createElement("canvas");
+const view=$("preview");
+const status=$("status");
+let results=null,current="original",objectURL=null,busy=false;
+const buttons=["showOriginal","showNatural","showBalanced","showEnhanced"];
+function setStatus(msg,error=false){status.textContent=msg;status.classList.toggle("error",error);}
+function show(level){
+ const canvas=level==="original"?source:results?.[level];
+ if(!canvas||!canvas.width)return;
+ current=level;view.width=canvas.width;view.height=canvas.height;
+ view.getContext("2d").drawImage(canvas,0,0);
+ for(const id of buttons){const b=$(id);b.classList.toggle("active",id.toLowerCase()==="show"+level.toLowerCase());}
+}
+function setButtons(ready){for(const id of buttons)$(id).disabled=!ready;$("save").disabled=!ready;}
+function loadPhoto(file){
+ if(!file)return;
+ results=null;setButtons(false);$("generate").disabled=true;
+ if(objectURL)URL.revokeObjectURL(objectURL);
+ objectURL=URL.createObjectURL(file);
+ const image=new Image();
+ image.onload=()=>{
+  const scale=Math.min(1,1280/Math.max(image.naturalWidth,image.naturalHeight));
+  source.width=Math.max(1,Math.round(image.naturalWidth*scale));
+  source.height=Math.max(1,Math.round(image.naturalHeight*scale));
+  source.getContext("2d").drawImage(image,0,0,source.width,source.height);
+  show("original");$("generate").disabled=false;setStatus("Photo ready. Generate the preview.");
+  URL.revokeObjectURL(objectURL);objectURL=null;
+ };
+ image.onerror=()=>{setStatus("Unable to read this image.",true);URL.revokeObjectURL(objectURL);objectURL=null;};
+ image.src=objectURL;
+}
+$("photo").addEventListener("change",e=>loadPhoto(e.target.files?.[0]));
+async function detectPose(){
+ const model=new window.Pose({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/pose/${f}`});
+ model.setOptions({modelComplexity:1,smoothLandmarks:false,minDetectionConfidence:.65});
+ let found=null;
+ model.onResults(r=>{found=r.poseLandmarks||null;});
+ try{await model.send({image:source});return found;}finally{await model.close();}
+}
+async function detectSegmentation(){
+ const model=new window.SelfieSegmentation({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${f}`});
+ model.setOptions({modelSelection:1});
+ let found=false;
+ model.onResults(r=>{
+  if(!r.segmentationMask)return;
+  mask.width=source.width;mask.height=source.height;
+  const ctx=mask.getContext("2d");
+  ctx.clearRect(0,0,mask.width,mask.height);
+  ctx.drawImage(r.segmentationMask,0,0,mask.width,mask.height);
+  // Segmentation image is white/black; convert its luminance to alpha.
+  const pixels=ctx.getImageData(0,0,mask.width,mask.height);
+  for(let i=0;i<pixels.data.length;i+=4){
+    const value=pixels.data[i];
+    pixels.data[i]=255;pixels.data[i+1]=255;pixels.data[i+2]=255;pixels.data[i+3]=value;
+  }
+  ctx.putImageData(pixels,0,0);
+  found=true;
+ });
+ try{await model.send({image:source});return found;}finally{await model.close();}
+}
+$("generate").addEventListener("click",async()=>{
+ if(busy||!source.width)return;
+ if(!BODY_PROCEDURES[procedureId]){setStatus("This procedure does not yet have a body contour preview.",true);return;}
+ busy=true;$("generate").disabled=true;setButtons(false);
+ try{
+  if(!window.Pose||!window.SelfieSegmentation)throw Error("MediaPipe assets could not load. Check your connection.");
+  setStatus("Detecting body pose…");
+  const landmarks=await detectPose();
+  if(!landmarks)throw Error("No body pose detected. Use a photo showing the full torso and legs.");
+  setStatus("Building person segmentation…");
+  if(!await detectSegmentation())throw Error("Could not segment the body from the background.");
+  setStatus("Generating educational previews…");
+  results=renderBodyLevels(source,landmarks,mask,procedureId);
+  setButtons(true);show("balanced");
+  setStatus("Preview ready. Compare the three intensity levels.");
+ }catch(error){setStatus(error?.message||String(error),true);}
+ finally{busy=false;$("generate").disabled=!source.width;}
+});
+for(const [id,level] of [["showOriginal","original"],["showNatural","natural"],["showBalanced","balanced"],["showEnhanced","enhanced"]]){
+ $(id).addEventListener("click",()=>show(level));
+}
+$("save").addEventListener("click",()=>{
+ if(!view.width)return;
+ const a=document.createElement("a");
+ a.download=`aesthetiq-${procedureId}-${current}.png`;
+ a.href=view.toDataURL("image/png");a.click();
+});
+if(!BODY_PROCEDURES[procedureId]){$("generate").disabled=true;setStatus("This procedure is not available in the body preview engine.",true);}
+</script>
+</body></html>
