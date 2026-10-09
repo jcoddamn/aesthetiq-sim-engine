@@ -52,6 +52,11 @@ import {
 } from "./procedureConstraints.js?v=2";
 
 import {
+  constrainWarpByFaceScale,
+  compareFaceMorphometrics
+} from "./faceMorphometrics.js?v=1";
+
+import {
   repairLowerLipTexture
 } from "./lipTextureRepair.js";
 
@@ -517,9 +522,7 @@ function createWarpedLandmarks(
       landmarks,
       level,
       fillerProduct,
-      fillerGoal,
-      neuromodulatorProduct,
-      procedureOption
+      fillerGoal
     );
 
   case "chin-implant":
@@ -533,10 +536,7 @@ function createWarpedLandmarks(
       landmarks,
       level,
       fillerProduct,
-      fillerGoal,
-      neuromodulatorProduct,
-      procedureOption,
-      dentalMesh
+      fillerGoal
     );
 
   case "cheek-implants":
@@ -802,6 +802,28 @@ function createSimulationLevel({
         fillerProduct,
         fillerGoal
       );
+
+    workingLandmarks =
+      constrainWarpByFaceScale(
+        landmarks,
+        workingLandmarks,
+        normalizedProcedure
+      );
+
+    if (level === "balanced") {
+      const comparison =
+        compareFaceMorphometrics(
+          landmarks,
+          workingLandmarks
+        );
+      if (comparison) {
+        console.debug(
+          "[AesthetIQ] Facial morphometrics",
+          normalizedProcedure,
+          comparison.delta
+        );
+      }
+    }
 
     if (
       normalizedProcedure ===
