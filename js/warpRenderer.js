@@ -1,3 +1,4 @@
+import {FACE_TRIANGLES} from './faceTopology.js';
 // =========================================================
 // AESTHETIQ — FACE WARP RENDERER
 // File: js/warpRenderer.js
@@ -41,107 +42,10 @@ function toCanvasPoint(
 // TRIANGLE HELPERS
 // ---------------------------------------------------------
 
-function getTessellationEdges() {
-  const edges =
-    globalThis.FACEMESH_TESSELATION ||
-    globalThis.FaceMesh?.FACEMESH_TESSELATION;
-
-  if (!Array.isArray(edges)) {
-    console.warn(
-      "[AesthetIQ] FACEMESH_TESSELATION was not found."
-    );
-
-    return [];
-  }
-
-  return edges;
-}
-
-function buildTrianglesFromEdges(edges) {
-  const adjacency = new Map();
-
-  function addNeighbor(a, b) {
-    if (!adjacency.has(a)) {
-      adjacency.set(a, new Set());
-    }
-
-    adjacency.get(a).add(b);
-  }
-
-  edges.forEach((edge) => {
-    if (
-      !Array.isArray(edge) ||
-      edge.length < 2
-    ) {
-      return;
-    }
-
-    const [a, b] = edge;
-
-    addNeighbor(a, b);
-    addNeighbor(b, a);
-  });
-
-  const triangleKeys = new Set();
-  const triangles = [];
-
-  adjacency.forEach((neighbors, a) => {
-    const neighborList =
-      Array.from(neighbors);
-
-    for (
-      let i = 0;
-      i < neighborList.length;
-      i += 1
-    ) {
-      const b = neighborList[i];
-
-      for (
-        let j = i + 1;
-        j < neighborList.length;
-        j += 1
-      ) {
-        const c = neighborList[j];
-
-        if (!adjacency.get(b)?.has(c)) {
-          continue;
-        }
-
-        const triangle =
-          [a, b, c].sort(
-            (first, second) =>
-              first - second
-          );
-
-        const key =
-          triangle.join("-");
-
-        if (triangleKeys.has(key)) {
-          continue;
-        }
-
-        triangleKeys.add(key);
-        triangles.push(triangle);
-      }
-    }
-  });
-
-  return triangles;
-}
-
-let cachedTriangles = null;
-
+// Rendering connectivity must exist even when detector script globals do not.
+// Never cache an empty mesh and silently return an unchanged image.
 export function getFaceTriangles() {
-  if (cachedTriangles) {
-    return cachedTriangles;
-  }
-
-  cachedTriangles =
-    buildTrianglesFromEdges(
-      getTessellationEdges()
-    );
-
-  return cachedTriangles;
+  return FACE_TRIANGLES;
 }
 
 // ---------------------------------------------------------

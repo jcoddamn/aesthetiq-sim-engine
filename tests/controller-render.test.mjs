@@ -22,11 +22,17 @@ test('controller initializes and displays generated results after a completed pr
  source=source.replace(/import\s*\{[\s\S]*?\}\s*from\s*["'][^"']+["'];/g,'');
  try{
   w.eval(source);
-  const canvas=w.document.createElement('canvas');canvas.width=256;canvas.height=256;const ctx=canvas.getContext('2d');ctx.fillStyle='#bc9276';ctx.fillRect(0,0,256,256);
+  const canvas=w.document.createElement('canvas');canvas.width=256;canvas.height=256;const ctx=canvas.getContext('2d');for(let y=0;y<256;y+=4)for(let x=0;x<256;x+=4){ctx.fillStyle=(x+y)%8?'#b38d77':'#795340';ctx.fillRect(x,y,4,4);}
   w.testCaptures={straight:{imageCanvas:canvas,landmarks},left:{imageCanvas:canvas,landmarks},right:{imageCanvas:canvas,landmarks}};
   w.eval('handlePrecisionScanComplete(testCaptures)');
   assert.match(w.document.getElementById('trackingStatus').textContent,/Preview ready/);
   const result=w.document.getElementById('resultCanvas');assert.equal(result.width,256);assert.ok(backing(result).getContext('2d').getImageData(120,120,1,1).data[3]>0);
   assert.equal(w.document.getElementById('resultsSection').style.display,'block');
+  const pixels=()=>Buffer.from(backing(result).getContext('2d').getImageData(0,0,256,256).data);
+  const balanced=pixels();
+  w.document.querySelector('[data-level="enhanced"]').click();
+  assert.notDeepEqual(pixels(),balanced,'Intensity buttons must display distinct rendered images');
+  w.document.getElementById('showOriginalButton').click();
+  assert.deepEqual(pixels(),Buffer.from(backing(canvas).getContext('2d').getImageData(0,0,256,256).data),'Original control must display the actual captured image');
  }finally{w.close();}
 });

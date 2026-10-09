@@ -11,7 +11,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=31";
+} from "./simulationPipeline.js?v=32";
 
 import {
   getProcedureLabel,
