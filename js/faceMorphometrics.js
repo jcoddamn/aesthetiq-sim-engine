@@ -22,6 +22,14 @@ export function measureFaceMorphometrics(landmarks){
  const chinLength=pair(l,17,152);
  const upperLidLeft=pair(l,159,145);
  const upperLidRight=pair(l,386,374);
+ const upperVermilion=pair(l,0,13);
+ const lowerVermilion=pair(l,17,14);
+ const leftCupid=finite(l[37])&&finite(l[0])?l[0].y-l[37].y:null;
+ const rightCupid=finite(l[267])&&finite(l[0])?l[0].y-l[267].y:null;
+ const cupidDip=leftCupid!==null&&rightCupid!==null?(leftCupid+rightCupid)/2:null;
+ const browLeft=pair(l,105,159);
+ const browRight=pair(l,334,386);
+
  return {
    intercanthalDistance:eyeWidth,
    faceWidth,
@@ -35,7 +43,12 @@ export function measureFaceMorphometrics(landmarks){
    chinToFaceLength:safeRatio(chinLength,faceHeight),
    mouthToFaceWidth:safeRatio(mouthWidth,faceWidth),
    upperLidApertureLeft:safeRatio(upperLidLeft,faceHeight),
-   upperLidApertureRight:safeRatio(upperLidRight,faceHeight)
+   upperLidApertureRight:safeRatio(upperLidRight,faceHeight),
+   upperVermilionToMouth:safeRatio(upperVermilion,mouthWidth),
+   lowerVermilionToMouth:safeRatio(lowerVermilion,mouthWidth),
+   cupidBowDipToMouth:safeRatio(cupidDip,mouthWidth),
+   browHeightLeftToFace:safeRatio(browLeft,faceHeight),
+   browHeightRightToFace:safeRatio(browRight,faceHeight)
  };
 }
 // Limit simulated landmark motion relative to detected facial scale.
