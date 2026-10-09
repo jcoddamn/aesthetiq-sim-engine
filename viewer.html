@@ -28,6 +28,8 @@ a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
 <canvas id="viewer" aria-label="Interactive 3D facial procedure model"></canvas>
 <div class="panel">
 <p id="status" role="status" aria-live="polite">Preparing 3D viewer…</p>
+<p id="scanQuality">Canonical reference model</p>
+<p id="scanWarnings" style="font-size:12px">Upload a clear face photo or complete Precision Scan for a personalized model.</p>
 <strong id="selectedProcedureLabel">Rhinoplasty</strong>
 <div class="controls">
 <label>Procedure<select id="procedureSelect"></select></label>
@@ -38,10 +40,10 @@ a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
 <label>Intensity <span id="intensityValue">1.00×</span><input id="intensitySlider" type="range" min="0" max="1.6" value="1" step=".02"></label>
 <label>Result development <span id="recoveryValue">100%</span><input id="recoverySlider" type="range" min="0" max="100" value="100" step="1"></label>
 <div class="controls">
-<button id="resetView">Reset camera</button><button id="resetModel">Reset model</button><button id="deleteScan">Delete local scan</button>
+<button id="compareOriginal" aria-label="Hold to view original 3D face">Hold to compare original</button><button id="resetView">Reset camera</button><button id="resetModel">Reset model</button><button id="deleteScan">Delete local scan</button>
 <button id="save">Save image</button><button id="back">Back</button>
 </div>
 <p id="previewNote"></p>
 <small>Model: MediaPipe canonical face geometry, Apache 2.0. Three-angle scanning estimates geometry and projects photo textures onto the facial surface. Depth and occluded areas remain approximations, not a clinical 3D scan. The ear, skull and neck surfaces are schematic.</small>
 </div>
-</main><script type="module" src="./faceViewer.js?v=5"></script></body></html>
+</main><script type="module" src="./faceViewer.js?v=6"></script></body></html>
