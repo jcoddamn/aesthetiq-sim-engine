@@ -37,6 +37,7 @@ a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
 <label>Reference photo (optional)<input id="photo" type="file" accept="image/*"></label>
 <label><input id="wireframe" type="checkbox"> Show mesh wireframe</label>
 </div>
+<div class="controls"><button id="presetNatural">Natural</button><button id="presetBalanced">Balanced</button><button id="presetEnhanced">Enhanced</button></div>
 <label>Intensity <span id="intensityValue">1.00×</span><input id="intensitySlider" type="range" min="0" max="1.6" value="1" step=".02"></label>
 <label>Result development <span id="recoveryValue">100%</span><input id="recoverySlider" type="range" min="0" max="100" value="100" step="1"></label>
 <div class="controls">
@@ -46,4 +47,4 @@ a{color:#c4b5fd}#status.error{color:#fda4af}small{color:#aebbd1}
 <p id="previewNote"></p>
 <small>Model: MediaPipe canonical face geometry, Apache 2.0. Three-angle scanning estimates geometry and projects photo textures onto the facial surface. Depth and occluded areas remain approximations, not a clinical 3D scan. The ear, skull and neck surfaces are schematic.</small>
 </div>
-</main><script type="module" src="./faceViewer.js?v=7"></script></body></html>
+</main><script type="module" src="./faceViewer.js?v=8"></script></body></html>
