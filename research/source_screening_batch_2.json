@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-09",
+  "scope": "Second source-screening batch; temporary adult image review only",
+  "article_license_verified_sources": 7,
+  "adult_outcome_or_technique_sources": 6,
+  "background_only_sources": 1,
+  "new_figure_files_acquired": 3,
+  "new_figures_visually_screened": 3,
+  "new_completed_simulator_comparisons": 0,
+  "retained_patient_image_files": 0,
+  "clinical_calibration_applied": false,
+  "sources": [
+    {
+      "id": "PMC13058167",
+      "label": "Modified Cupid\u2019s-bow lip shaping",
+      "title": "The Modified Cupid's Bow Lips: A Dominant Aesthetic Trend in Lip Augmentation\u2014A Clinical and Statistical Analysis",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13058167/",
+      "doi": "10.1111/jocd.70855",
+      "article_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_verified_from": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13058167/fullTextXML",
+      "source_sha256": "9b80d8f803c4a63e46658999f5842017f5c9aaf20274dd749214a9f098d3fc1b",
+      "procedures": [
+        "lip-filler"
+      ],
+      "figures": [
+        "5",
+        "6",
+        "7"
+      ],
+      "adult_evidence": "Adults 18+; illustrated cases ages 26, 38 and 25.",
+      "current_use": "Candidate for Heart-style shape review; not an exact match to our Heart or Russian presets.",
+      "limitations": "Follow-up timing, full image framing and independent scale must be checked. Image retrieval was unavailable in this session.",
+      "consent_review": "Informed consent reported; independent permission for training or redistribution not established.",
+      "acquired_figure_files": 0,
+      "visually_screened_figures": [],
+      "new_simulator_comparisons": 0,
+      "clinical_calibration_eligible": false,
+      "figure_specific_rights_status": "No separate restrictive credit identified in reviewed captions; not a blanket clearance for training or redistribution."
+    },
+    {
+      "id": "PMC11477425",
+      "label": "General lip volume and contour",
+      "title": "The Redefinition and Volumization of the Lip Area with Hyaluronic Acid: A Case Series",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11477425/",
+      "doi": "10.3390/jcm13195705",
+      "article_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_verified_from": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11477425/fullTextXML",
+      "source_sha256": "25748ca75fe25eccc8ef783b79ffa07528006f7240009ad8229ee8af53fdd52e",
+      "procedures": [
+        "lip-filler"
+      ],
+      "figures": [
+        "2",
+        "3"
+      ],
+      "adult_evidence": "Cohort ages 42\u201369.",
+      "current_use": "General lip-volume reference. Figure 3 includes baseline, 2 weeks and 3 months.",
+      "limitations": "Figure 2 is immediate; do not treat swelling as a healed outcome. Figure overlap may repeat one person. Image retrieval was unavailable in this session.",
+      "consent_review": "Written participation consent and use of anonymized clinical data for scientific purposes reported.",
+      "acquired_figure_files": 0,
+      "visually_screened_figures": [],
+      "new_simulator_comparisons": 0,
+      "clinical_calibration_eligible": false,
+      "figure_specific_rights_status": "No separate restrictive credit identified in reviewed captions; not a blanket clearance for training or redistribution."
+    },
+    {
+      "id": "PMC11253074",
+      "label": "Comparison of four lip injection techniques",
+      "title": "Comparing the Effects of Different Injection Techniques Used in Lip Augmentation on Filler Migration and Patient Satisfaction",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11253074/",
+      "doi": "10.7759/cureus.64716",
+      "article_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_verified_from": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11253074/fullTextXML",
+      "source_sha256": "5724615f428f7b667a4ed85a9e732101c6186b62a506e78323e6e4501d95e89c",
+      "procedures": [
+        "lip-filler"
+      ],
+      "figures": [
+        "2"
+      ],
+      "adult_evidence": "Cohort ages 19\u201339.",
+      "current_use": "Technique context only.",
+      "limitations": "Figure 2 shows immediate appearances, not a verified set of healed matched pairs. No direct Russian-style validation.",
+      "consent_review": "Informed consent reported; declarations also say obtained or waived.",
+      "acquired_figure_files": 0,
+      "visually_screened_figures": [],
+      "new_simulator_comparisons": 0,
+      "clinical_calibration_eligible": false,
+      "figure_specific_rights_status": "No separate restrictive credit identified in reviewed captions; not a blanket clearance for training or redistribution."
+    },
+    {
+      "id": "PMC11743227",
+      "label": "Under-eye filler",
+      "title": "Bridging the Gap Rather Than Filling the Entire Valley\u2014Anatomic Insights When Treating the Medial Infraorbital Region",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11743227/",
+      "doi": "10.1111/jocd.16582",
+      "article_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_verified_from": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11743227/fullTextXML",
+      "source_sha256": "8212437395f4deac6c77aedaabc51941d6ef2e8194e9204f60a527bd7897be89",
+      "procedures": [
+        "under-eye-filler"
+      ],
+      "figures": [
+        "6",
+        "7"
+      ],
+      "adult_evidence": "Cohort ages 21\u201346; illustrated cases ages 35 and 38.",
+      "current_use": "Two before/after figure candidates; six-month cohort assessment.",
+      "limitations": "Cropped framing, photo comparability and figure-specific timing still require inspection; no new measurements.",
+      "consent_review": "No explicit consent statement found in the retrieved XML; publication provenance recorded, broader reuse not asserted.",
+      "acquired_figure_files": 0,
+      "visually_screened_figures": [],
+      "new_simulator_comparisons": 0,
+      "clinical_calibration_eligible": false,
+      "figure_specific_rights_status": "No separate restrictive credit identified in reviewed captions; not a blanket clearance for training or redistribution."
+    },
+    {
+      "id": "PMC10239804",
+      "label": "Under-eye surgery with orbital fat filling",
+      "title": "Application of infraorbital rim augmentation with pocket fat filling to correct tear trough deformity",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10239804/",
+      "doi": "10.3389/fsurg.2023.1112402",
+      "article_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_verified_from": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10239804/fullTextXML",
+      "source_sha256": "5e9da1e19645bbac5ac794b661868cbaf1dc0dd12ec23f36ae2c303ccaa650de",
+      "procedures": [
+        "lower-blepharoplasty",
+        "facial-fat-transfer"
+      ],
+      "figures": [
+        "2",
+        "3",
+        "4"
+      ],
+      "adult_evidence": "Cohort ages 25\u201359; illustrated cases ages 32, 46 and 55.",
+      "current_use": "Three pairs visually screened; reference only.",
+      "limitations": "All three crop out mouth/chin needed by the current full-face metrics. Different lighting/pose/expression; combined fat removal and filling cannot isolate one generic procedure.",
+      "consent_review": "Written consent for publication of identifiable images explicitly reported.",
+      "acquired_figure_files": 3,
+      "visually_screened_figures": [
+        "2",
+        "3",
+        "4"
+      ],
+      "new_simulator_comparisons": 0,
+      "clinical_calibration_eligible": false,
+      "figure_specific_rights_status": "No separate restrictive credit identified in reviewed captions; not a blanket clearance for training or redistribution."
+    },
+    {
+      "id": "PMC11856795",
+      "label": "Lip and philtrum anatomy",
+      "title": "Anatomical-Based Diagnosis and Filler Injection Techniques: Lips and Philtrum",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11856795/",
+      "doi": "10.3390/life15020315",
+      "article_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_verified_from": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11856795/fullTextXML",
+      "source_sha256": "554f6472449d584764e78f5550d38b90ed6bca080974dee1ab09f638ae13c8a5",
+      "procedures": [
+        "lip-filler"
+      ],
+      "figures": [
+        "8",
+        "11"
+      ],
+      "adult_evidence": "Adult status of the actual illustrated individuals is not established.",
+      "current_use": "Text and anatomy background only; patient images not acquired.",
+      "limitations": "A cited adult study does not establish ages of this review\u2019s own pictured cases.",
+      "consent_review": "Informed consent reported, but case-level ages and provenance remain unresolved.",
+      "acquired_figure_files": 0,
+      "visually_screened_figures": [],
+      "new_simulator_comparisons": 0,
+      "clinical_calibration_eligible": false,
+      "figure_specific_rights_status": "No separate restrictive credit identified in reviewed captions; not a blanket clearance for training or redistribution."
+    },
+    {
+      "id": "doi-10.1007-s00266-026-05723-4",
+      "label": "Nonsurgical nose filler",
+      "title": "Standardized Non-surgical Rhinoplasty with Hyaluronic Acid: Consistent Outcomes Across Injectors with Varying Experience",
+      "url": "https://link.springer.com/article/10.1007/s00266-026-05723-4",
+      "doi": "10.1007/s00266-026-05723-4",
+      "article_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_verified_from": "https://link.springer.com/article/10.1007/s00266-026-05723-4#rightslink",
+      "procedures": [],
+      "figures": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "adult_evidence": "Cohort ages 20\u201360; illustrated adults ages 25, 26, 34 and 35.",
+      "current_use": "Four candidate before/after figures with documented injection totals.",
+      "limitations": "Actual photo timing and image quality need review. Patient-reported effect duration is not the date of the after photograph. Filler augmentation must not calibrate surgical reduction.",
+      "consent_review": "Written participant consent reported.",
+      "figure_specific_rights_status": "Publisher includes images under article license unless a credit line excludes them; full-resolution credit review outstanding.",
+      "acquired_figure_files": 0,
+      "visually_screened_figures": [],
+      "new_simulator_comparisons": 0,
+      "clinical_calibration_eligible": false,
+      "external_procedure": "nonsurgical nasal HA augmentation",
+      "catalog_mapping": "No exact procedure ID in the current catalog; do not map to surgical rhinoplasty."
+    }
+  ],
+  "lip_style_coverage": {
+    "hydration": "No matched hydration-specific image evidence established.",
+    "classic": "General volume leads; no new measured pair.",
+    "russian": "Technique context only; no matched validated preset evidence.",
+    "heart": "Modified Cupid\u2019s-bow source is a related shape, not equivalent to the preset.",
+    "pillow": "No matched source established.",
+    "keyhole": "No matched source established.",
+    "glossy": "No matched source established; lighting and cosmetics can confound apparent gloss."
+  },
+  "excluded_sources": [
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9241653/",
+      "reason": "CC BY-NC-ND; excluded from this commercial-development workflow."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13075509/",
+      "reason": "CC BY-NC; excluded from this commercial-development workflow."
+    }
+  ],
+  "deletion_status": "All three temporary image files deleted after visual screening; no crops, landmarks or renders were generated."
+}

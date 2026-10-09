@@ -4,9 +4,10 @@
     "image_reuse": "Verify the license on each figure, check third-party exclusions, confirm appropriate patient permissions, retain source and attribution, and review intended commercial use before downloading or displaying any clinical photograph.",
     "measurement": "Use standardized, same-person before/after photographs, compatible camera angles, expression and timing. Never treat observed deltas as an individual outcome guarantee.",
     "automated_training": false,
-    "downloaded_images": 5,
+    "downloaded_images": 8,
     "retained_images": 0,
-    "published_diagnostic_summary": "research/published_image_comparison_summary.json"
+    "published_diagnostic_summary": "research/published_image_comparison_summary.json",
+    "source_screening_batch_2": "research/source_screening_batch_2.json"
   },
   "geometry": {
     "name": "MediaPipe canonical 468-vertex face OBJ",
@@ -118,5 +119,8 @@
       "figure_status": "Publicly reusable image; multiple simultaneous procedures, rare craniofacial condition, not representative for isolated cosmetic procedure effects",
       "status": "reference identified; ethical suitability review required; not downloaded or used for calibration"
     }
+  ],
+  "source_registers": [
+    "research/source_screening_batch_2.json"
   ]
 }

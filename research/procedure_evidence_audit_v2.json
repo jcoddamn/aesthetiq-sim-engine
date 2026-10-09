@@ -1040,7 +1040,7 @@
     "total": 54,
     "source_specific": 46,
     "gallery_only": 8,
-    "image_files_downloaded": 5,
+    "image_files_downloaded": 8,
     "paired_images_measured": 2,
     "procedures_clinically_calibrated": 0,
     "source_count": 26,
@@ -1073,5 +1073,6 @@
       "commercial_use": "research and educational only",
       "status": "not acquired"
     }
-  ]
+  ],
+  "additional_source_register": "research/source_screening_batch_2.json"
 }

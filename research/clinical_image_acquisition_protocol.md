@@ -1,6 +1,6 @@
 # AesthetIQ clinical image acquisition and validation protocol
 
-**Status (2026-10-09):** Five open-license adult figure files were temporarily acquired. Two exploratory comparisons from one adult were completed; zero comparisons qualify for clinical calibration. Source images, crops, renders and landmark arrays are discarded after analysis and are not app assets.
+**Status (2026-10-09):** Eight open-license adult figure files were temporarily acquired across two batches. Two exploratory comparisons from one adult were completed; zero comparisons qualify for clinical calibration. Source images, crops, renders and landmark arrays are discarded after analysis and are not app assets.
 
 ## Required clearance before acquiring a patient photo
 - Identify photographer/clinic/publisher, exact figure and DOI/URL.
@@ -131,3 +131,7 @@ geometric implementation correction, not effect-size fitting to one person.
 Temporary images, crops, renders, model workspace and individual landmark/report files were deleted after analysis. Only source attribution, diagnostic residual ranges and code corrections remain. No secure-erasure guarantee is made for external hosting caches.
 
 The native render regression can be run with `node --test tests/simulation-pipeline.test.mjs` after installing `@napi-rs/canvas`; it uses the repository canonical reference model and synthetic pixels, not clinical photos.
+
+## Second source-screening batch — 2026-10-09
+
+See `source_screening_batch_2.json` and `sources_available_now.md`. Seven article licenses were verified, including one anatomy-only source whose pictured patient ages remain unconfirmed. Three additional adult under-eye surgical figure files were acquired, visually inspected, and deleted. All omit the mouth/chin required by the current full-face metrics; none adds a simulator comparison. Historical acquired figure files now total eight across both batches; retained images remain zero. The original lip batch remains two comparisons from one person. Two aggregate literature benchmarks were added without changing simulation coefficients. Other new image candidates remain unmeasured, and lip-image retrieval was unavailable in this session.

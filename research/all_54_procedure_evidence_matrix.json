@@ -431,7 +431,7 @@
         "eyes"
       ],
       "figure_reuse_permission": "not_confirmed",
-      "individual_patient_image_files_downloaded": 0,
+      "individual_patient_image_files_downloaded": 3,
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
@@ -442,7 +442,8 @@
       "article_license_candidate_sources": [
         "periocular_2026_ccby",
         "bleph_2011_ccby"
-      ]
+      ],
+      "additional_screening": "PMC10239804 figures 2-4: three adult pairs visually screened and deleted. Cropped mouth/chin, photographic differences and combined fat filling prevent current pipeline calibration."
     },
     {
       "procedure_id": "neck-lift",
@@ -1305,16 +1306,17 @@
   "summary": {
     "procedures": 54,
     "article_license_candidates": 8,
-    "clinical_images_downloaded": 5,
+    "clinical_images_downloaded": 8,
     "real_pair_simulation_comparisons": 2,
     "procedures_clinically_calibrated": 0,
     "procedures_with_article_candidates": 9,
     "articles_with_figure_reuse_verified": 0,
     "articles_with_verified_article_license": 8,
-    "temporary_figure_files_acquired": 5,
+    "temporary_figure_files_acquired": 8,
     "retained_patient_image_files": 0,
     "exploratory_simulator_comparisons": 2,
     "independent_individuals_in_exploratory_comparisons": 1,
     "calibration_eligible_comparisons": 0
-  }
+  },
+  "additional_source_register": "research/source_screening_batch_2.json"
 }

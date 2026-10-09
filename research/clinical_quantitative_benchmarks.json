@@ -146,6 +146,90 @@
       "patient_photos_downloaded": 0,
       "clinical_calibration_applied": false,
       "case_table": "research/open_license_adult_rhinoplasty_table.json"
+    },
+    {
+      "procedure": "lip-filler",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13058167/",
+      "doi": "10.1111/jocd.70855",
+      "study_design": "Retrospective adult cohort; published Table 3 morphometric subgroup n=32.",
+      "observations": [
+        {
+          "metric": "upper_lip_tubercle_area",
+          "baseline_mean": 228.5,
+          "after_mean": 297.0,
+          "unit": "mm2 as reported",
+          "measurement_type": "published_photographic_morphometry"
+        },
+        {
+          "metric": "upper_lip_angle_gamma",
+          "baseline_mean": 23.8,
+          "after_mean": 27.2,
+          "unit": "degrees",
+          "measurement_type": "study_defined_angle"
+        },
+        {
+          "metric": "upper_lip_angle_delta",
+          "baseline_mean": 24.3,
+          "after_mean": 27.3,
+          "unit": "degrees",
+          "measurement_type": "study_defined_angle"
+        },
+        {
+          "metric": "upper_lip_angle_epsilon",
+          "baseline_mean": 109.1,
+          "after_mean": 101.8,
+          "unit": "degrees",
+          "measurement_type": "study_defined_angle"
+        }
+      ],
+      "compatibility": "Context for central fullness and contour only. Study-defined angles and physical area are not the current normalized lip ratios, not 3D volume, and not a calibration of Heart or Russian styles. Absolute photo scale and follow-up need verification.",
+      "license": "CC BY 4.0",
+      "source_fulltext": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13058167/fullTextXML",
+      "source_sha256": "9b80d8f803c4a63e46658999f5842017f5c9aaf20274dd749214a9f098d3fc1b",
+      "patient_photos_downloaded": 0,
+      "clinical_calibration_applied": false
+    },
+    {
+      "procedure": "under-eye-filler",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11743227/",
+      "doi": "10.1111/jocd.16582",
+      "study_design": "123 adults, 246 treated tear troughs; six-month observer assessment. Two sides of one person are not independent patients.",
+      "observations": [
+        {
+          "metric": "tear_trough_depth_rating",
+          "baseline_mean": 2.12,
+          "after_mean": 1.15,
+          "unit": "study-defined rating points",
+          "measurement_type": "observer_clinical_rating"
+        },
+        {
+          "metric": "hyperpigmentation_score",
+          "baseline_mean": 2.19,
+          "after_mean": 1.31,
+          "unit": "0-4 ordinal scale",
+          "measurement_type": "observer_clinical_rating"
+        },
+        {
+          "metric": "fat_pseudoprolapse_score",
+          "baseline_mean": 1.88,
+          "after_mean": 1.14,
+          "unit": "0-4 ordinal scale",
+          "measurement_type": "observer_clinical_rating"
+        },
+        {
+          "metric": "lower_eyelid_wrinkle_score",
+          "baseline_mean": 1.51,
+          "after_mean": 1.12,
+          "unit": "0-4 ordinal scale",
+          "measurement_type": "observer_clinical_rating"
+        }
+      ],
+      "compatibility": "Published observer scores, not measured per-person 3D depth or percentage correction. Do not translate to pixel movement, color reduction or simulator intensity. Source itself notes limited validation of its rating method.",
+      "license": "CC BY 4.0",
+      "source_fulltext": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11743227/fullTextXML",
+      "source_sha256": "8212437395f4deac6c77aedaabc51941d6ef2e8194e9204f60a527bd7897be89",
+      "patient_photos_downloaded": 0,
+      "clinical_calibration_applied": false
     }
   ]
 }
