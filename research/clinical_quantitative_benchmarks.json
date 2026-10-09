@@ -108,6 +108,34 @@
       "compatibility": "3D relative lip volume is not interchangeable with AesthetIQ's 2D landmark displacement or product visual multipliers. Useful for direction/time-course review only.",
       "source_license": "Article CC BY 4.0; figure-specific credits and patient permissions must be reviewed separately",
       "calibration_applied": false
+    },
+    {
+      "procedure": "revision-rhinoplasty",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12283507/",
+      "license": "CC BY 4.0, subject to individual figure exclusions",
+      "population": "Six adult patients extracted from Table 1; cleft lip/palate secondary rhinoplasty; cases 2 and 8 (minors) excluded",
+      "observations": [
+        {
+          "metric": "tip_projection_ratio",
+          "baseline_mean": 0.5516666666666666,
+          "after_mean": 0.6533333333333333,
+          "mean_delta": 0.10166666666666668,
+          "unit": "published ratio",
+          "direction": "increase"
+        },
+        {
+          "metric": "alar_width_ratio",
+          "baseline_mean": 1.1783333333333335,
+          "after_mean": 0.955,
+          "mean_delta": -0.2233333333333333,
+          "unit": "published ratio",
+          "direction": "decrease"
+        }
+      ],
+      "compatibility": "Directional reference only. The study uses side-view tip projection and potentially different canthal landmarks; cannot fit AesthetIQ 2D deformation magnitudes.",
+      "patient_photos_downloaded": 0,
+      "clinical_calibration_applied": false,
+      "case_table": "research/open_license_adult_rhinoplasty_table.json"
     }
   ]
 }
