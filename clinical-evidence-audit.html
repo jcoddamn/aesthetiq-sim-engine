@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AesthetIQ | Clinical Evidence Audit</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color-scheme:dark;background:#0b1222;color:#f8fafc}
+body{margin:0 auto;max-width:1100px;padding:18px}
+h1{font-size:1.7rem}p{color:#cbd5e1;line-height:1.5}
+.panel{border:1px solid #34435c;border-radius:15px;padding:16px;margin:14px 0;background:#172033}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{display:block;font-size:.9rem}input,select,button{width:100%;padding:10px;margin-top:6px;border:1px solid #4b5874;border-radius:9px;background:#252f48;color:white}
+button{background:#5b36b8;cursor:pointer}button:disabled{opacity:.5;cursor:default}
+pre{white-space:pre-wrap;overflow:auto;font-size:12px}
+img{max-width:100%;border-radius:10px}canvas{max-width:100%;height:auto;border-radius:10px}
+.preview{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head><body>
+<a href="index.html">← AesthetIQ</a>
+<h1>Procedure evidence audit</h1>
+<p>This research tool compares <strong>same-person, authorized</strong> before/after photographs against the app's Natural, Balanced and Enhanced outputs. It measures normalized 2D facial geometry—not volume, tissue response or medical accuracy. Photos are processed locally and are not added to the GitHub repository.</p>
+<div class="panel">
+<div class="controls">
+<label>Procedure<select id="procedure"></select></label>
+<label>Before photograph<input id="before" type="file" accept="image/*"></label>
+<label>After photograph<input id="after" type="file" accept="image/*"></label>
+</div>
+<label><input id="permission" type="checkbox" style="width:auto"> I have permission to analyze these two photographs of the same person, with consistent pose and expression.</label>
+<button id="run">Measure and compare</button>
+<p id="status" role="status" aria-live="polite">Choose a procedure and authorized image pair.</p>
+<p id="sourceLinks"></p>
+</div>
+<div class="panel">
+<h2>Comparison</h2>
+<div id="preview" class="preview"></div>
+<pre id="report">No measured image pairs yet.</pre>
+<button id="export" disabled>Export measurements (no photographs)</button>
+</div>
+<div class="panel"><h2>Important limitations</h2>
+<p>Clinical photos from publications and galleries are not automatically licensed for commercial reuse. Do not upload copyrighted or non-consensual patient images. Results require matching camera angle, expression, lighting and time after treatment. Skin, hair, dental and body procedures need different measurement models and will be reported as not yet quantitatively comparable.</p>
+</div>
+<script type="module">
+import {procedures} from "./js/procedureData.js?v=3";
+import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
+import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=29";
+import {compareProcedureLandmarks} from "./js/procedureEvidenceComparison.js?v=1";
+const $=id=>document.getElementById(id);
+const ids=procedures.map(p=>p.id);
+for(const p of procedures){
+ const o=document.createElement("option");o.value=p.id;o.textContent=p.area+" — "+p.name;$("procedure").append(o);
+}
+let report=null,audit=null;
+fetch("./research/procedure_evidence_audit_v2.json").then(r=>r.ok?r.json():null).then(data=>{audit=data;updateLinks();}).catch(()=>{});
+function updateLinks(){
+ $("sourceLinks").replaceChildren();
+ const row=audit?.procedures?.find(p=>p.id===$("procedure").value);
+ if(!row)return;
+ const title=document.createElement("strong");title.textContent="Research references: ";$("sourceLinks").append(title);
+ for(const id of row.evidence_sources){
+  const item=audit.sources[id];if(!item)continue;
+  const a=document.createElement("a");a.href=item.url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=id+" (rights review required)";
+  $("sourceLinks").append(a,document.createTextNode(" · "));
+ }
+}
+$("procedure").addEventListener("change",updateLinks);
+async function prepare(file){
+ if(!file)throw Error("Choose both images.");
+ const bitmap=await createImageBitmap(file);
+ const factor=Math.min(1,1280/Math.max(bitmap.width,bitmap.height));
+ const c=document.createElement("canvas");c.width=Math.round(bitmap.width*factor);c.height=Math.round(bitmap.height*factor);
+ c.getContext("2d").drawImage(bitmap,0,0,c.width,c.height);bitmap.close();return c;
+}
+function thumb(label,canvas){
+ const wrapper=document.createElement("div");
+ const caption=document.createElement("p");caption.textContent=label;wrapper.append(caption);
+ const view=document.createElement("canvas");view.width=canvas.width;view.height=canvas.height;
+ view.getContext("2d").drawImage(canvas,0,0);wrapper.append(view);return wrapper;
+}
+$("run").addEventListener("click",async()=>{
+ if(!$("permission").checked){$("status").textContent="Confirm permission to analyze the photographs.";return;}
+ $("run").disabled=true;$("export").disabled=true;report=null;$("status").textContent="Analyzing photographs…";
+ try{
+  const before=await prepare($("before").files[0]),after=await prepare($("after").files[0]);
+  const original=await detectFaceLandmarksFromImage(before);
+  const observed=await detectFaceLandmarksFromImage(after);
+  if(!Array.isArray(original)||!Array.isArray(observed))throw Error("A face could not be detected in both photographs.");
+  const procedure=$("procedure").value;
+  const sim=runProcedureSimulationFromLandmarks({procedure,landmarks:original,imageSource:before,blurPx:8,mirrorX:false});
+  report=compareProcedureLandmarks({
+   beforeLandmarks:original,afterLandmarks:observed,
+   simulatedLandmarksByLevel:sim.landmarksByLevel,procedure
+  });
+  report={...report,source:"user_authorized_local_pair",generatedAt:new Date().toISOString(),
+   limitations:"No clinical validation or parameter calibration is implied."};
+  $("preview").replaceChildren(
+   thumb("Before",before),thumb("After",after),
+   thumb("Natural",sim.naturalCanvas),thumb("Balanced",sim.balancedCanvas),thumb("Enhanced",sim.enhancedCanvas)
+  );
+  $("report").textContent=JSON.stringify(report,null,2);
+  $("status").textContent=report.status==="comparison_available"?
+   "Normalized measurement comparison generated; not a clinical accuracy score.":
+   "Analysis generated with limitations: "+report.status;
+  $("export").disabled=false;
+ }catch(e){$("status").textContent=e.message||String(e);$("status").classList.add("error");}
+ finally{$("run").disabled=false;}
+});
+$("export").addEventListener("click",()=>{
+ if(!report)return;
+ const blob=new Blob([JSON.stringify(report,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="aesthetiq-evidence-comparison.json";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+</script></body></html>
