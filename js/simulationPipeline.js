@@ -54,7 +54,7 @@ import {
 import {
   constrainWarpByFaceScale,
   compareFaceMorphometrics
-} from "./faceMorphometrics.js?v=1";
+} from "./faceMorphometrics.js?v=2";
 
 import {
   repairLowerLipTexture
@@ -1197,6 +1197,13 @@ export function runProcedureSimulation({
       natural: naturalResult?.quality || null,
       balanced: balancedResult?.quality || null,
       enhanced: enhancedResult?.quality || null
+    },
+
+    // Research audit data; not presented as clinical outcome measurements.
+    landmarksByLevel: {
+      natural: naturalResult?.landmarks || landmarks,
+      balanced: balancedResult?.landmarks || landmarks,
+      enhanced: enhancedResult?.landmarks || landmarks
     }
   };
 }
