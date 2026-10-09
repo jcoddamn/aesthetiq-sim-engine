@@ -37,7 +37,7 @@ import {
 import {
   renderWarp,
   getFaceTriangles
-} from "./warpRenderer.js";
+} from "./warpRenderer.js?v=2";
 
 import {
   MeshRenderer
