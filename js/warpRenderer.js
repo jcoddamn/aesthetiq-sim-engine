@@ -266,23 +266,21 @@ function drawWarpedTriangle(
     return;
   }
 
+  // Overlap clipping edges by half a pixel to reduce antialiased seams.
+  // Keep the affine transform anchored to the original target triangle.
+  const cx=(targetTriangle[0].x+targetTriangle[1].x+targetTriangle[2].x)/3;
+  const cy=(targetTriangle[0].y+targetTriangle[1].y+targetTriangle[2].y)/3;
+  const clipTriangle=targetTriangle.map(point=>{
+    const dx=point.x-cx,dy=point.y-cy;
+    const distance=Math.hypot(dx,dy)||1;
+    return {x:point.x+dx/distance*.45,y:point.y+dy/distance*.45};
+  });
   context.save();
-
+  context.setTransform(1,0,0,1,0,0);
   context.beginPath();
-  context.moveTo(
-    targetTriangle[0].x,
-    targetTriangle[0].y
-  );
-
-  context.lineTo(
-    targetTriangle[1].x,
-    targetTriangle[1].y
-  );
-
-  context.lineTo(
-    targetTriangle[2].x,
-    targetTriangle[2].y
-  );
+  context.moveTo(clipTriangle[0].x,clipTriangle[0].y);
+  context.lineTo(clipTriangle[1].x,clipTriangle[1].y);
+  context.lineTo(clipTriangle[2].x,clipTriangle[2].y);
 
   context.closePath();
   context.clip();
@@ -296,6 +294,8 @@ function drawWarpedTriangle(
     transform.f
   );
 
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
   context.drawImage(
     sourceCanvas,
     0,
