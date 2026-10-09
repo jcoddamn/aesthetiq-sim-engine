@@ -52,6 +52,19 @@ import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
 import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=29";
 import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=2";
 import {summarizeCalibrationEvidence} from "./js/evidenceCalibrationReview.js?v=1";
+const isLocalResearchHost=["localhost","127.0.0.1","[::1]"].includes(location.hostname);
+if(!isLocalResearchHost){
+ document.body.replaceChildren();
+ const notice=document.createElement("main");
+ notice.style.cssText="max-width:680px;margin:80px auto;padding:24px;font-family:system-ui";
+ const title=document.createElement("h1");
+ title.textContent="Developer-only clinical research tool";
+ const description=document.createElement("p");
+ description.textContent="Clinical photo analysis is disabled on public app hosts. Run this tool in an isolated local development environment.";
+ notice.append(title,description);
+ document.body.append(notice);
+ throw new Error("Clinical photo analysis is disabled on public hosts.");
+}
 const $=id=>document.getElementById(id);
 const ids=procedures.map(p=>p.id);
 for(const p of procedures){
