@@ -65,6 +65,8 @@ import {
   createDentalMeshMask,
   renderDentalGeometry
 } from "./dentalMesh.js?v=2";
+import {refineProcedureMask} from "./anatomicalMask2D.js?v=1";
+import {inspectWarp,moderateWarp,inspectRender} from "./simulationQuality2D.js?v=1";
 
 const meshRenderer =
   new MeshRenderer();
@@ -810,6 +812,11 @@ function createSimulationLevel({
         normalizedProcedure
       );
 
+    const warpReview = inspectWarp(landmarks,workingLandmarks,normalizedProcedure);
+    if (!warpReview.valid) {
+      workingLandmarks = moderateWarp(landmarks,workingLandmarks,warpReview.scale);
+    }
+
     if (level === "balanced") {
       const comparison =
         compareFaceMorphometrics(
@@ -940,6 +947,10 @@ function createSimulationLevel({
     }
   }
 
+  maskCanvas = refineProcedureMask(
+    maskCanvas,normalizedProcedure,workingLandmarks,mirrorX
+  );
+
   if (!maskCanvas) {
     return {
       canvas:
@@ -1006,17 +1017,19 @@ function createSimulationLevel({
       );
   }
 
+  const quality = inspectRender(sourceCanvas,resultCanvas||workingCanvas);
+  const safeCanvas = quality.valid ? (resultCanvas||workingCanvas) : workingCanvas;
   return {
-    canvas:
-      resultCanvas ||
-      workingCanvas,
-
-    landmarks:
-      workingLandmarks,
-
+    canvas: safeCanvas,
+    landmarks: workingLandmarks,
     polygons,
-
-    maskCanvas
+    maskCanvas,
+    quality: {
+      ...quality,
+      warp: usesGeometryWarp(normalizedProcedure)
+        ? inspectWarp(landmarks,workingLandmarks,normalizedProcedure)
+        : null
+    }
   };
 }
 
@@ -1154,7 +1167,13 @@ export function runProcedureSimulation({
 
     enhancedCanvas:
       enhancedResult?.canvas ||
-      copyCanvas(sourceCanvas)
+      copyCanvas(sourceCanvas),
+
+    quality: {
+      natural: naturalResult?.quality || null,
+      balanced: balancedResult?.quality || null,
+      enhanced: enhancedResult?.quality || null
+    }
   };
 }
 
@@ -1196,6 +1215,7 @@ export function runProcedureSimulationFromImage({
     anatomyProfile: anatomy,
     tissueModel,
 
+    procedureOption,
     lipStyle,
     fillerProduct,
     fillerGoal,
