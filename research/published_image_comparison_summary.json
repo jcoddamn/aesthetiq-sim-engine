@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-09",
+  "scope": "Published adult image diagnostics; no clinical calibration",
+  "patient_photos_in_app": false,
+  "retained_patient_image_files": 0,
+  "temporary_figure_files_acquired": 5,
+  "candidate_individuals_reviewed": 4,
+  "completed_simulator_comparisons": 2,
+  "independent_individuals_compared": 1,
+  "calibration_eligible_comparisons": 0,
+  "procedure": "lip-filler",
+  "source": {
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12936626/",
+    "doi": "10.1111/jocd.70744",
+    "figure": "1A",
+    "article_license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "adult_status": "Article cohort is 20\u201330 years; caption identifies an adult example",
+    "use": "Temporary local measurement and software debugging; no training or image redistribution",
+    "source_fulltext": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12936626/fullTextXML"
+  },
+  "measurement_protocol": "square_pixel_eye_aligned_2d_v2",
+  "detector": "MediaPipe Python FaceLandmarker 1.1.0, official float16 model v1, CPU",
+  "renderer": "Actual simulationPipeline.js using Canvas 2D via @napi-rs/canvas; not a browser or iPhone validation",
+  "followups_days": [
+    30,
+    90
+  ],
+  "metric_names": [
+    "upperVermilionToMouth",
+    "lowerVermilionToMouth",
+    "cupidBowDipToMouth",
+    "mouthToFaceWidth"
+  ],
+  "diagnostic_residual_ranges": {
+    "natural": {
+      "minimum_normalized_rmse": 0.004387,
+      "maximum_normalized_rmse": 0.004828
+    },
+    "balanced": {
+      "minimum_normalized_rmse": 0.009654,
+      "maximum_normalized_rmse": 0.010365
+    },
+    "enhanced": {
+      "minimum_normalized_rmse": 0.020439,
+      "maximum_normalized_rmse": 0.021188
+    }
+  },
+  "interpretation": "Residuals compare exploratory 2D ratios across two follow-ups of one person. They are not a clinical accuracy percentage and were not used to fit effect magnitudes.",
+  "limitations": [
+    "The article blurs the eye regions; automatic alignment anchors are inferred and cannot be visually verified.",
+    "Low-resolution published panels and photographic variability limit measurement reliability.",
+    "Two follow-ups are one independent person, not two independent cases.",
+    "No product dose or generic intensity level has been matched to the clinical treatment.",
+    "A 2D lip ratio is not 3D volume; detected lower-lip ratio changes disagree in direction with the preview, requiring better images and independent manual review."
+  ],
+  "math_fixes_applied": [
+    "Initialize filler-product settings before they are used; previously lip simulations raised a ReferenceError.",
+    "Measure visible upper/lower vermilion thickness instead of the gap between the lips.",
+    "Account for image proportions and mouth-axis orientation in lip anatomy weighting."
+  ],
+  "effect_magnitudes_fitted_to_images": false,
+  "excluded_sources": [
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11210068/",
+      "figure": "2",
+      "reason": "Cropped lower face with measurement overlays; both panels did not yield a detectable face."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11635368/",
+      "figures": [
+        "3",
+        "4"
+      ],
+      "reason": "Duplicate presentations of one cropped lip pair; both clean panels did not yield a detectable face; Figure 3 contains a surface overlay."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7954385/",
+      "figure": "1",
+      "reason": "Side profile cannot be compared with frontal FaceMesh ratio metrics."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12078119/",
+      "reason": "CC BY-NC-ND source excluded before acquisition."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12283507/",
+      "reason": "Further image acquisition rejected by automatic approval review because the study includes minors; no images acquired or analyzed from this study."
+    }
+  ],
+  "deletion_status": "temporary_images_crops_renders_landmarks_and_case_reports_deleted_after_analysis"
+}

@@ -25,6 +25,20 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 <label>Before photograph<input id="before" type="file" accept="image/*"></label>
 <label>After photograph<input id="after" type="file" accept="image/*"></label>
 </div>
+<fieldset id="caseDetails" class="panel"><legend>Case context for independent comparison</legend>
+<p>Use study-specific random codes. Do not enter names, email addresses, birth dates, or medical record numbers. Reuse the same case code for the same person.</p>
+<div class="controls">
+<label>Study/cohort code<input id="cohortId" placeholder="study-a" maxlength="80"></label>
+<label>Case code<input id="caseId" placeholder="case-001" maxlength="80"></label>
+<label>Treatment goal code<input id="treatmentGoal" placeholder="lip-volume" maxlength="80"></label>
+<label>Technique/product protocol code<input id="techniqueId" placeholder="protocol-a" maxlength="80"></label>
+<label>Follow-up<select id="followupWindow"><option value="">Choose timing</option><option value="immediate">Immediate</option><option value="1-4-weeks">1–4 weeks</option><option value="5-12-weeks">5–12 weeks</option><option value="13-26-weeks">13–26 weeks</option><option value="over-26-weeks">Over 26 weeks</option></select></label>
+<label>Dataset role<select id="split"><option value="development">Development</option><option value="holdout">Holdout — evaluation only</option></select></label>
+</div>
+<label><input id="adult" type="checkbox" style="width:auto"> The person is confirmed to be at least 18 years old.</label>
+<label><input id="referenceVisible" type="checkbox" style="width:auto"> Eye, nose and lip reference landmarks are visible, with no blur, masks or measurement overlays covering them.</label>
+<label><input id="isolated" type="checkbox" style="width:auto"> No concurrent treatment confounds the selected procedure.</label>
+</fieldset>
 <label><input id="permission" type="checkbox" style="width:auto"> I have permission to analyze these two photographs of the same person, with consistent pose and expression.</label>
 <button id="run">Measure and compare</button>
 <p id="status" role="status" aria-live="polite">Choose a procedure and authorized image pair.</p>
@@ -33,12 +47,17 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 <div class="panel">
 <h2>Comparison</h2>
 <div id="preview" class="preview"></div>
-<pre id="report">No measured image pairs yet.</pre>
+<pre id="report">Choose a new temporary pair, or review the completed published diagnostics below.</pre>
 <button id="export" disabled>Export measurements (no photographs)</button><button id="discard">Discard temporary photos</button>
 </div>
 <div class="panel">
+<h2>Published image diagnostics</h2>
+<p>Temporary published adult images have been measured against the actual simulation pipeline. The summary below contains no photographs or landmark arrays. Diagnostic comparisons do not qualify as clinical calibration.</p>
+<p id="publishedStatus" role="status">Loading completed comparisons…</p>
+<div id="publishedTable"></div><p id="publishedLimitations"></p>
+</div><div class="panel">
 <h2>Multi-case calibration review</h2>
-<p>Import a JSON array of measurement reports exported from independent, consented cases. The summary requires at least 20 aligned cases per procedure before it even becomes eligible for expert review. It never changes the app's procedure parameters automatically.</p>
+<p>Import a JSON array of measurement reports exported from independent, consented cases. The summary requires 20 distinct comparable cases within each study, procedure, goal, technique and follow-up group before expert review. This is an internal review floor, not clinical validation. Repeated cases are excluded; holdout cases never qualify for calibration. Older reports without image proportions and case context must be measured again. It never changes the app's procedure parameters automatically.</p>
 <input id="reportsFile" type="file" accept="application/json,.json" aria-label="Upload measurement report collection">
 <button id="aggregate">Summarize collected cases</button>
 <pre id="aggregateResults">No clinical measurement reports imported.</pre>
@@ -54,11 +73,12 @@ a{color:#c4b5fd}small{color:#b7c5d7}#status.error{color:#fda4af}
 </div>
 <script type="module">
 import {procedures} from "./js/procedureData.js?v=3";
-import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
-import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=29";
-import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=2";
-import {summarizeCalibrationEvidence} from "./js/evidenceCalibrationReview.js?v=1";
-import {auditEvidenceReadiness} from "./js/evidenceReadinessAudit.js?v=1";
+import {detectFaceLandmarksFromImage,releaseImageFaceLandmarker} from "./js/mediapipeRunner.js";
+import {runProcedureSimulationFromLandmarks} from "./js/simulationPipeline.js?v=30";
+import {compareProcedureLandmarks,METRIC_GROUPS} from "./js/procedureEvidenceComparison.js?v=3";
+import {summarizeCalibrationEvidence} from "./js/evidenceCalibrationReview.js?v=2";
+import {auditEvidenceReadiness} from "./js/evidenceReadinessAudit.js?v=2";
+import {createTemporaryPhotoSession} from "./js/temporaryPhotoSession.js";
 const isLocalResearchHost=["localhost","127.0.0.1","[::1]"].includes(location.hostname);
 if(!isLocalResearchHost){
  document.body.replaceChildren();
@@ -86,6 +106,7 @@ async function loadEvidenceReadiness(){
    data.totalProcedures+" procedures • "+
    data.withMeasurementDefinitions+" measurement definitions • "+
    data.withArticleCandidates+" with candidate articles • "+
+   data.articlesWithVerifiedLicense+" article licenses verified • "+
    data.readyForExpertCalibrationReview+" eligible for calibration review";
   const table=$("readinessTable");
   const header=document.createElement("tr");
@@ -104,13 +125,29 @@ async function loadEvidenceReadiness(){
  }catch(error){$("readinessSummary").textContent=error.message||String(error);}
 }
 loadEvidenceReadiness();
+async function loadPublishedDiagnostics(){
+ try{
+  const response=await fetch("./research/published_image_comparison_summary.json",{cache:"no-store"});
+  if(!response.ok)throw Error("Published diagnostics are unavailable.");
+  const data=await response.json();
+  $("publishedStatus").textContent=data.completed_simulator_comparisons+" comparisons • "+data.independent_individuals_compared+" independent adult • "+data.calibration_eligible_comparisons+" eligible for calibration";
+  const table=document.createElement("table");table.style.width="100%";
+  const header=document.createElement("tr");
+  for(const title of ["Intensity","Normalized ratio residual range"]){const th=document.createElement("th");th.textContent=title;th.style.textAlign="left";header.append(th);}table.append(header);
+  for(const [level,value] of Object.entries(data.diagnostic_residual_ranges)){
+   const tr=document.createElement("tr");
+   for(const text of [level,value.minimum_normalized_rmse.toFixed(4)+" – "+value.maximum_normalized_rmse.toFixed(4)]){const td=document.createElement("td");td.textContent=text;tr.append(td);}table.append(tr);
+  }
+  $("publishedTable").replaceChildren(table);
+  $("publishedLimitations").textContent=data.interpretation+" "+data.limitations.join(" ");
+ }catch(error){$("publishedStatus").textContent=error.message;}
+}
+loadPublishedDiagnostics();
 let report=null,audit=null;
-let temporaryCanvases=[];
+const photos=createTemporaryPhotoSession();
+let busy=false;
 function clearTemporaryPhotos(clearInputs=true){
- for(const canvas of temporaryCanvases){
-  if(canvas){canvas.width=0;canvas.height=0;}
- }
- temporaryCanvases=[];
+ photos.discard();
  for(const canvas of $("preview").querySelectorAll("canvas")){
   canvas.width=0;canvas.height=0;
  }
@@ -120,15 +157,16 @@ function clearTemporaryPhotos(clearInputs=true){
 $("discard").addEventListener("click",()=>{
  clearTemporaryPhotos();
  report=null;
+ $("reportsFile").value="";$("aggregateResults").textContent="Imported analysis cleared.";
  $("report").textContent="Temporary analysis cleared.";
  $("export").disabled=true;
  $("status").textContent="Temporary image canvases cleared. Immediate browser memory erasure cannot be guaranteed.";
 });
-window.addEventListener("pagehide",()=>clearTemporaryPhotos());
+window.addEventListener("pagehide",()=>{$("discard").click();});
 fetch("./research/procedure_evidence_audit_v2.json").then(r=>r.ok?r.json():null).then(data=>{audit=data;updateLinks();}).catch(()=>{});
 function updateLinks(){
  $("sourceLinks").replaceChildren();
- $("run").disabled=!METRIC_GROUPS[$("procedure").value];
+ $("run").disabled=busy||!METRIC_GROUPS[$("procedure").value];
  $("run").title=METRIC_GROUPS[$("procedure").value]?"Compare facial landmark metrics":"No validated quantitative landmark metric exists for this procedure";
  const row=audit?.procedures?.find(p=>p.id===$("procedure").value);
  if(!row)return;
@@ -139,54 +177,95 @@ function updateLinks(){
   $("sourceLinks").append(a,document.createTextNode(" · "));
  }
 }
-$("procedure").addEventListener("change",updateLinks);
+function invalidateComparison(){
+ clearTemporaryPhotos(false);report=null;$("report").textContent="Inputs changed; measure this pair again.";$("export").disabled=true;
+}
+$("procedure").addEventListener("change",()=>{invalidateComparison();updateLinks();});
+for(const id of ["before","after","cohortId","caseId","treatmentGoal","techniqueId","followupWindow","split","permission","adult","isolated","referenceVisible"]){
+ $(id).addEventListener("change",invalidateComparison);
+}
 updateLinks();
-async function prepare(file){
+async function prepare(file,token){
  if(!file)throw Error("Choose both images.");
  const bitmap=await createImageBitmap(file);
+ try{photos.assertCurrent(token);}catch(error){bitmap.close();throw error;}
  const factor=Math.min(1,1280/Math.max(bitmap.width,bitmap.height));
- const c=document.createElement("canvas");c.width=Math.round(bitmap.width*factor);c.height=Math.round(bitmap.height*factor);
- c.getContext("2d").drawImage(bitmap,0,0,c.width,c.height);bitmap.close();return c;
+ const c=photos.track(document.createElement("canvas"),token);c.width=Math.round(bitmap.width*factor);c.height=Math.round(bitmap.height*factor);
+ try{c.getContext("2d").drawImage(bitmap,0,0,c.width,c.height);}finally{bitmap.close();}
+ return c;
 }
-function thumb(label,canvas){
+function thumb(label,canvas,token){
  const wrapper=document.createElement("div");
  const caption=document.createElement("p");caption.textContent=label;wrapper.append(caption);
- const view=document.createElement("canvas");view.width=canvas.width;view.height=canvas.height;
+ const view=photos.track(document.createElement("canvas"),token);view.width=canvas.width;view.height=canvas.height;
  view.getContext("2d").drawImage(canvas,0,0);wrapper.append(view);return wrapper;
 }
+function caseContext(){
+ const context=Object.fromEntries(["cohortId","caseId","treatmentGoal","techniqueId","followupWindow","split"].map(id=>[id,$(id).value.trim()]));
+ for(const id of ["cohortId","caseId","treatmentGoal","techniqueId"]){
+  if(!/^[a-zA-Z0-9_-]{1,80}$/.test(context[id]))throw Error("Enter random case/study codes and treatment protocol codes using letters, numbers, hyphens or underscores.");
+ }
+ if(!context.followupWindow)throw Error("Choose the follow-up period.");
+ return {...context,simulationConfigId:"default-goal-products-blur8-pipeline30",
+  referenceLandmarksVisible:$("referenceVisible").checked,
+  adultConfirmed:$("adult").checked,isolatedProcedureConfirmed:$("isolated").checked,
+  samePersonConfirmed:$("permission").checked,standardizedCaptureConfirmed:$("permission").checked,
+  imageUseAuthorized:$("permission").checked};
+}
+function setBusy(value){
+ busy=value;
+ for(const id of ["procedure","before","after","caseDetails","permission"])$(id).disabled=value;
+ updateLinks();
+}
 $("run").addEventListener("click",async()=>{
- if(!$("permission").checked){$("status").textContent="Confirm permission to analyze the photographs.";return;}
- clearTemporaryPhotos(false);
- $("run").disabled=true;$("export").disabled=true;report=null;$("status").textContent="Analyzing photographs…";
+ if(busy)return;
+ let context;
  try{
-  const before=await prepare($("before").files[0]);
-  temporaryCanvases.push(before);
-  const after=await prepare($("after").files[0]);
-  temporaryCanvases.push(after);
+  context=caseContext();
+  if(!context.imageUseAuthorized||!context.adultConfirmed||!context.isolatedProcedureConfirmed||!context.referenceLandmarksVisible)throw Error("Confirm authorized adult photographs, visible reference landmarks and an isolated procedure before comparing.");
+ }catch(e){$("status").textContent=e.message;return;}
+ const procedure=$("procedure").value;
+ if(!METRIC_GROUPS[procedure])return;
+ const beforeFile=$("before").files[0],afterFile=$("after").files[0];
+ clearTemporaryPhotos(false);
+ const token=photos.current();
+ setBusy(true);$("export").disabled=true;report=null;$("report").textContent="Measuring current pair…";
+ $("status").classList.remove("error");$("status").textContent="Analyzing photographs…";
+ try{
+  const before=await prepare(beforeFile,token);
+  const after=await prepare(afterFile,token);
   const original=await detectFaceLandmarksFromImage(before);
+  photos.assertCurrent(token);
   const observed=await detectFaceLandmarksFromImage(after);
+  photos.assertCurrent(token);
   if(!Array.isArray(original)||!Array.isArray(observed))throw Error("A face could not be detected in both photographs.");
-  const procedure=$("procedure").value;
-  if(!METRIC_GROUPS[procedure])throw Error("This procedure does not yet have a compatible quantitative facial landmark metric.");
   const sim=runProcedureSimulationFromLandmarks({procedure,landmarks:original,imageSource:before,blurPx:8,mirrorX:false});
+  for(const value of Object.values(sim))if(value instanceof HTMLCanvasElement)photos.track(value,token);
   report=compareProcedureLandmarks({
    beforeLandmarks:original,afterLandmarks:observed,
+   beforeImageSize:{width:before.width,height:before.height},afterImageSize:{width:after.width,height:after.height},
    simulatedLandmarksByLevel:sim.landmarksByLevel,procedure
   });
-  report={...report,source:"user_authorized_local_pair",generatedAt:new Date().toISOString(),
+  report={...report,caseContext:context,source:"user_authorized_local_pair",generatedAt:new Date().toISOString(),
    limitations:"No clinical validation or parameter calibration is implied."};
-  temporaryCanvases.push(sim.naturalCanvas,sim.balancedCanvas,sim.enhancedCanvas);
   $("preview").replaceChildren(
-   thumb("Before",before),thumb("After",after),
-   thumb("Natural",sim.naturalCanvas),thumb("Balanced",sim.balancedCanvas),thumb("Enhanced",sim.enhancedCanvas)
+   thumb("Before",before,token),thumb("After",after,token),
+   thumb("Natural",sim.naturalCanvas,token),thumb("Balanced",sim.balancedCanvas,token),thumb("Enhanced",sim.enhancedCanvas,token)
   );
   $("report").textContent=JSON.stringify(report,null,2);
   $("status").textContent=report.status==="comparison_available"?
-   "Normalized measurement comparison generated; not a clinical accuracy score.":
-   "Analysis generated with limitations: "+report.status;
+   "Normalized measurement comparison generated; not a clinical accuracy score.":"Analysis generated with limitations: "+report.status;
   $("export").disabled=false;
- }catch(e){$("status").textContent=e.message||String(e);$("status").classList.add("error");}
- finally{$("run").disabled=false;}
+ }catch(e){
+  if(e.name!=="AbortError"){
+   clearTemporaryPhotos(false);report=null;$("report").textContent="No completed comparison.";
+   $("status").textContent=e.message||String(e);$("status").classList.add("error");
+  }
+ }finally{
+  try{await releaseImageFaceLandmarker();}
+  catch(e){clearTemporaryPhotos(false);report=null;$("export").disabled=true;$("report").textContent="Analysis cleared after detector cleanup failed.";$("status").textContent="Close this research tab to release detector resources.";}
+  finally{setBusy(false);}
+ }
 });
 $("export").addEventListener("click",()=>{
  if(!report)return;
@@ -196,13 +275,16 @@ $("export").addEventListener("click",()=>{
  setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 $("aggregate").addEventListener("click",async()=>{
+ const token=photos.current();
  try{
   const file=$("reportsFile").files[0];
   if(!file)throw Error("Select a JSON file of measurement reports.");
   const parsed=JSON.parse(await file.text());
+  photos.assertCurrent(token);
   const reports=Array.isArray(parsed)?parsed:parsed.reports;
   const summary=summarizeCalibrationEvidence(reports);
+  $("reportsFile").value="";
   $("aggregateResults").textContent=JSON.stringify(summary,null,2);
- }catch(e){$("aggregateResults").textContent=e.message||String(e);}
+ }catch(e){if(e.name!=="AbortError")$("aggregateResults").textContent=e.message||String(e);}
 });
 </script></body></html>

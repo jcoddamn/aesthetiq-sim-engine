@@ -2,6 +2,10 @@
 // Compares normalized 2D landmark changes, not millimeters, volumes,
 // medical efficacy, or guaranteed treatment outcomes.
 import {measureFaceMorphometrics} from "./faceMorphometrics.js?v=2";
+import {standardizePhotoLandmarks} from "./researchPhotoGeometry.js";
+
+export const COMPARISON_VERSION = 2;
+export const COMPARISON_LEVELS = Object.freeze(["natural", "balanced", "enhanced"]);
 
 export const METRIC_GROUPS = Object.freeze({
  "lip-filler":["upperVermilionToMouth","lowerVermilionToMouth","cupidBowDipToMouth","mouthToFaceWidth"],
@@ -37,31 +41,37 @@ export function compareProcedureLandmarks({
  beforeLandmarks,
  afterLandmarks,
  simulatedLandmarksByLevel,
- procedure
+ procedure,
+ beforeImageSize,
+ afterImageSize
 }){
  const metrics=METRIC_GROUPS[procedure]||[];
  if(!metrics.length)return {
   procedure,status:"not_quantifiable_with_face_landmarks",
   reason:"This procedure requires surface, color, tooth, hair, body, or 3D measurements beyond the current 2D facial metric set."
  };
- const before=measureFaceMorphometrics(beforeLandmarks);
- const after=measureFaceMorphometrics(afterLandmarks);
+ const original=standardizePhotoLandmarks(beforeLandmarks,beforeImageSize);
+ const observed=standardizePhotoLandmarks(afterLandmarks,afterImageSize);
+ const before=measureFaceMorphometrics(original.points);
+ const after=measureFaceMorphometrics(observed.points);
  if(!before||!after)throw Error("Complete before and after facial landmarks are required.");
- const p=angleProxy(beforeLandmarks),q=angleProxy(afterLandmarks);
+ const p=angleProxy(original.points),q=angleProxy(observed.points);
  const warnings=[];
  if(!p||!q)warnings.push("Unable to verify photo alignment.");
  else{
   if(Math.abs(p.yaw-q.y)>.10)warnings.push("Head yaw differs between before and after photos.");
-  if(Math.abs(p.roll-q.roll)>.075)warnings.push("Head roll differs between before and after photos.");
+  if(Math.max(Math.abs(p.yaw),Math.abs(q.yaw))>.25)warnings.push("A near-frontal view is required for these 2D metrics.");
+  if(Math.abs(original.roll-observed.roll)>.075)warnings.push("Head roll differs between before and after photos.");
  }
  const measured={},simulated={},errors={};
  for(const metric of metrics){
   measured[metric]=delta(before,after,metric);
   errors[metric]={};
  }
- for(const [level,landmarks] of Object.entries(simulatedLandmarksByLevel||{})){
-  const values=measureFaceMorphometrics(landmarks);
-  if(!values)continue;
+ for(const level of COMPARISON_LEVELS){
+  const landmarks=simulatedLandmarksByLevel?.[level];
+  if(!landmarks)continue;
+  const values=measureFaceMorphometrics(standardizePhotoLandmarks(landmarks,beforeImageSize).points);
   simulated[level]={};
   let sum=0,count=0;
   for(const metric of metrics){
@@ -76,9 +86,13 @@ export function compareProcedureLandmarks({
   simulated[level].rmseNormalized=count?Math.sqrt(sum/count):null;
  }
  const validMetrics=Object.values(measured).filter(finite).length;
+ const complete=validMetrics===metrics.length&&COMPARISON_LEVELS.every(level=>
+  metrics.every(metric=>finite(simulated[level]?.[metric])));
  return {
+  schemaVersion:COMPARISON_VERSION,
+  measurementProtocol:"square_pixel_eye_aligned_2d_v2",
   procedure,
-  status:warnings.length?"alignment_review_required":validMetrics?"comparison_available":"insufficient_metrics",
+  status:warnings.length?"alignment_review_required":complete?"comparison_available":"insufficient_metrics_or_simulations",
   measurements:measured,
   simulated,
   errors,

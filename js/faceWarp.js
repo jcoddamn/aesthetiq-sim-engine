@@ -17,7 +17,7 @@ import {
 
 import {
   getLipProfile
-} from "./lipAnatomy.js?v=2";
+} from "./lipAnatomy.js?v=3";
 
 import {
   getFillerVisualProfile
@@ -126,7 +126,9 @@ export function warpLipFiller(
   anatomyStrength = 1,
   tissueModel = null,
   lipStyle = "classic",
-  lipProduct = "provider"
+  lipProduct = "provider",
+  fillerGoal = "balanced",
+  imageSize = null
 ) {
   if (
     !Array.isArray(landmarks) ||
@@ -142,7 +144,7 @@ export function warpLipFiller(
   getLipStyleProfile(lipStyle) || {};
 
   const anatomy =
-  getLipProfile(landmarks);
+  getLipProfile(landmarks,imageSize);
 
   const safeAnatomyStrength =
   Math.max(
@@ -208,6 +210,28 @@ const levelStrength =
   baseLevelStrength *
   safeAnatomyStrength *
   tissueDeformationStrength;
+
+const fillerProfile =
+  getFillerVisualProfile(
+    lipProduct,
+    "lip-filler"
+  );
+
+const productVolume =
+  Number(fillerProfile.volume) || 1;
+
+const productProjection =
+  Number(fillerProfile.projection) || 1;
+
+const productSpread =
+  Number(fillerProfile.spread) || 1;
+
+const productDefinition =
+  Number(fillerProfile.definition) || 1;
+
+const productFlexibility =
+  Number(fillerProfile.flexibility) || 1;
+
 
  const baseUpperVolume =
   (
@@ -357,27 +381,6 @@ const styleProjection =
   Number.isFinite(styleProfile.projection)
     ? styleProfile.projection
     : 1;
-
-const fillerProfile =
-  getFillerVisualProfile(
-    lipProduct,
-    "lip-filler"
-  );
-
-const productVolume =
-  Number(fillerProfile.volume) || 1;
-
-const productProjection =
-  Number(fillerProfile.projection) || 1;
-
-const productSpread =
-  Number(fillerProfile.spread) || 1;
-
-const productDefinition =
-  Number(fillerProfile.definition) || 1;
-
-const productFlexibility =
-  Number(fillerProfile.flexibility) || 1;
 
   const result =
     landmarks.map((landmark) => ({

@@ -165,6 +165,14 @@ export async function detectFaceLandmarksFromImage(
   );
 }
 
+// Research utilities call this after a temporary image pair so the detector
+// does not retain its last result callback or image-processing resources.
+export async function releaseImageFaceLandmarker() {
+  const detector = imageFaceMesh;
+  imageFaceMesh = null;
+  if (detector) await detector.close();
+}
+
 export function stopFaceTracking(videoElement) {
   running = false;
 

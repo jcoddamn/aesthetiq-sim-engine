@@ -1,34 +1,67 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "date": "2026-10-09",
-  "policy": "Study URLs are research leads; CC BY/CC0 article licenses and individual figure permissions must be confirmed separately before image processing. No image files are stored.",
+  "policy": "Article licenses and clinical suitability are tracked separately. A limited adult lip-image diagnostic was run locally; patient photos are not app assets and are discarded. No procedure is clinically calibrated.",
   "open_license_studies": [
     {
       "id": "lip_3d_ccby",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9369503/",
-      "license": "CC BY 4.0 article",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "lip-filler"
       ],
       "metric": "3D lip volume, upper lip projection and clinical fullness scale",
       "suitability": "Direct procedure, 3D metrics incompatible with 2D-only geometric ratios",
-      "license_verification_status": "pending_independent_figure_and_article_review"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "Lip Lifting Efficacy of Hyaluronic Acid Filler Injections: A Quantitative Assessment Using 3-Dimensional Photography",
+      "doi": "10.3390/jcm11154554",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9369503/fullTextXML",
+      "verification_sha256": "51873f1e8ff83b13e9090af4676be5c157c1dad28400b3a10294eb786df79861",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Direct lip filler study. Table 2 fullness scores and aggregate volume values checked. Profile views and 3D measurements cannot calibrate frontal 2D ratios.",
+      "reviewed_figure_ids": [
+        "jcm-11-04554-f001",
+        "jcm-11-04554-f002",
+        "jcm-11-04554-f003",
+        "jcm-11-04554-f004",
+        "jcm-11-04554-f005",
+        "jcm-11-04554-f006"
+      ]
     },
     {
       "id": "bleph_2026_ccby",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13206981/",
-      "license": "CC BY article",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "upper-blepharoplasty"
       ],
       "metric": "Upper eyelid fullness and infrabrow surgery assessment",
       "suitability": "Related technique; not a general blepharoplasty target",
-      "license_verification_status": "pending_independent_figure_and_article_review"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "Comparative Evaluation of Medial Septal Fat Excision During Infrabrow Blepharoplasty for Medial Upper Eyelid Fullness: A Retrospective Study",
+      "doi": "10.3390/jcm15103637",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13206981/fullTextXML",
+      "verification_sha256": "c8f7afcf29d15b93220403692297a4bc5290a125c51a6d15a2e24b089496e722",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Figure 3 describes simultaneous upper and lower eyelid surgery. Do not treat it as an isolated upper-eyelid treatment pair.",
+      "reviewed_figure_ids": [
+        "jcm-15-03637-f001",
+        "jcm-15-03637-f002",
+        "jcm-15-03637-f003"
+      ]
     },
     {
       "id": "periocular_2026_ccby",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13310729/",
-      "license": "CC BY article",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "upper-blepharoplasty",
         "lower-blepharoplasty",
@@ -36,64 +69,174 @@
       ],
       "metric": "Periocular imaging measurement methodology",
       "suitability": "Measurement validation, not direct cosmetic outcome data",
-      "license_verification_status": "pending_independent_figure_and_article_review"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "VisionMetric Suite for periocular measurement in ophthalmic plastic surgery: a preliminary single-center validation study",
+      "doi": "10.3389/fmed.2026.1855884",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13310729/fullTextXML",
+      "verification_sha256": "acee862166da4efdc86f2635a1705d17c12e5ee1085a20ff0458056ba62d1659",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Measurement-method validation, not a dataset of isolated cosmetic treatment outcomes. Landmark definitions differ from MediaPipe.",
+      "reviewed_figure_ids": [
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5"
+      ]
     },
     {
       "id": "jawline_2025_ccby",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12811921/",
-      "license": "CC BY 4.0 article",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "chin-filler",
         "jawline-filler"
       ],
       "metric": "3D contour and cephalometric evaluation",
       "suitability": "Direct but combined chin and jawline treatment; no independent procedure coefficients",
-      "license_verification_status": "pending_independent_figure_and_article_review"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "Optimizing Dermal Filler for Chin and Jawline Definition as an Advanced Approach for Natural Results: A Prospective Case Series With Ultrasonographic and 3D Facial Imaging Evaluation",
+      "doi": "10.7759/cureus.99477",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12811921/fullTextXML",
+      "verification_sha256": "b38139e118e13ba69eb42e2a5feed8e79e45a821736b6a1a5ae6ccb3096ef71d",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Combined chin and mandibular treatments. Consent statement says obtained or waived; person-specific processing permission remains unresolved.",
+      "reviewed_figure_ids": [
+        "FIG1",
+        "FIG2",
+        "FIG3",
+        "FIG4",
+        "FIG5",
+        "FIG6",
+        "FIG7",
+        "FIG8",
+        "FIG9",
+        "FIG10",
+        "FIG11",
+        "FIG12",
+        "FIG13",
+        "FIG14"
+      ]
     },
     {
       "id": "glabella_2026_ccby",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12984208/",
-      "license": "CC BY article (MDPI Diagnostics)",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "glabella-neuromodulator"
       ],
       "metric": "3D glabellar wrinkle depth",
       "suitability": "Direct objective wrinkle measurement, cannot infer from static FaceMesh landmarks",
-      "license_verification_status": "pending_independent_figure_and_article_review"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "Utility of 3D Imaging in the Objective Evaluation of Glabellar Lines Following Botulinum Toxin Treatment",
+      "doi": "10.3390/diagnostics16050679",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12984208/fullTextXML",
+      "verification_sha256": "2614590b8497caccbed7fd978bb38270252202994f378a0480a43fe4a21eee72",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Adult cohort with physical 3D depth measurements. Frontal 2D landmark movement does not measure wrinkle depth.",
+      "reviewed_figure_ids": [
+        "diagnostics-16-00679-f001",
+        "diagnostics-16-00679-f002",
+        "diagnostics-16-00679-f003",
+        "diagnostics-16-00679-f004",
+        "diagnostics-16-00679-f005",
+        "diagnostics-16-00679-f006",
+        "diagnostics-16-00679-f007"
+      ]
     },
     {
       "id": "fut_2026_ccby",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13396618/",
-      "license": "CC BY article",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "fut-hair-transplant"
       ],
       "metric": "Graft count and visible scar coverage at one year",
       "suitability": "Single scar reconstruction case, not typical cosmetic hairline outcomes",
-      "license_verification_status": "pending_independent_figure_and_article_review"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "Successful FUT hair restoration following Mohs surgery with allograft repair",
+      "doi": "10.1016/j.jdcr.2026.05.026",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13396618/fullTextXML",
+      "verification_sha256": "e21b3fd35948dffaea272745a4f26acecfcaf2f3693e14a2ef51097122f05700",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Single post-Mohs scalp reconstruction case. Not representative of routine cosmetic hair restoration.",
+      "reviewed_figure_ids": [
+        "fig1",
+        "fig2",
+        "fig3",
+        "fig4",
+        "fig5"
+      ]
     },
     {
       "id": "fue_2024_ccby_review",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11407486/",
-      "license": "License pending verification; excluded from approved CC BY pool",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "fue-hair-transplant"
       ],
       "metric": "Density and graft survival",
       "suitability": "Scarred scalp and stem-cell adjunct; not typical FUE",
-      "license_verification_status": "article_license_unverified"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "Stem cell therapy prior to follicular unit hair transplantation on scarred tissue: a novel approach to a successful procedure",
+      "doi": "10.25122/jml-2024-0303",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11407486/fullTextXML",
+      "verification_sha256": "448be73240dad44c8c1fba07f7ad1b1bf174c6c9000de6d50e72346922c78026",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Article CC BY 4.0 confirmed. Scarred-scalp study with a stem-cell adjunct arm; do not generalize to unscarred FUE or pool treatment arms.",
+      "reviewed_figure_ids": [
+        "F1",
+        "F2"
+      ]
     },
     {
       "id": "bleph_2011_ccby",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9443734/",
-      "license": "CC BY article",
+      "license": "CC BY 4.0 article \u2014 verified in primary full-text XML",
       "applies": [
         "upper-blepharoplasty",
         "lower-blepharoplasty"
       ],
       "metric": "Blepharoplasty complication outcomes",
       "suitability": "Clinical safety context, not a quantified cosmetic shape target",
-      "license_verification_status": "pending_independent_figure_and_article_review"
+      "license_verification_status": "article_license_verified_figure_processing_not_cleared",
+      "title": "Complications in blepharoplasty: how to avoid and manage them",
+      "doi": "10.1590/S1808-86942011000300009",
+      "article_license_verified": true,
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "verification_date": "2026-10-09",
+      "verification_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9443734/fullTextXML",
+      "verification_sha256": "4e600336ae8b92bdb02b4fceca68ff1fe05acdaa2b7d8880b65c992303957033",
+      "figure_review_status": "captions_and_credit_fields_reviewed_no_patient_photos_processed",
+      "figure_reuse_permission": "not_confirmed",
+      "review_note": "Complication and repair photographs, not typical isolated cosmetic outcomes; no consent statement found in reviewed XML.",
+      "reviewed_figure_ids": [
+        "gra1",
+        "fig1",
+        "fig2",
+        "fig3",
+        "fig4"
+      ]
     }
   ],
   "procedures": [
@@ -109,7 +252,7 @@
         "rhinoplasty2"
       ],
       "figure_reuse_permission": "not_confirmed",
-      "individual_patient_image_files_downloaded": 0,
+      "individual_patient_image_files_downloaded": 1,
       "measured_real_before_after_pairs": 0,
       "actual_app_simulation_compared_to_real_pairs": false,
       "clinically_calibrated": false,
@@ -117,7 +260,8 @@
       "quantitative_compatibility": "requires_domain_specific_measurement",
       "next_action": "Identify an applicable CC BY/CC0 adult study with standardized, compatible measurements.",
       "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
-      "article_license_candidate_sources": []
+      "article_license_candidate_sources": [],
+      "image_diagnostic_note": "One temporary side-profile figure reviewed and excluded from frontal metric comparison."
     },
     {
       "procedure_id": "revision-rhinoplasty",
@@ -386,17 +530,20 @@
         "lip3d2"
       ],
       "figure_reuse_permission": "not_confirmed",
-      "individual_patient_image_files_downloaded": 0,
-      "measured_real_before_after_pairs": 0,
-      "actual_app_simulation_compared_to_real_pairs": false,
+      "individual_patient_image_files_downloaded": 4,
+      "measured_real_before_after_pairs": 2,
+      "actual_app_simulation_compared_to_real_pairs": true,
       "clinically_calibrated": false,
-      "benchmark_status": "article_candidate_found_rights_and_metrics_pending",
+      "benchmark_status": "exploratory_image_diagnostics_not_calibration",
       "quantitative_compatibility": "requires_domain_specific_measurement",
-      "next_action": "Check the source article and each figure's rights, adult status, consent, camera standardization, and exact measurement definitions before processing images.",
+      "next_action": "Acquire a larger independent set with visible reference landmarks, matched capture and treatment metadata, and manual measurement review.",
       "blocked_reason": "No authorized standardized paired patient images and validated matched metric pipeline for this procedure",
       "article_license_candidate_sources": [
         "lip_3d_ccby"
-      ]
+      ],
+      "exploratory_simulation_comparisons": 2,
+      "exploratory_independent_individuals": 1,
+      "published_diagnostic_summary": "research/published_image_comparison_summary.json"
     },
     {
       "procedure_id": "cheek-filler",
@@ -1158,10 +1305,16 @@
   "summary": {
     "procedures": 54,
     "article_license_candidates": 8,
-    "clinical_images_downloaded": 0,
-    "real_pair_simulation_comparisons": 0,
+    "clinical_images_downloaded": 5,
+    "real_pair_simulation_comparisons": 2,
     "procedures_clinically_calibrated": 0,
     "procedures_with_article_candidates": 9,
-    "articles_with_figure_reuse_verified": 0
+    "articles_with_figure_reuse_verified": 0,
+    "articles_with_verified_article_license": 8,
+    "temporary_figure_files_acquired": 5,
+    "retained_patient_image_files": 0,
+    "exploratory_simulator_comparisons": 2,
+    "independent_individuals_in_exploratory_comparisons": 1,
+    "calibration_eligible_comparisons": 0
   }
 }

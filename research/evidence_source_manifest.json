@@ -4,7 +4,9 @@
     "image_reuse": "Verify the license on each figure, check third-party exclusions, confirm appropriate patient permissions, retain source and attribution, and review intended commercial use before downloading or displaying any clinical photograph.",
     "measurement": "Use standardized, same-person before/after photographs, compatible camera angles, expression and timing. Never treat observed deltas as an individual outcome guarantee.",
     "automated_training": false,
-    "downloaded_images": 0
+    "downloaded_images": 5,
+    "retained_images": 0,
+    "published_diagnostic_summary": "research/published_image_comparison_summary.json"
   },
   "geometry": {
     "name": "MediaPipe canonical 468-vertex face OBJ",

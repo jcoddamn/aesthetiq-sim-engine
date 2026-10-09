@@ -35,7 +35,17 @@
       ],
       "compatibility": "NOT directly comparable to normalized 2D MediaPipe landmark ratios; requires validated 3D volume calibration",
       "source_license": "CC BY 4.0 article, figure rights must be checked",
-      "calibration_applied": false
+      "calibration_applied": false,
+      "verification": {
+        "date": "2026-10-09",
+        "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9369503/fullTextXML",
+        "locations": [
+          "Results: aggregate lip volume paragraph",
+          "Table 2: upper and lower lip fullness"
+        ],
+        "status": "listed_values_match_primary_full_text",
+        "patient_photos_processed": 0
+      }
     },
     {
       "procedure": "microneedling-and-chemical-peel",
@@ -51,7 +61,7 @@
         }
       ],
       "compatibility": "NOT directly comparable to AesthetIQ brightness/blur filters; requires independent skin texture and scar scoring",
-      "source_license": "CC BY-NC-SA 4.0 — no commercial image reuse without permission",
+      "source_license": "CC BY-NC-SA 4.0 \u2014 no commercial image reuse without permission",
       "calibration_applied": false
     },
     {

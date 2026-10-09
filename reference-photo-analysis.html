@@ -1,84 +1,11 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AesthetIQ | Reference Photo Measurement</title><meta name="robots" content="noindex,nofollow,noarchive">
-<style>
-:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#0c1120;color:#f8fafc}
-body{max-width:820px;margin:30px auto;padding:16px}a{color:#c4b5fd}
-label{display:block;margin:15px 0}input,select,button{font:inherit;padding:10px;border-radius:8px}
-button{background:#6d28d9;color:white;border:0;cursor:pointer}button:disabled{opacity:.5}
-pre{overflow:auto;white-space:pre-wrap;background:#172033;border-radius:12px;padding:16px}
-small{color:#cbd5e1}img{max-width:44%;height:auto;margin-right:2%;border-radius:8px}
-</style>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-</head><body>
-<a href="index.html">← AesthetIQ</a>
-<h1>Reference photo measurement</h1>
-<p>Research utility: compare facial landmark ratios from two standardized, authorized photographs of the <strong>same person</strong>. It does not train the simulator, estimate clinical outcomes, or upload photos to a server.</p>
-<label>Procedure <select id="procedure">
-<option value="rhinoplasty">Rhinoplasty</option>
-<option value="revision-rhinoplasty">Revision Rhinoplasty</option>
-<option value="chin-filler">Chin</option>
-<option value="cheek-filler">Cheek</option>
-<option value="jawline-filler">Jawline</option>
-<option value="facelift">Facelift</option>
-<option value="upper-blepharoplasty">Upper Blepharoplasty</option>
-<option value="lower-blepharoplasty">Lower Blepharoplasty</option>
-<option value="brow-lift">Brow Lift</option>
-<option value="lip-lift">Lip Lift</option>
-</select></label>
-<label>Before photograph <input type="file" id="before" accept="image/*"></label>
-<label>After photograph <input type="file" id="after" accept="image/*"></label>
-<label><input type="checkbox" id="consent"> I have permission to analyze both images and confirm they show the same person.</label>
-<button id="analyze">Compare measurements</button>
-<p id="status" role="status" aria-live="polite"></p>
-<div id="images"></div>
-<pre id="results">No measurements yet.</pre>
-<button id="export" disabled>Export measurement JSON</button>
-<p><small>Standardize camera distance, lighting, expression, angle and timing. Do not infer millimeters from normalized landmarks without an external scale. No individual patient's appearance should be reproduced or stored without appropriate consent.</small></p>
+<meta name="robots" content="noindex,nofollow,noarchive"><title>AesthetIQ | Reference Photo Measurement</title></head>
+<body><main><h1>Reference photo measurement</h1><p id="notice">This research tool runs only on a local development host.</p></main>
 <script type="module">
-import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js";
-import {measureClinicalPhotoPair} from "./js/clinicalPhotoCalibration.js?v=1";
-if(!["localhost","127.0.0.1","[::1]"].includes(location.hostname)){
- document.body.replaceChildren();
- const message=document.createElement("p");
- message.textContent="This development-only research tool is disabled on public hosts.";
- document.body.append(message);
- throw new Error("Reference photo analysis is disabled on public hosts.");
+if(["localhost","127.0.0.1","[::1]"].includes(location.hostname)){
+ location.replace("./clinical-evidence-audit.html");
+}else{
+ document.getElementById("notice").textContent="Clinical photo analysis is disabled on public app hosts.";
 }
-const $=id=>document.getElementById(id);
-let last=null;
-async function load(file){
- if(!file)throw Error("Select both photographs.");
- const image=await createImageBitmap(file);
- const canvas=document.createElement("canvas");
- const scale=Math.min(1,1280/Math.max(image.width,image.height));
- canvas.width=Math.round(image.width*scale);
- canvas.height=Math.round(image.height*scale);
- canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
- image.close();return canvas;
-}
-$("analyze").onclick=async()=>{
- $("export").disabled=true;last=null;
- if(!$("consent").checked){$("status").textContent="Confirm permission before analyzing.";return;}
- $("analyze").disabled=true;$("status").textContent="Measuring…";
- try{
- const before=await load($("before").files[0]);
- const after=await load($("after").files[0]);
- const b=await detectFaceLandmarksFromImage(before);
- const a=await detectFaceLandmarksFromImage(after);
- last=measureClinicalPhotoPair(b,a,$("procedure").value);
- $("results").textContent=JSON.stringify(last,null,2);
- $("images").replaceChildren(before,after);
- $("status").textContent=last.comparable?"Measurements ready.":"Measurements ready with alignment warnings.";
- $("export").disabled=false;
- }catch(e){$("status").textContent=e.message||String(e);}
- finally{$("analyze").disabled=false;}
-};
-$("export").onclick=()=>{
- if(!last)return;
- const blob=new Blob([JSON.stringify(last,null,2)],{type:"application/json"});
- const url=URL.createObjectURL(blob);
- const a=document.createElement("a");a.href=url;a.download="aesthetiq-photo-measurements.json";a.click();
- setTimeout(()=>URL.revokeObjectURL(url),1000);
-};
 </script></body></html>

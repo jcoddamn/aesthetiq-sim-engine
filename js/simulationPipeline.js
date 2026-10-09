@@ -32,7 +32,7 @@ import {
   warpUpperBlepharoplasty,
   warpLowerBlepharoplasty,
   warpLipLift
-} from "./faceWarp.js?v=24";
+} from "./faceWarp.js?v=25";
 
 import {
   renderWarp,
@@ -496,7 +496,8 @@ function createWarpedLandmarks(
   procedureOption = "",
   lipStyle = "classic",
   fillerProduct = "provider",
-  fillerGoal = "balanced"
+  fillerGoal = "balanced",
+  imageSize = null
 ) {
   if (!Array.isArray(landmarks)) {
     return landmarks;
@@ -512,7 +513,8 @@ function createWarpedLandmarks(
         tissueModel,
         lipStyle,
         fillerProduct,
-        fillerGoal
+        fillerGoal,
+        imageSize
       );
 
     return applyLandmarkConstraints(
@@ -805,7 +807,8 @@ function createSimulationLevel({
         procedureOption,
         lipStyle,
         fillerProduct,
-        fillerGoal
+        fillerGoal,
+        {width:sourceCanvas.width,height:sourceCanvas.height}
       );
 
     workingLandmarks =
