@@ -15,7 +15,7 @@ import {
 
 import {
   applyTreatmentEffect
-} from "./treatmentEffects.js?v=11";
+} from "./treatmentEffects.js?v=12";
 
 import {
   createMaskDebugCanvas
@@ -33,20 +33,12 @@ import {
   warpUpperBlepharoplasty,
   warpLowerBlepharoplasty,
   warpLipLift
-} from "./faceWarp.js?v=25";
+} from "./faceWarp.js?v=26";
 
 import {
   renderWarp,
   getFaceTriangles
-} from "./warpRenderer.js?v=3";
-
-import {
-  MeshRenderer
-} from "./meshRenderer.js?v=7";
-
-import {
-  applySoftTissueLighting
-} from "./softTissueLighting.js";
+} from "./warpRenderer.js?v=4";
 
 import {
   getProcedureConstraints
@@ -71,60 +63,6 @@ import {inspectWarp,moderateWarp,inspectRender} from "./simulationQuality2D.js?v
 import {preserveSkinDetail} from "./skinDetail2D.js?v=1";
 import {refineDentalAppearanceMask} from "./dentalAppearanceMask2D.js?v=1";
 import {depthAwareWarp} from "./depthAwareWarp2D.js?v=1";
-
-const meshRenderer =
-  new MeshRenderer();
-
-const LIP_RENDER_INDICES =
-  new Set([
-    // Outer upper lip
-    61, 185, 40, 39, 37,
-    0, 267, 269, 270, 409, 291,
-
-    // Outer lower lip
-    146, 91, 181, 84,
-    17, 314, 405, 321, 375,
-
-    // Inner upper lip
-    78, 191, 80, 81, 82,
-    13, 312, 311, 310, 415, 308,
-
-    // Inner lower lip
-    95, 88, 178, 87,
-    14, 317, 402, 318, 324,
-
-    // Immediate upper-lip skin
-    164, 167, 165, 92, 186,
-    57, 43, 106, 182, 83,
-    18, 313, 406, 335, 273,
-    287, 410, 322, 391, 393,
-
-    // Immediate side transition
-    205, 50, 187, 207,
-    206, 203, 129, 202, 214,
-    425, 280, 411, 427,
-    426, 423, 358, 422, 434,
-
-    // Lower-lip transition
-    200, 199, 175,
-    208, 201, 194,
-    428, 421, 418
-  ]);
-
-const lipTriangles =
-  getFaceTriangles().filter(
-    (triangle) =>
-      Array.isArray(triangle) &&
-      triangle.length >= 3 &&
-      triangle.every(
-        (index) =>
-          LIP_RENDER_INDICES.has(index)
-      )
-  );
-
-meshRenderer.setTriangles(
-  lipTriangles
-);
 
 // Keep enabled while testing facial regions.
 let DEBUG_MASKS = true;
@@ -843,65 +781,10 @@ function createSimulationLevel({
       }
     }
 
-    if (
-      normalizedProcedure ===
-      "lip-filler"
-    ) {
-      console.log(
-        "[AesthetIQ] MESH RENDER TEST",
-        {
-          originalCount:
-            landmarks?.length,
+    // Render the complete displacement field, including surrounding skin.
+    // A lip-only composite clipped out support motion and retained old edges.
+    workingCanvas = renderWarp(sourceCanvas,landmarks,workingLandmarks);
 
-          warpedCount:
-            workingLandmarks?.length
-        }
-      );
-
-      try {
-        const meshCanvas =
-          meshRenderer.render(
-            sourceCanvas,
-            landmarks,
-            workingLandmarks
-          );
-
-        if (!meshCanvas) {
-          throw new Error(
-            "MeshRenderer returned no canvas."
-          );
-        }
-
-        workingCanvas =
-          meshCanvas;
-
-      } catch (error) {
-        console.error(
-          "[AesthetIQ] MeshRenderer failed:",
-          error
-        );
-
-        workingCanvas =
-          copyCanvas(sourceCanvas);
-
-        setTimeout(() => {
-          alert(
-            `MeshRenderer failed: ${
-              error?.message ||
-              String(error)
-            }`
-          );
-        }, 0);
-      }
-
-    } else {
-      workingCanvas =
-        renderWarp(
-          sourceCanvas,
-          landmarks,
-          workingLandmarks
-        );
-    }
   }
 
   const {
@@ -1020,19 +903,6 @@ function createSimulationLevel({
       dentalMesh
     );
 
-  if (
-    normalizedProcedure ===
-    "lip-filler"
-  ) {
-    resultCanvas =
-      applySoftTissueLighting(
-        resultCanvas ||
-          workingCanvas,
-
-        maskCanvas,
-        level
-      );
-  }
 
   if ([
     "chemical-peel","laser-resurfacing","co2-laser",

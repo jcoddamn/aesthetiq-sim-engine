@@ -319,36 +319,8 @@ export function simulateLipFiller(
   maskCanvas,
   level = "balanced"
 ) {
-  const intensity =
-    getIntensityValue(level);
-
-  const featheredMask =
-    featherMask(maskCanvas, 10);
-
-  const saturate =
-    1 + intensity * 0.24;
-
-  const brighten =
-    1 + intensity * 0.06;
-
-  const contrast =
-    1 + intensity * 0.08;
-
-  const blur =
-    intensity * 0.35;
-
-  const effectCanvas =
-    createEffectLayer(
-      sourceCanvas,
-      `saturate(${saturate}) brightness(${brighten}) contrast(${contrast}) blur(${blur}px)`
-    );
-
-  return applyMaskedLayer(
-    sourceCanvas,
-    effectCanvas,
-    featheredMask,
-    0.46 + intensity * 0.32
-  );
+  // Filler changes shape, not pigment. Geometry is already rendered upstream.
+  return cloneCanvas(sourceCanvas);
 }
 
 // ---------------------------------------------------------

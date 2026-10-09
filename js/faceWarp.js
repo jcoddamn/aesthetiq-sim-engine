@@ -1,3 +1,4 @@
+import {FACE_TRIANGLES} from './faceTopology.js';
 import {
   getLipIntensityProfile,
   getLipStyleProfile
@@ -2250,6 +2251,35 @@ export function warpFacelift(
 
   applySide(left, -1);
   applySide(right, 1);
+
+  // Carry the lift through the cheek/jowl tissue, rather than changing only
+  // fourteen silhouette points. Keep eyes, nose and mouth fixed.
+  const drivers=new Set([...left,...right]);
+  const protectedIds=new Set([33,133,159,145,263,362,386,374,61,291,0,13,14,17,1,2,4,5,6,168]);
+  const adjacency=Array.from({length:landmarks.length},()=>new Set());
+  for(const tri of FACE_TRIANGLES)for(const i of tri)for(const j of tri)if(i!==j)adjacency[i]?.add(j);
+  const weights=new Map([...drivers].map(i=>[i,1]));
+  let frontier=[...drivers];
+  for(let ring=1;ring<=3;ring++){
+    const next=[];
+    for(const i of frontier)for(const j of adjacency[i]){
+      if(weights.has(j)||protectedIds.has(j))continue;
+      weights.set(j,[1,.72,.4,.16][ring]);next.push(j);
+    }
+    frontier=next;
+  }
+  const centerX=(landmarks[234].x+landmarks[454].x)/2;
+  for(const [i,weight] of weights){
+    if(drivers.has(i))continue;
+    const p=landmarks[i];
+    // Do not lift the upper eye/forehead or the central nose/mouth region.
+    const eyeY=(landmarks[33].y+landmarks[263].y)/2;
+    const halfWidth=Math.abs(landmarks[454].x-landmarks[234].x)/2;
+    const side=Math.abs(p.x-centerX)/Math.max(.001,halfWidth);
+    if(p.y<=eyeY||side<.32)continue;
+    const direction=p.x<centerX?-1:1;
+    result[i]={...p,x:p.x+direction*lateral*weight,y:p.y-lift*weight};
+  }
 
   return result;
 }

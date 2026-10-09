@@ -266,6 +266,22 @@ export function renderWarp(
     return outputCanvas;
   }
 
+  // Warp an exterior support ring first, so moving the face outline replaces
+  // its old pixels instead of drawing a new outline over an unchanged face.
+  const oval=[10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109];
+  const sourceOval=oval.map(i=>toCanvasPoint(originalLandmarks[i],outputCanvas.width,outputCanvas.height));
+  const targetOval=oval.map(i=>toCanvasPoint(warpedLandmarks[i],outputCanvas.width,outputCanvas.height));
+  if(sourceOval.every(Boolean)&&targetOval.every(Boolean)){
+    const center=sourceOval.reduce((p,v)=>({x:p.x+v.x/oval.length,y:p.y+v.y/oval.length}),{x:0,y:0});
+    const outer=sourceOval.map(p=>({x:center.x+(p.x-center.x)*1.3,y:center.y+(p.y-center.y)*1.3}));
+    for(let i=0;i<oval.length;i++){
+      const j=(i+1)%oval.length;
+      if(sourceOval[i].x===targetOval[i].x&&sourceOval[i].y===targetOval[i].y&&sourceOval[j].x===targetOval[j].x&&sourceOval[j].y===targetOval[j].y)continue;
+      drawWarpedTriangle(context,sourceCanvas,[sourceOval[i],outer[i],outer[j]],[targetOval[i],outer[i],outer[j]]);
+      drawWarpedTriangle(context,sourceCanvas,[sourceOval[i],outer[j],sourceOval[j]],[targetOval[i],outer[j],targetOval[j]]);
+    }
+  }
+
   triangles.forEach(
     ([first, second, third]) => {
       const sourceTriangle = [
@@ -314,6 +330,8 @@ export function renderWarp(
       ) {
         return;
       }
+
+      if(sourceTriangle.every((p,i)=>p.x===targetTriangle[i].x&&p.y===targetTriangle[i].y))return;
 
       drawWarpedTriangle(
         context,
