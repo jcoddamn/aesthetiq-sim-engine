@@ -16,13 +16,18 @@ function openDB(){
 }
 async function transact(mode,action){
  const db=await openDB();
- try{return await new Promise((resolve,reject)=>{
-  const tx=db.transaction(STORE,mode);
-  const req=action(tx.objectStore(STORE));
-  req.onsuccess=()=>resolve(req.result);
-  req.onerror=()=>reject(req.error||Error("Local scan operation failed."));
-  tx.onabort=()=>reject(tx.error||Error("Local scan transaction aborted."));
- });}finally{db.close();}
+ try{
+  return await new Promise((resolve,reject)=>{
+   const tx=db.transaction(STORE,mode);
+   let result;
+   const req=action(tx.objectStore(STORE));
+   req.onsuccess=()=>{result=req.result;};
+   req.onerror=()=>reject(req.error||Error("Local scan operation failed."));
+   tx.oncomplete=()=>resolve(result);
+   tx.onerror=()=>reject(tx.error||Error("Local scan transaction failed."));
+   tx.onabort=()=>reject(tx.error||Error("Local scan transaction aborted."));
+  });
+ }finally{db.close();}
 }
 function canvasBlob(canvas){
  return new Promise((resolve,reject)=>{
