@@ -1,3 +1,4 @@
+import {createComparisonCanvas} from './comparisonExport.js';
 import {preparePreviewSource} from './previewInput.js';
 import {renderMeasurementCoverage,renderPreviewMeasurements} from './measurementCoverageUI.js';
 import {
@@ -1905,6 +1906,21 @@ async function handlePhotoUpload(event) {
 // =========================================================
 // SAVE AND VIEWER
 // =========================================================
+
+function saveMatchedComparison() {
+  if(!capturedCanvas||!simulationResults)return;
+  try {
+    const stage=getRecoveryStage(currentProcedure,selectedRecoveryStage);
+    const rendered=renderRecoveryIllustration(capturedCanvas,getSelectedResultCanvas(),stage,currentProcedure);
+    const variant=currentProcedure==="lip-filler"?selectedLipStyle:selectedOption;
+    const label=[currentProcedure,variant,selectedLevel,stage.label,"Illustrative preview"].filter(Boolean).join(" · ");
+    const canvas=createComparisonCanvas(capturedCanvas,rendered,label);
+    const link=document.createElement('a');link.download=`aesthetiq-${currentProcedure}-${selectedLevel}-comparison.png`;
+    link.href=canvas.toDataURL('image/png');link.click();
+    setStatus('Matched comparison saved','ready');
+  }catch(error){setStatus(error.message,'error');}
+}
+document.getElementById('saveComparisonButton')?.addEventListener('click',saveMatchedComparison);
 
 function saveCurrentSimulation() {
   const selectedCanvas =

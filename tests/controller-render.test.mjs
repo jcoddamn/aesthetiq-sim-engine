@@ -21,7 +21,7 @@ test('controller initializes and displays generated results after a completed pr
  w.startFaceTracking=()=>{};w.stopFaceTracking=()=>{};
  source=source.replace(/import\s*\{[\s\S]*?\}\s*from\s*["'][^"']+["'];/g,'');
  try{
-  w.eval(source);
+  w.eval(source+'\nwindow.inspectTestResult=()=>({simulationResults,selectedLevel});');
   const canvas=w.document.createElement('canvas');canvas.width=256;canvas.height=256;const ctx=canvas.getContext('2d');for(let y=0;y<256;y+=4)for(let x=0;x<256;x+=4){ctx.fillStyle=(x+y)%8?'#b38d77':'#795340';ctx.fillRect(x,y,4,4);}
   w.testCaptures={straight:{imageCanvas:canvas,landmarks},left:{imageCanvas:canvas,landmarks},right:{imageCanvas:canvas,landmarks}};
   w.eval('handlePrecisionScanComplete(testCaptures)');
@@ -30,6 +30,14 @@ test('controller initializes and displays generated results after a completed pr
   assert.equal(w.document.getElementById('resultsSection').style.display,'block');
   const pixels=()=>Buffer.from(backing(result).getContext('2d').getImageData(0,0,256,256).data);
   const balanced=pixels();
+  const lipArea=landmarks=>{
+    const ids=[61,185,40,39,37,0,267,269,270,409,291,375,321,405,314,17,84,181,91,146];
+    return Math.abs(ids.reduce((sum,id,i)=>{const next=landmarks[ids[(i+1)%ids.length]],p=landmarks[id];return sum+p.x*next.y-next.x*p.y;},0))/2;
+  };
+  w.testLipArea=lipArea;
+  assert.ok(lipArea(w.inspectTestResult().simulationResults.landmarksByLevel.balanced)>lipArea(landmarks)*1.02, 'Classic Balanced must grow lip area after the Precision anatomy/tissue path');
+  assert.match(w.document.getElementById('resultStateLabel')?.textContent||w.inspectTestResult().selectedLevel,/balanced/i);
+
   w.document.querySelector('[data-level="enhanced"]').click();
   assert.notDeepEqual(pixels(),balanced,'Intensity buttons must display distinct rendered images');
   w.document.getElementById('showOriginalButton').click();
