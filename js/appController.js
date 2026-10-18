@@ -1,4 +1,4 @@
-import {createComparisonCanvas} from './comparisonExport.js';
+import {createComparisonCanvas} from './comparisonExport.js?v=2';
 import {preparePreviewSource} from './previewInput.js';
 import {renderMeasurementCoverage,renderPreviewMeasurements} from './measurementCoverageUI.js';
 import {
@@ -12,7 +12,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=33";
+} from "./simulationPipeline.js?v=47";
 
 import {
   getProcedureLabel,
@@ -41,10 +41,11 @@ import {
 import {saveApproved3DScan} from "./precision3dStore.js?v=2";
 
 import {
+  getProcedureJourney,
   getRecoveryTimeline,
   getRecoveryStage
-} from "./recoveryTimeline.js?v=1";
-import {renderRecoveryIllustration} from "./recoveryIllustration2D.js?v=1";
+} from "./recoveryTimeline.js?v=2";
+import {renderRecoveryIllustration} from "./recoveryIllustration2D.js?v=2";
 
 import {
   drawPolygonOutline
@@ -66,10 +67,6 @@ import {
   buildTissueModel
 } from "./tissueModel.js";
 
-
-// =========================================================
-// CONFIGURATION
-// =========================================================
 
 const DEBUG_MODE = false;
 
@@ -98,12 +95,11 @@ const selectedFillerGoal =
 
 const selectedNeuromodulatorProduct =
   params.get("neuromodulator") ||
-  selectedOption ||
+  (selectedOption === "standard-treatment" ? "botox" : selectedOption) ||
   "botox";
 
 const selectedPreviewIntensity =
-  params.get("intensity") ||
-  "balanced";
+  normalizePreviewIntensity(params.get("intensity"));
 
 const selectedLipIntensity =
   selectedPreviewIntensity;
@@ -115,10 +111,13 @@ let processingPhoto = false;
 let generatingPreview = false;
 let latestLandmarks = null;
 let capturedCanvas = null;
+let capturedLandmarks = null;
 let latest3DCaptures = null;
 let simulationResults = null;
 let selectedLevel = "balanced";
-let selectedRecoveryStage = "final";
+let selectedRecoveryStage = params.get("stage") || "final";
+let showRecoveryEffects = params.get("recovery") !== "0";
+let showRecoveryBruising = params.get("bruising") === "1";
 let viewingOriginal = false;
 
 const smoothLandmarks =
@@ -175,6 +174,18 @@ const recoveryStageNoteElement =
   document.getElementById(
     "recoveryStageNote"
   );
+
+const recoveryStageCareElement = document.getElementById("recoveryStageCare");
+const recoveryStageWarningElement = document.getElementById("recoveryStageWarning");
+const recoveryEffectsControls = document.getElementById("recoveryEffectsControls");
+const recoveryEffectsToggle = document.getElementById("recoveryEffectsToggle");
+const recoveryBruisingToggle = document.getElementById("recoveryBruisingToggle");
+const recoverySourceDetails = document.getElementById("recoverySourceDetails");
+const recoveryLimitsElement = document.getElementById("recoveryLimits");
+const recoverySourcesElement = document.getElementById("recoverySources");
+const guidedTimelineEntry = document.getElementById("guidedTimelineEntry");
+const guidedTimelineLink = document.getElementById("guidedTimelineLink");
+const guidedTimelineNote = document.getElementById("guidedTimelineNote");
 
 const trackingStatus =
   document.getElementById("trackingStatus");
@@ -377,10 +388,6 @@ const precisionCapture =
       handlePrecisionScanComplete
   });
 
-// =========================================================
-// INITIALIZATION
-// =========================================================
-
 initApp();
 
 function initApp() {
@@ -396,6 +403,8 @@ function initApp() {
   updateProcedureInformation();
   renderRecoveryTimeline();
   bindControls();
+  updateIntensityButtons();
+  updateCompareButtons();
 
   if (DEBUG_MODE) {
     developmentTools?.classList.add(
@@ -456,7 +465,6 @@ function initApp() {
   startPreviewLoop();
 }
 
-// =========================================================
 function updateProcedureInformation() {
   renderMeasurementCoverage(document.getElementById("measurementCoverage"),currentProcedure);
   const procedureData =
@@ -551,10 +559,6 @@ function getSelectedTreatmentLabel(option) {
     )
     .join(" ");
 }
-// =========================================================
-// CONTROLS
-// =========================================================
-
 function bindControls() {
   captureButton?.addEventListener(
     "click",
@@ -590,10 +594,10 @@ precisionScanButton?.addEventListener(
         "click",
         () => {
           selectedLevel =
-            button.dataset.level ||
-            "balanced";
+            normalizePreviewIntensity(button.dataset.level);
 
           updateIntensityButtons();
+          updateGuidedTimelineLink();
           viewingOriginal = false;
           updateCompareButtons();
           renderSelectedResult();
@@ -624,6 +628,18 @@ precisionScanButton?.addEventListener(
       renderSelectedResult();
     }
   );
+
+  recoveryEffectsToggle?.addEventListener("change", () => {
+    showRecoveryEffects = recoveryEffectsToggle.checked;
+    updateRecoveryTimelineUI();
+    renderSelectedResult();
+  });
+
+  recoveryBruisingToggle?.addEventListener("change", () => {
+    showRecoveryBruising = recoveryBruisingToggle.checked;
+    updateRecoveryTimelineUI();
+    renderSelectedResult();
+  });
 
   showOriginalButton?.addEventListener(
     "click",
@@ -1294,10 +1310,6 @@ function isLightingAcceptable() {
   }
 }
 
-// =========================================================
-// CAPTURE AND SIMULATION
-// =========================================================
-
 function captureAndGenerate() {
   if (!latestLandmarks) {
     setStatus(
@@ -1364,16 +1376,23 @@ function generateSimulation(
   generatingPreview = true;
   try {
     setCaptureLoading(true);
+    simulationResults = null;
+    if (resultsSection) {
+      resultsSection.hidden = true;
+      resultsSection.style.display = "none";
+    }
     capturedCanvas = preparePreviewSource(imageSource);
     imageSource = capturedCanvas;
+    // Keep the photo's points when the live camera moves.
+    capturedLandmarks = Array.isArray(landmarks)
+      ? landmarks.map(point => ({ ...point })) : null;
 
     setStatus(
       "Generating preview…",
       "loading"
     );
 
-    // Set the ACTIVE result level before
-    // running or rendering the simulation.
+    // Use the selected level before drawing the result.
     const usesSelectedPreviewIntensity =
       [
         "lip-filler",
@@ -1414,7 +1433,7 @@ function generateSimulation(
         procedure:
           currentProcedure,
 
-        landmarks,
+        landmarks: capturedLandmarks?.map(point => ({ ...point })),
 
         imageSource,
 
@@ -1493,6 +1512,7 @@ function generateSimulation(
 viewingOriginal = false;
 
     updateIntensityButtons();
+    updateGuidedTimelineLink();
     updateCompareButtons();
     renderSelectedResult();
 
@@ -1531,9 +1551,52 @@ viewingOriginal = false;
   }
 }
 
-// =========================================================
-// RESULT DISPLAY
-// =========================================================
+function normalizePreviewIntensity(value) {
+  const level = String(value || "").trim().toLowerCase();
+  return ["natural", "balanced", "enhanced"].includes(level) ? level : "balanced";
+}
+
+function getRecoveryContext() {
+  const productId = currentProcedure === "lip-filler"
+    ? selectedFillerProduct : selectedNeuromodulatorProduct;
+  const optionId = selectedOption === "standard-treatment"
+    ? currentProcedure === "lip-filler" ? "hyaluronic-acid"
+      : currentProcedure === "glabella-neuromodulator" ? selectedNeuromodulatorProduct : selectedOption
+    : selectedOption;
+  return { productId, optionId };
+}
+
+function getCurrentRecoveryStage() {
+  return getRecoveryStage(currentProcedure, selectedRecoveryStage, getRecoveryContext());
+}
+
+function updateGuidedTimelineLink() {
+  if (!guidedTimelineEntry || !guidedTimelineLink) return;
+  const journey = getProcedureJourney(currentProcedure, getRecoveryContext());
+  const eligible = !!journey && (currentProcedure !== "lip-filler"
+    || selectedLipStyle.trim().toLowerCase() === "classic");
+  guidedTimelineEntry.hidden = !eligible;
+  if (!eligible) {
+    guidedTimelineLink.removeAttribute("href");
+    return;
+  }
+
+  const destination = new URL("./journey.html", window.location.href);
+  destination.search = params.toString();
+  destination.searchParams.set("procedure", currentProcedure);
+  destination.searchParams.set("option", getRecoveryContext().optionId);
+  destination.searchParams.set("intensity", simulationResults ? selectedLevel : selectedPreviewIntensity);
+  destination.searchParams.set("stage", selectedRecoveryStage);
+  destination.searchParams.delete("day");
+  destination.searchParams.set("recovery", showRecoveryEffects ? "1" : "0");
+  destination.searchParams.set("bruising", showRecoveryBruising ? "1" : "0");
+  guidedTimelineLink.href = destination.href;
+  if (guidedTimelineNote) {
+    guidedTimelineNote.textContent = currentProcedure === "glabella-neuromodulator"
+      ? "Use paired relaxed and frown photos in the guided view. A single photo cannot separate expression lines from resting creases."
+      : "Follow Classic HA lip filler from the first day through a settled-result example, with capture guidance and source notes.";
+  }
+}
 
 function renderRecoveryTimeline() {
   if (!recoveryTimelineElement) {
@@ -1542,8 +1605,12 @@ function renderRecoveryTimeline() {
 
   const timeline =
     getRecoveryTimeline(
-      currentProcedure
+      currentProcedure,
+      getRecoveryContext()
     );
+  recoveryTimelineElement.dataset.detailed = String(
+    !!getProcedureJourney(currentProcedure, getRecoveryContext())
+  );
 
   recoveryTimelineElement.innerHTML =
     timeline
@@ -1552,6 +1619,7 @@ function renderRecoveryTimeline() {
           class="recovery-stage-button"
           data-stage="${stage.id}"
           type="button"
+          aria-pressed="false"
         >
           ${stage.label}
         </button>
@@ -1562,22 +1630,21 @@ function renderRecoveryTimeline() {
 }
 
 function updateRecoveryTimelineUI() {
-  const stage =
-    getRecoveryStage(
-      currentProcedure,
-      selectedRecoveryStage
-    );
+  const stage = getCurrentRecoveryStage();
+  selectedRecoveryStage = stage.id;
+  const journey = getProcedureJourney(currentProcedure, getRecoveryContext());
 
   document
     .querySelectorAll(
       ".recovery-stage-button"
     )
     .forEach(button => {
+      const active = button.dataset.stage === stage.id;
       button.classList.toggle(
         "active",
-        button.dataset.stage ===
-          stage.id
+        active
       );
+      button.setAttribute("aria-pressed", String(active));
     });
 
   if (recoveryStageTimingElement) {
@@ -1589,27 +1656,55 @@ function updateRecoveryTimelineUI() {
     recoveryStageNoteElement.textContent =
       stage.note;
   }
+  if (recoveryStageCareElement) {
+    recoveryStageCareElement.textContent = stage.care || "";
+    recoveryStageCareElement.hidden = !stage.care;
+  }
+  if (recoveryStageWarningElement) {
+    recoveryStageWarningElement.textContent = stage.contactWarning || "";
+    recoveryStageWarningElement.hidden = !stage.contactWarning;
+  }
+  if (recoveryEffectsControls) recoveryEffectsControls.hidden = !journey;
+  if (recoveryEffectsToggle) recoveryEffectsToggle.checked = showRecoveryEffects;
+  if (recoveryBruisingToggle) {
+    recoveryBruisingToggle.checked = showRecoveryBruising;
+    recoveryBruisingToggle.disabled = !showRecoveryEffects;
+  }
+  if (recoverySourceDetails) recoverySourceDetails.hidden = !journey;
+  if (recoveryLimitsElement) recoveryLimitsElement.textContent = journey?.coefficientNote || "";
+  if (recoverySourcesElement) {
+    recoverySourcesElement.replaceChildren();
+    for (const source of journey?.sources || []) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = source.url;
+      link.textContent = `${source.publisher}: ${source.title}`;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      item.append(link);
+      recoverySourcesElement.append(item);
+    }
+  }
+  updateGuidedTimelineLink();
+}
+
+function createCurrentRecoveryPreview(sourceCanvas = getSelectedResultCanvas()) {
+  if (!capturedCanvas || !sourceCanvas) return null;
+  return renderRecoveryIllustration(
+    capturedCanvas, sourceCanvas, getCurrentRecoveryStage(), currentProcedure,
+    {
+      sourceLandmarks: capturedLandmarks,
+      resultLandmarks: simulationResults?.landmarksByLevel?.[selectedLevel] || capturedLandmarks,
+      showRecovery: showRecoveryEffects,
+      showBruising: showRecoveryBruising
+    }
+  );
 }
 
 function renderRecoveryAdjustedResult(
   sourceCanvas,
   targetCanvas
 ) {
-  const stage =
-    getRecoveryStage(
-      currentProcedure,
-      selectedRecoveryStage
-    );
-
-  const progress =
-    Math.max(
-      0,
-      Math.min(
-        1,
-        Number(stage.resultProgress) || 0
-      )
-    );
-
   targetCanvas.width =
     capturedCanvas.width;
 
@@ -1630,14 +1725,14 @@ function renderRecoveryAdjustedResult(
     targetCanvas.height
   );
 
-  const illustrated = renderRecoveryIllustration(
-    capturedCanvas,sourceCanvas,stage,currentProcedure
-  );
+  const illustrated = createCurrentRecoveryPreview(sourceCanvas);
   context.drawImage(illustrated,0,0,targetCanvas.width,targetCanvas.height);
 }
 
 function renderSelectedResult() {
-  renderPreviewMeasurements(document.getElementById("previewMeasurements"),viewingOriginal?null:simulationResults?.measurements,selectedLevel);
+  const stage = getCurrentRecoveryStage();
+  const showMeasurements = !viewingOriginal && stage.id === "final";
+  renderPreviewMeasurements(document.getElementById("previewMeasurements"),showMeasurements?simulationResults?.measurements:null,selectedLevel);
   if (
     !resultCanvas ||
     !capturedCanvas
@@ -1672,14 +1767,9 @@ function renderSelectedResult() {
   );
 
   if (resultLabel) {
-    const stage =
-      getRecoveryStage(
-        currentProcedure,
-        selectedRecoveryStage
-      );
-
     resultLabel.textContent =
-      `${capitalize(selectedLevel)} • ${stage.label}`;
+      stage.id === "before" ? "Before treatment"
+        : `${capitalize(selectedLevel)} • ${stage.label}`;
   }
 }
 
@@ -1705,11 +1795,12 @@ function updateIntensityButtons() {
       ".intensity-button"
     )
     .forEach((button) => {
+      const active = button.dataset.level === selectedLevel;
       button.classList.toggle(
         "active",
-        button.dataset.level ===
-          selectedLevel
+        active
       );
+      button.setAttribute("aria-pressed", String(active));
     });
 }
 
@@ -1723,20 +1814,20 @@ function updateCompareButtons() {
     "active",
     !viewingOriginal
   );
+  showOriginalButton?.setAttribute("aria-pressed", String(viewingOriginal));
+  showSimulationButton?.setAttribute("aria-pressed", String(!viewingOriginal));
 }
-
-// =========================================================
-// RESET
-// =========================================================
 
 function resetSimulation() {
   capturedCanvas = null;
+  capturedLandmarks = null;
   latest3DCaptures = null;
   simulationResults = null;
   selectedRecoveryStage = "final";
   viewingOriginal = false;
 
   updateRecoveryTimelineUI();
+  updateCompareButtons();
 
   if (resultsSection) {
   resultsSection.classList.remove(
@@ -1780,10 +1871,6 @@ function resetSimulation() {
   );
 }
 
-// =========================================================
-// PHOTO UPLOAD
-// =========================================================
-
 async function handlePhotoUpload(event) {
   const file =
     event.target.files?.[0];
@@ -1809,16 +1896,12 @@ async function handlePhotoUpload(event) {
           "loading"
         );
 
-        capturedCanvas = preparePreviewSource(image);
+        const uploadedCanvas = preparePreviewSource(image);
 
-        /*
-         * IMPORTANT:
-         * Detect landmarks from the uploaded
-         * photo itself.
-         */
+        // Check the new photo before replacing the current capture.
         const uploadedLandmarks =
           await detectFaceLandmarksFromImage(
-            capturedCanvas
+            uploadedCanvas
           );
 
         if (
@@ -1839,14 +1922,10 @@ async function handlePhotoUpload(event) {
           "Face detected — generating preview…",
           "loading"
         );
-        latest3DCaptures = {straight:{imageCanvas:capturedCanvas,landmarks:uploadedLandmarks}};
+        latest3DCaptures = {straight:{imageCanvas:uploadedCanvas,landmarks:uploadedLandmarks}};
 
-        /*
-         * Use the uploaded photo's landmarks,
-         * not latestLandmarks from the camera.
-         */
         generateSimulation(
-          capturedCanvas,
+          uploadedCanvas,
           uploadedLandmarks
         );
 
@@ -1871,10 +1950,7 @@ async function handlePhotoUpload(event) {
           objectUrl
         );
 
-        /*
-         * Lets the same image be selected
-         * again if the user wants.
-         */
+        // Allow the same file to be picked again.
         if (event.target) {
           event.target.value = "";
         }
@@ -1903,19 +1979,19 @@ async function handlePhotoUpload(event) {
     objectUrl;
 }
 
-// =========================================================
-// SAVE AND VIEWER
-// =========================================================
-
 function saveMatchedComparison() {
   if(!capturedCanvas||!simulationResults)return;
   try {
-    const stage=getRecoveryStage(currentProcedure,selectedRecoveryStage);
-    const rendered=renderRecoveryIllustration(capturedCanvas,getSelectedResultCanvas(),stage,currentProcedure);
+    const stage=getCurrentRecoveryStage();
+    const rendered=createCurrentRecoveryPreview();
     const variant=currentProcedure==="lip-filler"?selectedLipStyle:selectedOption;
-    const label=[currentProcedure,variant,selectedLevel,stage.label,"Illustrative preview"].filter(Boolean).join(" · ");
+    const product=currentProcedure==="lip-filler"?getFillerProduct(selectedFillerProduct).name
+      :currentProcedure==="glabella-neuromodulator"?getNeuromodulatorProduct(selectedNeuromodulatorProduct).name:"";
+    const effects=getProcedureJourney(currentProcedure,getRecoveryContext())
+      ?showRecoveryEffects?showRecoveryBruising?"Recovery + bruising example":"Recovery example":"Recovery effects off":"";
+    const label=[getProcedureLabel(currentProcedure),variant,product,selectedLevel,stage.label,stage.timing,effects,"Illustrative preview"].filter(Boolean).join(" · ");
     const canvas=createComparisonCanvas(capturedCanvas,rendered,label);
-    const link=document.createElement('a');link.download=`aesthetiq-${currentProcedure}-${selectedLevel}-comparison.png`;
+    const link=document.createElement('a');link.download=`aesthetiq-${currentProcedure}-${selectedLevel}-${stage.id}-comparison.png`;
     link.href=canvas.toDataURL('image/png');link.click();
     setStatus('Matched comparison saved','ready');
   }catch(error){setStatus(error.message,'error');}
@@ -1926,7 +2002,7 @@ function saveCurrentSimulation() {
   const selectedCanvas =
     viewingOriginal
       ? capturedCanvas
-      : getSelectedResultCanvas();
+      : createCurrentRecoveryPreview();
 
   if (!selectedCanvas) {
     setStatus(
@@ -1946,7 +2022,7 @@ function saveCurrentSimulation() {
       currentProcedure,
       viewingOriginal
         ? "original"
-        : selectedLevel
+        : `${selectedLevel}-${getCurrentRecoveryStage().id}`
     ].join("-");
 
   link.download =

@@ -1,13 +1,5 @@
-// =========================================================
-// AESTHETIQ — RECOVERY / RESULT TIMELINE
-// File: js/recoveryTimeline.js
-// =========================================================
-//
-// Timeline stages are educational visualization states.
-// They do not predict an individual's healing time or
-// clinical outcome. Recovery varies by procedure, technique,
-// anatomy, health, aftercare, and treating clinician.
-// =========================================================
+// Keep swelling separate so the lips do not lose their shape as they heal.
+// The timelines show examples. They do not predict a person's recovery.
 
 const FILLER_PROCEDURES = new Set([
   "lip-filler",
@@ -330,6 +322,346 @@ const TIMELINES = {
   ]
 };
 
+const SOURCES = {
+  "aad-fillers": {
+    id: "aad-fillers",
+    title: "Fillers: FAQs",
+    publisher: "American Academy of Dermatology",
+    url: "https://www.aad.org/public/cosmetic/wrinkles/fillers-faqs",
+    summary: "HA fillers add volume immediately. Common temporary injection reactions often clear within 7–14 days or sooner."
+  },
+  "cleveland-lip-fillers": {
+    id: "cleveland-lip-fillers",
+    title: "Lip Fillers: What to Expect",
+    publisher: "Cleveland Clinic",
+    url: "https://my.clevelandclinic.org/health/treatments/22133-lip-fillers",
+    summary: "Describes variable early swelling and a follow-up visit around two weeks."
+  },
+  "fda-kysse-patient": {
+    id: "fda-kysse-patient",
+    title: "Restylane Kysse patient information",
+    publisher: "FDA / Galderma",
+    url: "https://www.accessdata.fda.gov/cdrh_docs/pdf14/P140029S021D.pdf",
+    summary: "The study allowed a four-week touch-up. The leaflet explains side effects and when to contact the treating clinician."
+  },
+  "galderma-kysse-ifu": {
+    id: "galderma-kysse-ifu",
+    title: "Restylane Kysse prescribing information",
+    publisher: "Galderma",
+    url: "https://www.galderma.com/us/sites/default/files/2023-05/Restylane_Kysse_eIFU_USA.pdf",
+    summary: "Clinical studies tracked early reactions across several time windows and found that response varied between people and products."
+  },
+  "botox-faq": {
+    id: "botox-faq",
+    title: "BOTOX Cosmetic frequently asked questions",
+    publisher: "AbbVie",
+    url: "https://www.botoxcosmetic.com/how-it-works/frequently-asked-questions",
+    summary: "For frown lines, results may start in 1–2 days, develop fully by 30 days, and last up to four months."
+  },
+  "botox-prescribing": {
+    id: "botox-prescribing",
+    title: "BOTOX Cosmetic prescribing information",
+    publisher: "AbbVie",
+    url: "https://www.rxabbvie.com/pdf/botox-cosmetic_pi.pdf",
+    summary: "Describes delayed onset, a roughly 3–4 month glabellar effect, and assessments at maximum frown."
+  },
+  "aad-neuromodulator": {
+    id: "aad-neuromodulator",
+    title: "Botulinum toxin therapy: FAQs",
+    publisher: "American Academy of Dermatology",
+    url: "https://www.aad.org/public/cosmetic/wrinkles/botulinum-toxin-faqs",
+    summary: "Explains targeted muscle relaxation, possible temporary injection reactions, and the need for a qualified clinician."
+  }
+};
+
+function journeyStage({
+  id, label, timing, day, phase, effectProgress,
+  swelling = 0, redness = 0, bruising = 0,
+  note, care, contactWarning = "", sourceIds = []
+}) {
+  return {
+    id, label, timing, day, phase,
+    resultProgress: effectProgress,
+    effectProgress, swelling, redness, bruising,
+    note, care, contactWarning, sourceIds
+  };
+}
+
+const COEFFICIENT_NOTE =
+  "Effect, swelling, redness and bruising values are drawing settings from 0 to 1. Moving between checkpoints interpolates the picture, not a clinical recovery percentage. These values are not measured healing rates, probabilities or dose estimates. Bruising is an optional example and is off by default.";
+
+const JOURNEYS = {
+  "lip-filler": {
+    id: "ha-lip-filler",
+    procedureId: "lip-filler",
+    title: "HA lip filler",
+    scopeLabel: "Classic HA lip filler recovery example",
+    stageLabel: "Recovery and settling",
+    defaultStageId: "final",
+    bruisingDefault: false,
+    evidenceBasis: "The recovery windows draw on AAD, Cleveland Clinic and Restylane Kysse labeling. Kysse is one reference, not a claim that all HA products behave alike.",
+    coefficientNote: COEFFICIENT_NOTE,
+    sources: ["aad-fillers", "cleveland-lip-fillers", "fda-kysse-patient", "galderma-kysse-ifu"].map(id => SOURCES[id]),
+    safetyInfo: {
+      eligibility: "The Kysse reference labeling is for adults 22 and older. A clinician must check whether treatment is suitable.",
+      common: [
+        "Swelling, tenderness, redness and sometimes bruising can follow injections.",
+        "These often improve within one to two weeks. Their amount and timing vary."
+      ],
+      contactClinician: [
+        "Contact the treating clinician if injection-site reactions last beyond 14 days.",
+        "Get advice for spreading redness, fever, drainage, increasing pain, recurring sores, or new symptoms weeks later."
+      ],
+      urgent: [
+        "Get emergency help for vision changes or stroke symptoms such as face drooping, weakness or trouble speaking.",
+        "Contact the treating clinician immediately for white or unusually pale skin or unusual pain during or shortly after treatment."
+      ]
+    },
+    limits: [
+      "This shows a possible shape change on your photo. Product, technique and personal response can change the outcome.",
+      "It does not measure tissue volume, plan injections or recommend a product.",
+      "Day 28 is a settled-result example, not a deadline for healing. Persistent symptoms need clinical advice.",
+      "Recovery effects are separate from the selected lip shape. The settled view keeps the original color and texture.",
+      "Later filler fading and repeat treatment are outside this 28-day example."
+    ],
+    stages: [
+      journeyStage({
+        id: "before", label: "Before", timing: "Before treatment", day: 0,
+        phase: "baseline", effectProgress: 0,
+        note: "Your starting photo, with no treatment or recovery changes.",
+        care: "Use a clear photo with relaxed, closed lips. A photo cannot determine whether treatment is suitable.",
+        sourceIds: ["cleveland-lip-fillers"]
+      }),
+      journeyStage({
+        id: "immediate", label: "Immediately after", timing: "Same day", day: 0,
+        phase: "recovery", effectProgress: 1, swelling: 0.32, redness: 0.36, bruising: 0.1,
+        note: "HA filler adds volume right away. Swelling or injection marks may make the lips look fuller or less even than the settled view.",
+        care: "Follow the treating clinician's aftercare instructions. This picture cannot show tenderness or assess symptoms.",
+        contactWarning: "Unusual pain, white skin or vision changes need immediate medical attention.",
+        sourceIds: ["aad-fillers", "fda-kysse-patient"]
+      }),
+      journeyStage({
+        id: "early", label: "Days 1–3", timing: "Early recovery", day: 2,
+        phase: "recovery", effectProgress: 1, swelling: 0.5, redness: 0.18, bruising: 0.4,
+        note: "This example shows more swelling early on. The amount and timing vary, and not everyone bruises.",
+        care: "Early appearance is not a reliable guide to the settled contour. Follow your clinician's advice.",
+        contactWarning: "Get prompt advice for worsening pain, spreading redness or other concerning changes.",
+        sourceIds: ["cleveland-lip-fillers", "galderma-kysse-ifu"]
+      }),
+      journeyStage({
+        id: "developing", label: "Days 4–7", timing: "First week", day: 7,
+        phase: "recovery", effectProgress: 1, swelling: 0.19, redness: 0.08, bruising: 0.22,
+        note: "Early reactions are easing in this example. The selected lip shape stays present while the added swelling decreases.",
+        care: "Recovery varies. The image should not be used to decide whether a real symptom is normal.",
+        contactWarning: "Increasing pain, drainage, fever or spreading redness needs clinical advice.",
+        sourceIds: ["aad-fillers", "fda-kysse-patient", "galderma-kysse-ifu"]
+      }),
+      journeyStage({
+        id: "settling", label: "Around 2 weeks", timing: "About day 14", day: 14,
+        phase: "settling", effectProgress: 1, swelling: 0.03, bruising: 0.02,
+        note: "Early swelling and bruising have largely eased in this example. Many people have a clearer view of the contour around this time.",
+        care: "A follow-up around two weeks can help the clinician review healing and the result.",
+        contactWarning: "If injection-site reactions continue beyond 14 days, contact the treating clinician.",
+        sourceIds: ["aad-fillers", "cleveland-lip-fillers", "fda-kysse-patient"]
+      }),
+      journeyStage({
+        id: "final", label: "Settled example", timing: "Around 4 weeks", day: 28,
+        phase: "settled", effectProgress: 1,
+        note: "The selected contour without added swelling, redness or bruising. This is an example of a settled result, not a promise of your outcome.",
+        care: "Review remaining concerns with the clinician. Any touch-up is a separate treatment and assessment.",
+        contactWarning: "Persistent or new swelling, pain or lumps needs advice; do not assume it is still settling.",
+        sourceIds: ["fda-kysse-patient", "galderma-kysse-ifu"]
+      })
+    ]
+  },
+  "glabella-neuromodulator": {
+    id: "botox-frown-lines",
+    procedureId: "glabella-neuromodulator",
+    title: "BOTOX Cosmetic frown lines",
+    scopeLabel: "BOTOX Cosmetic for lines between the eyebrows",
+    stageLabel: "Onset and return of movement",
+    defaultStageId: "final",
+    bruisingDefault: false,
+    evidenceBasis: "Timing comes from BOTOX Cosmetic labeling and patient information. These timing references do not apply to every neuromodulator product.",
+    coefficientNote: COEFFICIENT_NOTE,
+    sources: ["botox-faq", "botox-prescribing", "aad-neuromodulator"].map(id => SOURCES[id]),
+    safetyInfo: {
+      eligibility: "BOTOX Cosmetic frown-line labeling is for adults 18 and older. A clinician must assess the face, muscle activity and medical history.",
+      common: [
+        "Temporary redness, swelling, soreness or bruising can follow injections.",
+        "The wrinkle-relaxing effect develops over days. It is not an instant change."
+      ],
+      contactClinician: [
+        "Contact the treating clinician about a drooping eyelid or brow, unexpected weakness, or other symptoms that concern you.",
+        "Use a clinical review, not the preview slider, to decide whether or when to repeat treatment."
+      ],
+      urgent: [
+        "Get medical help right away for trouble breathing, swallowing or speaking. These symptoms can occur hours to weeks after injection."
+      ]
+    },
+    limits: [
+      "Compare a neutral face with a matched frown. A neutral selfie alone cannot show the effect on expression lines.",
+      "The preview illustrates reduced frown creasing. It does not measure muscle strength, choose injection sites or recommend a dose.",
+      "Static creases may remain. This is not an all-over skin-smoothing treatment.",
+      "Day 30 shows a full-effect example. The later views illustrate a possible return of movement, not an exact wear-off date.",
+      "Clinical responder rates are group results. They are not the percentage change in your face and are not used as drawing settings."
+    ],
+    stages: [
+      journeyStage({
+        id: "before", label: "Before", timing: "Before treatment", day: 0,
+        phase: "baseline", effectProgress: 0,
+        note: "Your starting neutral and frown photos, with no simulated treatment.",
+        care: "Use the same lighting, head position and requested expression for comparisons.",
+        sourceIds: ["botox-prescribing"]
+      }),
+      journeyStage({
+        id: "immediate", label: "Immediately after", timing: "Same day", day: 0,
+        phase: "recovery", effectProgress: 0, swelling: 0.08, redness: 0.12, bruising: 0.04,
+        note: "The full wrinkle-relaxing effect is not immediate. This view can show temporary injection-related marks without removing the frown lines.",
+        care: "Follow the treating clinician's aftercare instructions.",
+        contactWarning: "Get medical help right away for trouble breathing, swallowing or speaking.",
+        sourceIds: ["botox-prescribing", "aad-neuromodulator"]
+      }),
+      journeyStage({
+        id: "early", label: "Days 1–3", timing: "Onset may begin", day: 2,
+        phase: "onset", effectProgress: 0.2, swelling: 0.01, redness: 0.02, bruising: 0.12,
+        note: "BOTOX Cosmetic may start to take effect in 1–2 days. This example shows a small early change, not an immediate finished result.",
+        care: "Use the same requested frown when comparing photos. Onset differs between people.",
+        sourceIds: ["botox-faq", "botox-prescribing"]
+      }),
+      journeyStage({
+        id: "developing", label: "Days 4–7", timing: "Effect developing", day: 7,
+        phase: "developing", effectProgress: 0.7, bruising: 0.06,
+        note: "The effect develops through the first week. The frown appears less creased in this example while natural skin texture remains.",
+        care: "A matched expression is more useful for comparison than a relaxed photo alone.",
+        sourceIds: ["botox-prescribing", "aad-neuromodulator"]
+      }),
+      journeyStage({
+        id: "settling", label: "Around 2 weeks", timing: "About day 14", day: 14,
+        phase: "developing", effectProgress: 0.92,
+        note: "A more developed effect is shown here. Day 14 is a useful checkpoint, not a guaranteed final result for everyone.",
+        care: "Discuss unexpected changes or remaining concerns with the treating clinician.",
+        contactWarning: "A new drooping brow or eyelid, or unexpected weakness, needs clinical advice.",
+        sourceIds: ["botox-faq", "botox-prescribing"]
+      }),
+      journeyStage({
+        id: "final", label: "Full-effect example", timing: "Around day 30", day: 30,
+        phase: "established", effectProgress: 1,
+        note: "BOTOX Cosmetic describes full results by 30 days. This view shows the selected effect on frown creasing, with any remaining static lines preserved.",
+        care: "A clinician can review the result in person. The image cannot determine a dose or a treatment plan.",
+        sourceIds: ["botox-faq", "botox-prescribing"]
+      }),
+      journeyStage({
+        id: "wearing-off", label: "Around 3 months", timing: "Movement may return", day: 90,
+        phase: "wearing-off", effectProgress: 0.55,
+        note: "In this example, frown movement and lines are returning. Duration varies; there is no single wear-off date.",
+        care: "Discuss repeat treatment with the clinician. The slider is not a treatment schedule.",
+        sourceIds: ["botox-prescribing"]
+      }),
+      journeyStage({
+        id: "later", label: "Around 4 months", timing: "Further return of movement", day: 120,
+        phase: "wearing-off", effectProgress: 0.18,
+        note: "The example moves further toward the starting expression. Some people still have an effect at this point.",
+        care: "Use an assessment of your own result to discuss next steps with the clinician.",
+        sourceIds: ["botox-prescribing"]
+      })
+    ]
+  }
+};
+
+const HA_LIP_OPTIONS = new Set([
+  "", "hyaluronic-acid", "ha", "ha-filler", "juvederm", "restylane-kysse", "rha"
+]);
+
+const HA_LIP_PRODUCTS = new Set([
+  "", "provider", "hyaluronic-acid", "juvederm-ultra", "volbella",
+  "restylane-kysse", "kysse", "restylane-silk", "silk",
+  "belotero-intense", "belotero", "revanesse-lips", "revanesse", "rha2", "rha3"
+]);
+
+function contextIds(procedureId, context) {
+  const values = typeof context === "string" ? { productId: context } : (context || {});
+  const normalize = value => String(value?.id ?? value ?? "").trim().toLowerCase();
+  return {
+    optionId: normalize(values.optionId ?? values.option),
+    productId: normalize(values.productId ?? values.product ?? (
+      procedureId === "lip-filler" ? values.fillerProduct : values.neuromodulatorProduct
+    ))
+  };
+}
+
+export function getProcedureJourney(procedureId, context = {}) {
+  const { productId, optionId } = contextIds(procedureId, context);
+  const supported = procedureId === "lip-filler"
+    ? HA_LIP_OPTIONS.has(optionId) && HA_LIP_PRODUCTS.has(productId)
+    : procedureId === "glabella-neuromodulator"
+      && ["", "botox"].includes(productId) && ["", "botox"].includes(optionId);
+
+  if (!supported) return null;
+
+  // Callers can edit their copy without changing the next preview.
+  return JSON.parse(JSON.stringify(JOURNEYS[procedureId]));
+}
+
+const TRANSITION_NOTES = {
+  "lip-filler": {
+    immediate: "HA volume is already present. This example changes the early swelling and injection marks as you move through the first days.",
+    early: "Temporary swelling and optional bruising ease in this example while the selected lip contour stays present.",
+    developing: "The early reaction is settling in this example. The lip shape remains as the recovery effects decrease.",
+    settling: "This view moves toward the settled contour. Any persistent symptoms need clinical advice; the slider cannot assess healing."
+  },
+  "glabella-neuromodulator": {
+    immediate: "BOTOX Cosmetic may begin to take effect in 1–2 days. This is a sample transition, not an exact onset prediction.",
+    early: "The effect develops during the first week. This example gradually reduces frown creasing while keeping skin texture.",
+    developing: "This example continues to soften frown lines. Use the same requested expression to compare the change.",
+    settling: "This view moves toward the full-effect example at day 30. The amount of change is not a clinical prediction.",
+    final: "Frown movement and lines gradually return in this example. The duration and remaining effect vary between people.",
+    "wearing-off": "This example continues toward the starting expression. Some people still have an effect at four months."
+  }
+};
+
+export function getRecoveryStageAtDay(procedureId, day, context = {}) {
+  const journey = getProcedureJourney(procedureId, context);
+  if (!journey) return null;
+
+  const anchors = journey.stages.filter(item => item.id !== "before");
+  const first = anchors[0];
+  const last = anchors[anchors.length - 1];
+  const parsedDay = typeof day === "number" || (typeof day === "string" && day.trim())
+    ? Number(day) : NaN;
+  const selectedDay = Number.isNaN(parsedDay)
+    ? journey.stages.find(item => item.id === "final").day
+    : Math.max(first.day, Math.min(last.day, parsedDay));
+  const exact = anchors.find(item => item.day === selectedDay);
+  if (exact) return exact;
+
+  const nextIndex = anchors.findIndex(item => item.day > selectedDay);
+  const previous = anchors[nextIndex - 1];
+  const next = anchors[nextIndex];
+  const progress = (selectedDay - previous.day) / (next.day - previous.day);
+  const result = {
+    ...previous,
+    id: `day-${selectedDay}`,
+    label: next.phase === "wearing-off"
+      ? "Return of movement" : `Days ${previous.day + 1}–${next.day}`,
+    timing: `Day ${selectedDay}`,
+    day: selectedDay,
+    phase: next.phase === "wearing-off" ? next.phase : previous.phase,
+    interpolated: true,
+    note: TRANSITION_NOTES[procedureId][previous.id] || previous.note,
+    care: next.care,
+    contactWarning: next.contactWarning || previous.contactWarning,
+    sourceIds: [...new Set([...previous.sourceIds, ...next.sourceIds])]
+  };
+
+  // Change the drawing smoothly between the saved checkpoints.
+  for (const key of ["effectProgress", "swelling", "redness", "bruising"]) {
+    result[key] = previous[key] + (next[key] - previous[key]) * progress;
+  }
+  result.resultProgress = result.effectProgress;
+  return result;
+}
+
 export function getRecoveryTimelineType(
   procedureId
 ) {
@@ -383,8 +715,19 @@ export function getRecoveryTimelineType(
 }
 
 export function getRecoveryTimeline(
-  procedureId
+  procedureId,
+  context = {}
 ) {
+  const journey = getProcedureJourney(procedureId, context);
+  if (journey) return journey.stages;
+
+  const { productId, optionId } = contextIds(procedureId, context);
+  if (procedureId === "lip-filler" && [optionId, productId].some(
+    value => ["fat-transfer", "fat-grafting"].includes(value)
+  )) {
+    return TIMELINES.volume.map(item => ({ ...item }));
+  }
+
   const type =
     getRecoveryTimelineType(
       procedureId
@@ -397,16 +740,21 @@ export function getRecoveryTimeline(
 
 export function getRecoveryStage(
   procedureId,
-  stageId = "final"
+  stageId = "final",
+  context = {}
 ) {
   const timeline =
     getRecoveryTimeline(
-      procedureId
+      procedureId,
+      context
     );
 
   return (
     timeline.find(
       item => item.id === stageId
+    ) ||
+    timeline.find(
+      item => item.id === "final"
     ) ||
     timeline[
       timeline.length - 1

@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f8f7f4" />
+    <meta
+      name="description"
+      content="Explore lip filler and frown-line previews with an illustrated timeline from the first day to the settled result."
+    />
+    <title>Treatment timeline — AesthetIQ</title>
+    <link rel="stylesheet" href="css/product.css?v=2" />
+    <link rel="stylesheet" href="css/journey.css?v=1" />
+  </head>
+  <body>
+    <main class="aq-main journey-main" id="journeyApp">
+      <header class="aq-masthead">
+        <a class="aq-brand" href="index.html" aria-label="AesthetIQ home"
+          >Aesthet<span>IQ</span></a
+        >
+        <a class="aq-subtle-link" href="procedures.html">All procedures</a>
+      </header>
+
+      <section class="journey-heading">
+        <p class="eyebrow">Your treatment timeline</p>
+        <h1>See the change.<br /><em>Understand the timeline.</em></h1>
+        <p>
+          Explore the first day, the days that follow, and a settled result on
+          your own photo.
+        </p>
+        <nav class="journey-picker" aria-label="Choose a treatment">
+          <a href="journey.html?procedure=lip-filler" data-journey="lip-filler"
+            >Lip filler <span>Classic · Hyaluronic acid</span></a
+          >
+          <a
+            href="journey.html?procedure=glabella-neuromodulator"
+            data-journey="glabella-neuromodulator"
+            >Frown lines <span>BOTOX Cosmetic</span></a
+          >
+        </nav>
+        <p class="journey-disclosure">
+          These are visual examples. Your treatment and healing may look
+          different.
+        </p>
+      </section>
+
+      <div class="journey-layout">
+        <section
+          class="journey-card capture-card"
+          aria-labelledby="captureHeading"
+        >
+          <div class="journey-section-title">
+            <span class="step-number">1</span>
+            <h2 id="captureHeading">Add your photo</h2>
+          </div>
+          <p id="captureInstructions">
+            Look straight ahead, relax your lips, and use even lighting.
+          </p>
+          <div class="capture-slots">
+            <article class="capture-slot" data-slot="neutral">
+              <div class="capture-thumbnail">
+                <canvas
+                  id="neutralThumbnail"
+                  width="240"
+                  height="240"
+                  hidden
+                  aria-label="Your relaxed-face photo"
+                ></canvas>
+                <svg
+                  class="capture-placeholder"
+                  viewBox="0 0 100 112"
+                  aria-hidden="true"
+                >
+                  <ellipse cx="50" cy="42" rx="24" ry="31" />
+                  <path
+                    d="M10 106c2-29 20-39 40-39s38 10 40 39M38 39h4m16 0h4M43 56q7 3 14 0"
+                  />
+                </svg>
+                <span class="capture-badge" id="neutralBadge"
+                  >Photo needed</span
+                >
+              </div>
+              <h3 id="neutralHeading">Relaxed face</h3>
+              <div class="capture-buttons">
+                <button
+                  class="aq-button"
+                  type="button"
+                  data-upload="neutral"
+                  aria-label="Choose a relaxed-face photo"
+                >
+                  Choose photo
+                </button>
+                <button
+                  class="journey-text-button"
+                  type="button"
+                  data-camera="neutral"
+                  aria-label="Use camera for a relaxed-face photo"
+                >
+                  Use camera
+                </button>
+              </div>
+            </article>
+            <article class="capture-slot" data-slot="frown" hidden>
+              <div class="capture-thumbnail">
+                <canvas
+                  id="frownThumbnail"
+                  width="240"
+                  height="240"
+                  hidden
+                  aria-label="Your frowning photo"
+                ></canvas>
+                <svg
+                  class="capture-placeholder"
+                  viewBox="0 0 100 112"
+                  aria-hidden="true"
+                >
+                  <ellipse cx="50" cy="42" rx="24" ry="31" />
+                  <path
+                    d="M10 106c2-29 20-39 40-39s38 10 40 39M36 35l8 4m12 0 8-4M47 35v8m6-8v8M43 57h14"
+                  />
+                </svg>
+                <span class="capture-badge" id="frownBadge">Photo needed</span>
+              </div>
+              <h3>Frown gently</h3>
+              <div class="capture-buttons">
+                <button
+                  class="aq-button"
+                  type="button"
+                  data-upload="frown"
+                  aria-label="Choose a frown photo"
+                >
+                  Choose photo
+                </button>
+                <button
+                  class="journey-text-button"
+                  type="button"
+                  data-camera="frown"
+                  aria-label="Use camera for a frown photo"
+                >
+                  Use camera
+                </button>
+              </div>
+            </article>
+          </div>
+          <input
+            id="journeyPhotoInput"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            hidden
+          />
+          <p
+            id="captureStatus"
+            class="journey-status"
+            role="status"
+            aria-live="polite"
+          >
+            Use a clear photo with one adult face.
+          </p>
+          <label class="journey-check consent-check"
+            ><input id="journeyConsent" type="checkbox" /><span
+              >I’m 18 or older and have permission to use these photos. I
+              understand this is a visual example.</span
+            ></label
+          >
+          <button
+            id="generateJourney"
+            class="aq-button primary journey-generate"
+            type="button"
+            disabled
+          >
+            Create my preview <span aria-hidden="true">→</span>
+          </button>
+          <button
+            id="clearJourney"
+            class="journey-text-button"
+            type="button"
+            hidden
+          >
+            Clear photos and start again
+          </button>
+          <p class="journey-private">
+            Your photos are processed in this browser. They are not uploaded or
+            added to your saved procedures.
+          </p>
+        </section>
+
+        <section
+          class="journey-card preview-card"
+          aria-labelledby="previewHeading"
+        >
+          <div class="journey-section-title">
+            <span class="step-number">2</span>
+            <h2 id="previewHeading">Explore your result</h2>
+          </div>
+          <div id="journeyEmpty" class="journey-empty">
+            <svg viewBox="0 0 160 160" aria-hidden="true">
+              <path
+                d="M73 22C37 26 34 56 43 80c4 12 17 24 20 35m23-93c29 3 35 25 30 41l11 20-12 4c5 12-4 22-18 22l-3 20M56 137c-10 1-21 5-29 12m67-20c18 1 28 8 39 20M80 9v143"
+              />
+              <circle cx="80" cy="80" r="67" />
+            </svg>
+            <h3>Your photo. A clearer picture.</h3>
+            <p id="emptyInstructions">
+              Add a photo to compare the original with each stage of your
+              preview.
+            </p>
+            <div class="empty-stages" aria-hidden="true">
+              <span>First day</span><span>Recovery</span
+              ><span>Settled result</span>
+            </div>
+          </div>
+
+          <div id="journeyResults" hidden>
+            <div class="journey-controls">
+              <fieldset class="journey-control-group">
+                <legend>Preview strength</legend>
+                <div class="journey-segment">
+                  <button
+                    type="button"
+                    data-intensity="natural"
+                    aria-pressed="false"
+                  >
+                    Natural</button
+                  ><button
+                    type="button"
+                    data-intensity="balanced"
+                    aria-pressed="true"
+                  >
+                    Balanced</button
+                  ><button
+                    type="button"
+                    data-intensity="enhanced"
+                    aria-pressed="false"
+                  >
+                    Enhanced
+                  </button>
+                </div>
+              </fieldset>
+              <fieldset
+                class="journey-control-group"
+                id="expressionControls"
+                hidden
+              >
+                <legend>Expression</legend>
+                <div class="journey-segment">
+                  <button
+                    type="button"
+                    data-expression="neutral"
+                    aria-pressed="false"
+                  >
+                    At rest</button
+                  ><button
+                    type="button"
+                    data-expression="frown"
+                    aria-pressed="true"
+                  >
+                    Frowning
+                  </button>
+                </div>
+              </fieldset>
+              <fieldset class="journey-control-group">
+                <legend>View</legend>
+                <div class="journey-segment">
+                  <button type="button" data-crop="face" aria-pressed="true">
+                    Full face</button
+                  ><button
+                    type="button"
+                    data-crop="detail"
+                    aria-pressed="false"
+                  >
+                    Close-up
+                  </button>
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="journey-comparison">
+              <figure>
+                <div class="comparison-image">
+                  <canvas
+                    id="journeyOriginal"
+                    width="480"
+                    height="600"
+                    aria-label="Original photo"
+                  ></canvas
+                  ><span>Original</span>
+                </div>
+                <figcaption id="originalCaption">
+                  Your original photo
+                </figcaption>
+              </figure>
+              <figure>
+                <div class="comparison-image">
+                  <canvas
+                    id="journeyPreview"
+                    width="480"
+                    height="600"
+                    aria-label="Simulated treatment appearance"
+                  ></canvas
+                  ><span>Simulation</span>
+                </div>
+                <figcaption id="previewCaption">Your selected stage</figcaption>
+              </figure>
+            </div>
+            <p
+              id="renderStatus"
+              class="journey-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+
+            <div class="journey-timeline" aria-labelledby="timelineHeading">
+              <div class="timeline-title">
+                <div>
+                  <p class="eyebrow" id="journeyPhase">Recovery example</p>
+                  <h3 id="timelineHeading">Immediately afterward</h3>
+                </div>
+                <span class="journey-day" id="journeyDay">Day 0</span>
+              </div>
+              <label class="sr-only" for="journeyDaySlider"
+                >Days since treatment</label
+              >
+              <input
+                id="journeyDaySlider"
+                type="range"
+                min="0"
+                max="28"
+                step="1"
+                value="0"
+                aria-describedby="timelineHelp"
+              />
+              <div class="timeline-endpoints">
+                <span>Day 0</span><span id="timelineEnd">Day 28</span>
+              </div>
+              <div
+                id="journeyCheckpoints"
+                class="journey-checkpoints"
+                aria-label="Timeline checkpoints"
+              ></div>
+              <p id="journeyStageNote"></p>
+              <div class="recovery-toggles">
+                <label class="journey-check"
+                  ><input
+                    id="showJourneyRecovery"
+                    type="checkbox"
+                    checked
+                  /><span>Show recovery example</span></label
+                >
+                <label class="journey-check"
+                  ><input id="showJourneyBruising" type="checkbox" /><span
+                    >Include possible bruising</span
+                  ></label
+                >
+              </div>
+              <p class="journey-small" id="timelineHelp">
+                Move through an illustrated timeline. The dates and recovery
+                changes are examples, not a forecast of your own healing.
+              </p>
+              <div class="journey-care" id="journeyCare"></div>
+              <p id="journeyContact" class="journey-contact" hidden></p>
+              <button
+                id="jumpToSettled"
+                class="journey-text-button"
+                type="button"
+              >
+                See the settled result →
+              </button>
+            </div>
+
+            <div class="journey-export">
+              <button
+                id="saveJourneyComparison"
+                class="aq-button primary"
+                type="button"
+              >
+                Save this comparison
+              </button>
+              <p>Includes the procedure, stage, and simulation label.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section
+        class="journey-card journey-information"
+        aria-labelledby="informationHeading"
+      >
+        <h2 id="informationHeading">Understand what you’re seeing</h2>
+        <p id="journeyScope"></p>
+        <div class="journey-details-grid">
+          <details>
+            <summary>What the preview can show</summary>
+            <ul id="journeyLimits"></ul>
+            <p id="journeyEligibility"></p>
+          </details>
+          <details>
+            <summary>Recovery and when to get help</summary>
+            <div id="journeySafety"></div>
+          </details>
+          <details>
+            <summary>Sources behind the timeline</summary>
+            <ul id="journeySources"></ul>
+            <p class="journey-small">
+              Published recovery information guides the sequence. The drawing
+              strengths are illustrative and have not been validated as
+              predictions.
+            </p>
+          </details>
+        </div>
+        <a
+          id="journeyProcedureLink"
+          class="aq-subtle-link"
+          href="procedure.html?id=lip-filler"
+          >Read about this procedure →</a
+        >
+      </section>
+      <noscript
+        ><p class="journey-status is-error">
+          Turn on JavaScript to use the photo preview. You can still
+          <a href="procedures.html">read about procedures</a>.
+        </p></noscript
+      >
+    </main>
+    <nav class="bottom-nav"></nav>
+
+    <dialog
+      id="journeyCameraDialog"
+      class="journey-camera-dialog"
+      aria-labelledby="cameraDialogHeading"
+    >
+      <div class="camera-dialog-heading">
+        <h2 id="cameraDialogHeading">Take a relaxed-face photo</h2>
+        <button
+          id="closeJourneyCamera"
+          class="journey-text-button"
+          type="button"
+          aria-label="Close camera"
+        >
+          Close
+        </button>
+      </div>
+      <div class="journey-camera-frame">
+        <video id="journeyCamera" autoplay playsinline muted></video>
+        <div class="journey-camera-guide" aria-hidden="true"></div>
+      </div>
+      <p id="cameraDialogStatus" role="status">
+        Look straight ahead and keep your whole face in the frame.
+      </p>
+      <button
+        id="takeJourneyPhoto"
+        class="aq-button primary"
+        type="button"
+        disabled
+      >
+        Take photo
+      </button>
+    </dialog>
+    <script type="module" src="js/journeyPage.js?v=1"></script>
+    <script type="module" src="js/productUI.js?v=3"></script>
+  </body>
+</html>

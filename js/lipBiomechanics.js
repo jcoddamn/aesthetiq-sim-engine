@@ -249,10 +249,9 @@ const config = {
         halfMouthWidth
       );
 
-    const sideDirection =
-      point.x < centerX
-        ? -1
-        : 1;
+    const sideOffset = point.x - centerX;
+    const sideDirection = Math.abs(sideOffset) <= halfMouthWidth * 1e-6
+      ? 0 : Math.sign(sideOffset);
 
     result[index] = {
       ...point,
@@ -335,10 +334,9 @@ const config = {
         halfMouthWidth
       );
 
-    const sideDirection =
-      point.x < centerX
-        ? -1
-        : 1;
+    const sideOffset = point.x - centerX;
+    const sideDirection = Math.abs(sideOffset) <= halfMouthWidth * 1e-6
+      ? 0 : Math.sign(sideOffset);
 
     result[index] = {
       ...point,

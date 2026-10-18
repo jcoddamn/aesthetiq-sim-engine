@@ -492,6 +492,10 @@
       gap: 6px;
     }
 
+    .recovery-timeline[data-detailed="true"] {
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    }
+
     .recovery-stage-button {
       min-width: 0;
       border: 1px solid var(--border);
@@ -515,6 +519,73 @@
       color: var(--muted);
       font-size: 11px;
       line-height: 1.45;
+    }
+
+    .recovery-effects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      margin-top: 12px;
+    }
+
+    .recovery-effects[hidden],
+    .guided-timeline-entry[hidden],
+    .recovery-source-details[hidden] {
+      display: none;
+    }
+
+    .recovery-effects label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 44px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .recovery-effects input {
+      width: 17px;
+      height: 17px;
+      accent-color: #a78bfa;
+    }
+
+    .recovery-stage-warning {
+      color: #f8cfac;
+    }
+
+    .recovery-source-details {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .recovery-source-details summary {
+      cursor: pointer;
+      min-height: 28px;
+    }
+
+    .recovery-source-details a,
+    .guided-timeline-entry a {
+      color: #c4b5fd;
+      text-underline-offset: 3px;
+    }
+
+    .guided-timeline-entry {
+      margin: 0 0 16px;
+      padding: 15px 18px;
+    }
+
+    .guided-timeline-entry a {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .guided-timeline-entry p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     .result-card {
@@ -1488,6 +1559,11 @@
   </button>
 </section>
 
+    <div class="guided-timeline-entry card" id="guidedTimelineEntry" hidden>
+      <a id="guidedTimelineLink">Open guided timeline</a>
+      <p id="guidedTimelineNote"></p>
+    </div>
+
     <section class="camera-card card">
       <div class="camera-header">
         <h2>Camera preview</h2>
@@ -1663,15 +1739,16 @@
         <h2>Your preview</h2>
 
         <p>
-          Compare realistic levels of enhancement.
+          Compare preview strength and recovery stages.
         </p>
       </div>
 
-      <div class="intensity-tabs">
+      <div class="intensity-tabs" role="group" aria-label="Preview intensity">
         <button
           class="intensity-button"
           data-level="natural"
           type="button"
+          aria-pressed="false"
         >
           Natural
         </button>
@@ -1680,6 +1757,7 @@
           class="intensity-button active"
           data-level="balanced"
           type="button"
+          aria-pressed="true"
         >
           Balanced
         </button>
@@ -1688,6 +1766,7 @@
           class="intensity-button"
           data-level="enhanced"
           type="button"
+          aria-pressed="false"
         >
           Enhanced
         </button>
@@ -1707,12 +1786,28 @@
         <div
           class="recovery-timeline"
           id="recoveryTimeline"
+          role="group"
+          aria-label="Recovery stages"
         ></div>
 
         <p
           class="recovery-stage-note"
           id="recoveryStageNote"
+          aria-live="polite"
         ></p>
+        <p class="recovery-stage-note" id="recoveryStageCare" hidden></p>
+        <p class="recovery-stage-note recovery-stage-warning" id="recoveryStageWarning" hidden></p>
+
+        <div class="recovery-effects" id="recoveryEffectsControls" hidden>
+          <label><input id="recoveryEffectsToggle" type="checkbox" checked> Show recovery example</label>
+          <label><input id="recoveryBruisingToggle" type="checkbox"> Show bruising example</label>
+        </div>
+
+        <details class="recovery-source-details" id="recoverySourceDetails" hidden>
+          <summary>Timeline sources and limits</summary>
+          <p id="recoveryLimits"></p>
+          <ul id="recoverySources"></ul>
+        </details>
       </div>
 
       <div id="measurementCoverage" style="font-size:12px;line-height:1.6;margin:12px 0"></div>
@@ -1735,11 +1830,12 @@
           </span>
         </div>
 
-        <div class="compare-controls">
+        <div class="compare-controls" role="group" aria-label="Comparison view">
           <button
             class="compare-button"
             id="showOriginalButton"
             type="button"
+            aria-pressed="false"
           >
             Original
           </button>
@@ -1748,6 +1844,7 @@
             class="compare-button active"
             id="showSimulationButton"
             type="button"
+            aria-pressed="true"
           >
             Simulation
           </button>
@@ -1901,7 +1998,7 @@
 
   <script
     type="module"
-    src="./js/appController.js?v=46"
+    src="./js/appController.js?v=47"
   ></script>
 <script type="module" src="js/productUI.js?v=1"></script>
 </body>
