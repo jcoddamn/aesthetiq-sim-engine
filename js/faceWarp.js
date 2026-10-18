@@ -1,4 +1,5 @@
 import {FACE_TRIANGLES} from './faceTopology.js';
+import { smoothLowerLipDisplacement } from './lipContour.js';
 import {
   getLipIntensityProfile,
   getLipStyleProfile
@@ -1367,8 +1368,9 @@ const biomechanicalResult =
 // Prevent the lower lip from forming a pointed/V center.
 // =========================================================
 
-const smoothedBiomechanics =
-  biomechanicalResult.map(
+const smoothedBiomechanics = lipStyle === "classic"
+  ? smoothLowerLipDisplacement(landmarks, biomechanicalResult)
+  : biomechanicalResult.map(
     (point) => ({
       ...point
     })
@@ -1384,6 +1386,7 @@ const lowerRightPoint =
   smoothedBiomechanics[314];
 
 if (
+  lipStyle !== "classic" &&
   lowerCenterPoint &&
   lowerLeftPoint &&
   lowerRightPoint
@@ -1413,6 +1416,7 @@ const innerLowerRight =
   smoothedBiomechanics[317];
 
 if (
+  lipStyle !== "classic" &&
   innerLowerCenter &&
   innerLowerLeft &&
   innerLowerRight

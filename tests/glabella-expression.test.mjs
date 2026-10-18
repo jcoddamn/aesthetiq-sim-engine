@@ -15,7 +15,7 @@ const clonePoints = () => landmarks.map(p => ({ ...p }));
 const dataOf = canvas => canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 
-function face({ severity = 0, horizontal = false, points = landmarks, exposure = 1 } = {}) {
+function face({ severity = 0, horizontal = false, slope = 0, points = landmarks, exposure = 1 } = {}) {
   const canvas = createCanvas(600, 600), context = canvas.getContext('2d');
   const image = context.createImageData(600, 600);
   for (let y = 0; y < 600; y++) for (let x = 0; x < 600; x++) {
@@ -24,7 +24,8 @@ function face({ severity = 0, horizontal = false, points = landmarks, exposure =
     const envelope = clamp((y - 146) / 12, 0, 1) * clamp((217 - y) / 12, 0, 1);
     const shadow = horizontal
       ? severity * Math.exp(-((y - 183) ** 2) / 8) * clamp((x - 270) / 10, 0, 1) * clamp((330 - x) / 10, 0, 1)
-      : severity * (Math.exp(-((x - 289) ** 2) / 13) + Math.exp(-((x - 311) ** 2) / 13)) * envelope;
+      : severity * (Math.exp(-((x - 289 - slope * (y - 188)) ** 2) / 13) +
+        Math.exp(-((x - 311 - slope * (y - 188)) ** 2) / 13)) * envelope;
     const i = (y * 600 + x) * 4;
     for (let c = 0; c < 3; c++) image.data[i + c] = Math.round(([184, 145, 119][c] + light + texture - shadow) * exposure);
     image.data[i + 3] = 255;
@@ -83,6 +84,25 @@ test('natural to enhanced levels remain ordered and neutral softening remains sm
   assert.ok(values[2] < meanCreaseValue(face()) - 10, 'deep resting shadows are not promised to disappear');
 });
 
+test('slanted frown creases soften in either direction without changing nearby skin', () => {
+  for (const slope of [-.58, .58]) {
+    const source = face({ severity: 48, slope });
+    const rendered = renderGlabellaPreview(source, landmarks);
+    assert.equal(rendered.quality.valid, true);
+    const before = dataOf(source), after = dataOf(rendered.canvas);
+    let change = 0, samples = 0;
+    for (const center of [289, 311]) for (let y = 178; y < 199; y++) {
+      const x = Math.round(center + slope * (y - 188)), offset = (y * 600 + x) * 4;
+      change += after[offset] - before[offset]; samples++;
+    }
+    assert.ok(change / samples > 8, `slanted crease change was only ${change / samples}`);
+    for (const [x, y] of [[300, 125], [240, 190], [360, 190], [300, 240]]) {
+      const offset = (y * 600 + x) * 4;
+      assert.deepEqual(after.slice(offset, offset + 4), before.slice(offset, offset + 4));
+    }
+  }
+});
+
 test('fine skin texture survives correction and horizontal lines are not generally blurred', () => {
   const source = face({ severity: 48 });
   const result = renderGlabellaPreview(source, landmarks).canvas;
@@ -112,7 +132,7 @@ test('unclear inputs return an unchanged preview with useful quality guidance', 
   const noLines = renderGlabellaPreview(source, landmarks);
   assert.equal(noLines.quality.valid, true);
   assert.equal(noLines.quality.metrics.changedPixels, 0);
-  assert.match(noLines.quality.warnings.join(' '), /Few clear vertical frown lines/);
+  assert.match(noLines.quality.warnings.join(' '), /Few clear frown lines/);
   assert.equal(renderGlabellaPreview(null, landmarks).canvas, null);
 });
 

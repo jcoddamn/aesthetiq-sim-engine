@@ -189,28 +189,44 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
   const across = Math.max(3, frame.eyeDistance * 0.045);
   const along = Math.max(2, frame.eyeDistance * 0.026);
   const { axis } = frame;
-  const tone = (x, y) => (sample(fine, width, height, x, y) * 2 +
-    sample(fine, width, height, x - axis.y * along, y + axis.x * along) +
-    sample(fine, width, height, x + axis.y * along, y - axis.x * along) +
-    0.5 * sample(fine, width, height, x - axis.y * along * 2, y + axis.x * along * 2) +
-    0.5 * sample(fine, width, height, x + axis.y * along * 2, y - axis.x * along * 2)) / 5;
+  const directions = [0, -Math.PI / 6, Math.PI / 6].map(angle => ({
+    x: axis.x * Math.cos(angle) - axis.y * Math.sin(angle),
+    y: axis.x * Math.sin(angle) + axis.y * Math.cos(angle)
+  }));
+  const tone = (x, y, normal) => (sample(fine, width, height, x, y) * 2 +
+    sample(fine, width, height, x - normal.y * along, y + normal.x * along) +
+    sample(fine, width, height, x + normal.y * along, y - normal.x * along) +
+    0.5 * sample(fine, width, height, x - normal.y * along * 2, y + normal.x * along * 2) +
+    0.5 * sample(fine, width, height, x + normal.y * along * 2, y - normal.x * along * 2)) / 5;
   let creasePixels = 0;
-  // Only coherent vertical shadows contribute. Texture is never replaced by a blurred image.
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+    weights[y * width + x] = glabellaWeight(frame, x + x0, y + y0);
+  }
+  // Frown creases can slant. Use the strongest coherent direction once;
+  // adding the directions together would over-light their intersections.
   for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
     const index = y * width + x;
-    const weight = glabellaWeight(frame, x + x0, y + y0);
-    weights[index] = weight;
+    const weight = weights[index];
     if (!weight || pixels.data[index * 4 + 3] < 250) continue;
-    const center = tone(x, y);
-    const left = tone(x - axis.x * across, y - axis.y * across);
-    const right = tone(x + axis.x * across, y + axis.y * across);
-    const trough = Math.min(left, right) - center;
-    if (trough <= 1.5) continue;
-    const verticalContrast = Math.max(0, (sample(fine, width, height, x - axis.y * across, y + axis.x * across) +
-      sample(fine, width, height, x + axis.y * across, y - axis.x * across)) / 2 -
-      sample(fine, width, height, x, y));
-    const orientation = clamp(1 - verticalContrast / Math.max(2, trough), 0, 1);
-    correction[index] = Math.min(45, trough - 1.5) * strength * orientation * weight;
+    for (const normal of directions) {
+      // Do not read a brow or an eye as the dark side of a skin crease.
+      const supports = [-1, 0, 1].every(side => [-1, 0, 1].every(end =>
+        sample(weights, width, height,
+          x + normal.x * across * side - normal.y * along * 2 * end,
+          y + normal.y * across * side + normal.x * along * 2 * end) > 0));
+      if (!supports) continue;
+      const center = tone(x, y, normal);
+      const left = tone(x - normal.x * across, y - normal.y * across, normal);
+      const right = tone(x + normal.x * across, y + normal.y * across, normal);
+      const trough = Math.min(left, right) - center;
+      if (trough <= 1.5) continue;
+      const alongContrast = Math.max(0, (sample(fine, width, height, x - normal.y * across, y + normal.x * across) +
+        sample(fine, width, height, x + normal.y * across, y - normal.x * across)) / 2 -
+        sample(fine, width, height, x, y));
+      const orientation = clamp(1 - alongContrast / Math.max(2, trough), 0, 1);
+      correction[index] = Math.max(correction[index],
+        Math.min(45, trough - 1.5) * strength * orientation * weight);
+    }
     if (correction[index] > 1) creasePixels++;
   }
   const smoothCorrection = boxBlur(correction, width, height, 1);
@@ -231,7 +247,7 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
   if (changedPixels < Math.max(12, frame.eyeDistance * 0.12)) {
     warnings.push(expression === 'neutral'
       ? 'Few resting lines are visible. A relaxed photo can show little visible change.'
-      : 'Few clear vertical frown lines were detected. Use even lighting and capture a clear frown.');
+      : 'Few clear frown lines were detected. Use even lighting and capture a clear frown.');
   }
   return { canvas, quality: { valid: true, code: 'ready', reason: null, warnings,
     metrics: { ...frame.metrics, expression, level, creasePixels, changedPixels,

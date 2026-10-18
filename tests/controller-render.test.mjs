@@ -234,7 +234,7 @@ test('legacy contexts do not offer an unsupported guided procedure', async () =>
   const fixture = await controllerFixture('procedure=glabella-neuromodulator');
   try {
     assert.equal(fixture.w.inspectTestResult().context.productId, 'botox');
-    assert.equal(fixture.w.document.querySelectorAll('.recovery-stage-button').length, 8);
+    assert.equal(fixture.w.document.querySelectorAll('.recovery-stage-button').length, 9);
     assert.equal(fixture.w.document.getElementById('guidedTimelineEntry').hidden, false);
     assert.match(fixture.w.document.getElementById('guidedTimelineNote').textContent, /paired relaxed and frown photos/);
   } finally { fixture.close(); }

@@ -7,7 +7,7 @@ Use these two guided flows to show the complete software journey: add photos, cr
 | Flow | Required photos | Timeline checkpoints |
 | --- | --- | --- |
 | [Classic HA lip filler](../journey.html?procedure=lip-filler&option=hyaluronic-acid&style=classic&product=provider&intensity=balanced) | One relaxed face, lips gently closed | Before; immediately after; days 2, 7, 14 and 28 |
-| [BOTOX Cosmetic for glabellar frown lines](../journey.html?procedure=glabella-neuromodulator&option=botox&neuromodulator=botox&intensity=balanced) | The same person at rest and frowning, in separate photos | Before; immediately after; days 2, 7, 14 and 30; wearing-off examples at days 90 and 120 |
+| [BOTOX Cosmetic for glabellar frown lines](../journey.html?procedure=glabella-neuromodulator&option=botox&neuromodulator=botox&intensity=balanced) | The same person at rest and frowning, in separate photos | Before; immediately after; days 2, 3, 7, 14 and 30; wearing-off examples at days 90 and 120 |
 
 Open these links from a local server or the app's host. The README has local setup commands.
 
@@ -35,7 +35,7 @@ Useful stills: immediately after, day 2 with recovery visible, and day 28 close-
 
 1. Open the BOTOX link. Add one relaxed photo and a separate frown photo of the same adult. Match the light, camera distance and head position. Do not reuse one photo for both expressions.
 2. Check the permission box and create the preview. If the pair is rejected or the face position is poor, retake the photos before recording the result.
-3. Keep **Frowning** selected. Show **Before**, **Immediately after**, then days 2, 7, 14 and 30. The immediate view should retain the starting expression lines.
+3. Keep **Frowning** selected. Show **Before**, **Immediately after**, then days 2, 3, 7, 14 and 30. The immediate view should retain the starting expression lines.
 4. At day 30, switch between **At rest** and **Frowning**, then select **Close-up**. Explain that the views show different expressions and that resting creases may persist.
 5. Move to days 90 and 120 to show wearing off. Return to day 30, save the comparison, then save a second comparison with the other expression selected.
 6. Clear the photos when finished.
@@ -45,6 +45,20 @@ Useful stills: the original pair, day 30 at rest, day 30 frowning, and day 120 f
 ## Checks and remaining work
 
 Status recorded on October 18, 2026. Passing a software check does not establish clinical accuracy.
+
+### Photo-reference update
+
+The new references are now connected to three software changes:
+
+- Classic lip shaping smooths the added movement instead of averaging away the person's original lower-lip curve. Swelling remains separate and the settled view keeps the original color.
+- Frown-line rendering now follows vertical and slanted creases. Sampling stays clear of eyes and brows, and the renderer does not add eye enlargement from the combined-treatment examples.
+- The BOTOX timeline has a day-3 checkpoint before the stronger day-7 example. Its drawing strength is illustrative; ordinal wrinkle scores were not converted into pixel percentages.
+
+Four published photographic assets were inspected. The lip article's retrieved figure captions and embedded image labels disagree, so it was used for contour review only. The BOTOX expression examples include treatment around the eyes as well as the glabella; they were used to review crease appearance, not to fit an isolated treatment magnitude. The onabotulinum onset study was checked against its primary text and table, without using its separate prabotulinum arm.
+
+The source decisions are in [the photo-reference review](../research/nexus-photo-reference-review.json). No patient photos are bundled with the app. This pass adds no clinically calibrated cases.
+
+All **104 automated tests pass**, including the guided journeys, stage rendering, exports, retained lip contour, slanted frown creases, and protection of eyes, brows and skin texture. Synthetic render sheets were inspected. A fresh local Chromium check could not launch because this environment denied its socket creation; the earlier browser checks below describe the preceding build. Physical iPhone testing and clinician review are still pending.
 
 | Check | Status |
 | --- | --- |
