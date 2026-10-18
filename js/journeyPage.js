@@ -7,14 +7,14 @@ import { preparePreviewSource } from "./previewInput.js";
 import {
   runProcedureSimulationFromLandmarks,
   setMaskDebugEnabled,
-} from "./simulationPipeline.js?v=47";
-import { renderGlabellaPreview } from "./glabellaSimulation2D.js";
+} from "./simulationPipeline.js?v=48";
+import { renderGlabellaPreview } from "./glabellaSimulation2D.js?v=2";
 import { compareExpressionCaptures } from "./expressionCapture.js";
 import {
   getProcedureJourney,
   getRecoveryStage,
   getRecoveryStageAtDay,
-} from "./recoveryTimeline.js?v=2";
+} from "./recoveryTimeline.js?v=3";
 import { renderRecoveryIllustration } from "./recoveryIllustration2D.js?v=2";
 import { createComparisonCanvas } from "./comparisonExport.js?v=2";
 

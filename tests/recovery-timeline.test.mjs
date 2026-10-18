@@ -27,7 +27,7 @@ test('lip volume is present immediately and remains as recovery effects ease', (
 
 test('Botox starts without an instant effect and later allows movement to return', () => {
   const stages = getRecoveryTimeline('glabella-neuromodulator');
-  assert.deepEqual(stages.map(stage => stage.day), [0, 0, 2, 7, 14, 30, 90, 120]);
+  assert.deepEqual(stages.map(stage => stage.day), [0, 0, 2, 3, 7, 14, 30, 90, 120]);
   assert.equal(getRecoveryStage('glabella-neuromodulator', 'immediate').effectProgress, 0);
   const finalIndex = stages.findIndex(stage => stage.id === 'final');
   for (let index = 2; index <= finalIndex; index++) {

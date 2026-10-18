@@ -323,6 +323,27 @@ const TIMELINES = {
 };
 
 const SOURCES = {
+  "ruiz-lip-photos": {
+    id: "ruiz-lip-photos",
+    title: "Published HA lip photo examples",
+    publisher: "Ruiz et al., Journal of Clinical Medicine (2024)",
+    url: "https://doi.org/10.3390/jcm13195705",
+    summary: "Selected Genefill examples guide contour review, not size targets. The retrieved figure captions and embedded stage labels disagree; exact stage fitting is excluded."
+  },
+  "rodriguez-botox-onset": {
+    id: "rodriguez-botox-onset",
+    title: "BOTOX early-onset comparison",
+    publisher: "Rodriguez-Chavez et al., Journal of Cosmetic Dermatology (2024)",
+    url: "https://doi.org/10.1111/jocd.16454",
+    summary: "The onabotulinum arm reports a smaller early change at day 3 and a stronger response at day 7. Several upper-face areas were treated. Scores are not image-softening percentages."
+  },
+  "onabotulinum-expression-photos": {
+    id: "onabotulinum-expression-photos",
+    title: "Onabotulinum expression photo examples",
+    publisher: "Toxins (2026)",
+    url: "https://doi.org/10.3390/toxins18030145",
+    summary: "Rest and frown pairs show varied crease direction and response. Combined glabellar and eye-area treatment makes these unsuitable for isolated glabellar size or timing targets."
+  },
   "aad-fillers": {
     id: "aad-fillers",
     title: "Fillers: FAQs",
@@ -399,9 +420,9 @@ const JOURNEYS = {
     stageLabel: "Recovery and settling",
     defaultStageId: "final",
     bruisingDefault: false,
-    evidenceBasis: "The recovery windows draw on AAD, Cleveland Clinic and Restylane Kysse labeling. Kysse is one reference, not a claim that all HA products behave alike.",
+    evidenceBasis: "The recovery windows draw on AAD, Cleveland Clinic and Restylane Kysse labeling. Published HA photos inform contour review. These references do not establish an exact outcome or identical behavior across fillers.",
     coefficientNote: COEFFICIENT_NOTE,
-    sources: ["aad-fillers", "cleveland-lip-fillers", "fda-kysse-patient", "galderma-kysse-ifu"].map(id => SOURCES[id]),
+    sources: ["aad-fillers", "cleveland-lip-fillers", "fda-kysse-patient", "galderma-kysse-ifu", "ruiz-lip-photos"].map(id => SOURCES[id]),
     safetyInfo: {
       eligibility: "The Kysse reference labeling is for adults 22 and older. A clinician must check whether treatment is suitable.",
       common: [
@@ -482,9 +503,9 @@ const JOURNEYS = {
     stageLabel: "Onset and return of movement",
     defaultStageId: "final",
     bruisingDefault: false,
-    evidenceBasis: "Timing comes from BOTOX Cosmetic labeling and patient information. These timing references do not apply to every neuromodulator product.",
+    evidenceBasis: "Timing comes from BOTOX Cosmetic labeling and an onabotulinum onset study. Published expression photos inform local crease rendering. These are visual examples, not measured predictions of your response.",
     coefficientNote: COEFFICIENT_NOTE,
-    sources: ["botox-faq", "botox-prescribing", "aad-neuromodulator"].map(id => SOURCES[id]),
+    sources: ["botox-faq", "botox-prescribing", "aad-neuromodulator", "rodriguez-botox-onset", "onabotulinum-expression-photos"].map(id => SOURCES[id]),
     safetyInfo: {
       eligibility: "BOTOX Cosmetic frown-line labeling is for adults 18 and older. A clinician must assess the face, muscle activity and medical history.",
       common: [
@@ -530,11 +551,18 @@ const JOURNEYS = {
         sourceIds: ["botox-faq", "botox-prescribing"]
       }),
       journeyStage({
+        id: "day-three", label: "Day 3", timing: "Early effect check", day: 3,
+        phase: "onset", effectProgress: 0.25, bruising: 0.1,
+        note: "An early BOTOX change can still be modest at day 3. This checkpoint keeps more of the starting frown before the stronger first-week example; individual responses vary.",
+        care: "Compare the same requested expression. The drawing strength is illustrative, not a measured treatment percentage.",
+        sourceIds: ["botox-prescribing", "rodriguez-botox-onset"]
+      }),
+      journeyStage({
         id: "developing", label: "Days 4–7", timing: "Effect developing", day: 7,
         phase: "developing", effectProgress: 0.7, bruising: 0.06,
         note: "The effect develops through the first week. The frown appears less creased in this example while natural skin texture remains.",
         care: "A matched expression is more useful for comparison than a relaxed photo alone.",
-        sourceIds: ["botox-prescribing", "aad-neuromodulator"]
+        sourceIds: ["botox-prescribing", "aad-neuromodulator", "rodriguez-botox-onset"]
       }),
       journeyStage({
         id: "settling", label: "Around 2 weeks", timing: "About day 14", day: 14,
@@ -613,6 +641,7 @@ const TRANSITION_NOTES = {
   "glabella-neuromodulator": {
     immediate: "BOTOX Cosmetic may begin to take effect in 1–2 days. This is a sample transition, not an exact onset prediction.",
     early: "The effect develops during the first week. This example gradually reduces frown creasing while keeping skin texture.",
+    "day-three": "The first-week effect is developing in this example. A day-3 checkpoint does not determine the size or speed of your own response.",
     developing: "This example continues to soften frown lines. Use the same requested expression to compare the change.",
     settling: "This view moves toward the full-effect example at day 30. The amount of change is not a clinical prediction.",
     final: "Frown movement and lines gradually return in this example. The duration and remaining effect vary between people.",

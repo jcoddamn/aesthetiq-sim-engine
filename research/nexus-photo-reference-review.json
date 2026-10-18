@@ -1,0 +1,123 @@
+{
+  "review_date": "2026-10-18",
+  "scope": [
+    "Classic HA lip filler",
+    "BOTOX Cosmetic glabellar journey"
+  ],
+  "status": "reference-informed software refinements; not numerical clinical calibration",
+  "catalog_counts": {
+    "screened_sources": 63,
+    "photo_reference_sources": 47,
+    "cc_by_photo_reference_sources": 25,
+    "view_only_photo_reference_sources": 22,
+    "pending_sources": 9,
+    "excluded_photo_series_sources": 7,
+    "new_calibrated_comparisons": 0,
+    "images_in_catalog": 0,
+    "lip_photo_reference_sources": 28,
+    "frown_line_photo_reference_sources": 19,
+    "onabotulinum_containing_photo_source_entries": 8
+  },
+  "photographic_assets_visually_reviewed": 4,
+  "new_quantitatively_calibrated_patient_cases": 0,
+  "patient_images_in_app_or_repository": false,
+  "changes": [
+    {
+      "procedure": "lip-filler",
+      "source_ids": [
+        "L01"
+      ],
+      "change": "Smooth added lower-lip displacement instead of averaging the absolute starting contour. Applies to Classic only. Preserve the original curvature and asymmetry; retain existing strength, color, swelling and settling settings.",
+      "measured_coefficient_fit": false
+    },
+    {
+      "procedure": "glabella-neuromodulator",
+      "source_ids": [
+        "R02"
+      ],
+      "change": "Evaluate coherent vertical and slanted crease shadows within the existing glabellar mask. Use the strongest direction once and exclude samples touching eye/brow protection. Do not enlarge eyes or lift brows.",
+      "measured_coefficient_fit": false
+    },
+    {
+      "procedure": "glabella-neuromodulator",
+      "source_ids": [
+        "R01"
+      ],
+      "change": "Add a day-3 onset checkpoint before the stronger day-7 example. 0.25 is a conservative drawing setting, not a proportion calculated from an ordinal wrinkle score, a responder rate, or photo pixels. Existing day-2/day-7/day-30 anchors remain.",
+      "measured_coefficient_fit": false
+    }
+  ],
+  "reviews": [
+    {
+      "id": "L01",
+      "title": "The Redefinition and Volumization of the Lip Area with Hyaluronic Acid: A Case Series",
+      "doi": "10.3390/jcm13195705",
+      "url": "https://www.mdpi.com/2077-0383/13/19/5705",
+      "product": "Genefill Soft Fill",
+      "figures": "Figure 2: baseline and immediate day 0. Figure 3: one patient at baseline, 2 weeks and 3 months; unique cases across both figures not verified.",
+      "license": "CC BY 4.0, verified in primary article XML",
+      "consent": "Written consent for participation and anonymized clinical-data use for future training/scientific purposes. Does not separately establish machine-learning use.",
+      "limitations": "Selected examples from 13 women aged 42\u201369. No actual day 1, day 3 or day 7 panels verified. Captions and license verified from indexed primary full text; no pixel-level audit.",
+      "review_use": "qualitative reference review only",
+      "verification": "pixels and full-text XML inspected",
+      "observed_asset_labels": {
+        "jcm-13-05705-g002.jpg": [
+          "Before T0",
+          "After T2 Weeks",
+          "After T3 Months"
+        ],
+        "jcm-13-05705-g003.jpg": [
+          "two rows of Before T0 / After T0 post"
+        ]
+      },
+      "caption_conflict": "The retrieved XML associates g002 with the immediate figure caption and g003 with the time-series caption, opposite the embedded labels. Do not use figure numbering to fit recovery timing.",
+      "fit_exclusions": [
+        "Cropped lower faces with no stable eye alignment anchors",
+        "Lighting, gloss, expression and scale differ",
+        "Small selected case set and caption/asset conflict"
+      ]
+    },
+    {
+      "id": "R01",
+      "title": "Comparative study between the efficacy of prabotulinum toxin-A versus onabotulinum toxin-A for the treatment of upper facial expression lines",
+      "doi": "10.1111/jocd.16454",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1111/jocd.16454",
+      "product": "OnabotulinumtoxinA; separate prabotulinumtoxinA comparator",
+      "figures": "Figure 2A-C: one onabotulinum patient at baseline/day 3/day 7. Panels D-F belong to a different, prabotulinum-treated patient. Day 30/120 results are graphs, not published photographs in this figure.",
+      "license": "CC BY 4.0; Crossref version-of-record license, effective 2024-07-10",
+      "consent": "Written treatment consent is stated in an indexed copy; primary photo-specific consent not independently retrieved.",
+      "limitations": "Multiple upper-face regions treated. Publisher caption indexed, full-page fetch blocked. Photograph pixels and figure-specific credits still need inspection.",
+      "review_use": "qualitative reference review only",
+      "verification": "primary full text, table and caption inspected; figure pixels unavailable",
+      "fit_exclusions": [
+        "Multiple treated upper-face regions",
+        "Ordinal FWS scores cannot become pixel-lightening percentages",
+        "Do not substitute the separate prabotulinum arm"
+      ]
+    },
+    {
+      "id": "R02",
+      "title": "Botulinum Toxin Treatment Can Enlarge Eye Appearance in Asian Patients and Improves Social and Emotional Attributes",
+      "doi": "10.3390/toxins18030145",
+      "url": "https://www.mdpi.com/2072-6651/18/3/145",
+      "product": "OnabotulinumtoxinA; combined glabellar and lateral canthal treatment",
+      "figures": "Figures 4-6: three baseline/day 3 sets with rest, smile and frown views. Figures 7-8: two baseline/day 5 sets with the same expressions. Figure 10: baseline/day 26 at rest. Figure 11: baseline/day 21 at rest. Figure 12: baseline/day 26 at frown. Eight caption-described patient figure sets and 36 panels; unique patient identities were not independently deduplicated.",
+      "license": "CC BY 4.0, verified in primary article XML",
+      "consent": "Explicit written consent for images for research purposes and paper publication.",
+      "limitations": "Combined glabellar and lateral canthal treatment prevents attributing all changes to glabella alone. Different illustrated patients at different follow-ups, rather than one continuous timeline. Five early sets have rest/smile/frown views; the three later sets have one expression each and illustrate limited eye-size response. Eight unique cases were not independently established.",
+      "review_use": "qualitative reference review only",
+      "verification": "pixels for figures 4 and 7 and full-text XML inspected",
+      "fit_exclusions": [
+        "Glabellar and lateral-canthal co-treatment",
+        "Different people at day 3 and day 5, not one longitudinal curve",
+        "No reliable isolated-glabella effect-size estimate"
+      ]
+    }
+  ],
+  "remaining": [
+    "Matched, adequately resolved, consented patient series and independent manual measurements",
+    "Clinician review of both expression and recovery outputs",
+    "Physical iPhone 12 capture, touch and image-save testing"
+  ],
+  "temporary_image_handling": "Reference photos are only temporary review inputs; remove local photos after inspection. Preserve URLs, stage-label conflicts and decisions here."
+}
