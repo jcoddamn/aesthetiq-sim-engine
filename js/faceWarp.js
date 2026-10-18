@@ -14,7 +14,7 @@ import {
 
 import {
   applyLipBiomechanics
-} from "./lipBiomechanics.js?v=2";
+} from "./lipBiomechanics.js?v=4";
 
 import {
   getLipProfile
@@ -511,10 +511,9 @@ const styleProjection =
         1.8
       );
 
-    const sideDirection =
-      point.x < centerX
-        ? -1
-        : 1;
+    const sideOffset = point.x - centerX;
+    const sideDirection = Math.abs(sideOffset) <= halfMouthWidth * 1e-6
+      ? 0 : Math.sign(sideOffset);
 
     /*
      * Vertical movement builds lip height.

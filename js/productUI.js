@@ -47,7 +47,9 @@ for (const nav of document.querySelectorAll("nav.bottom-nav")) {
     a.href = href;
     a.className = "nav-item";
     const active =
-      page === href || (page === "home.html" && href === "index.html");
+      page === href ||
+      (page === "home.html" && href === "index.html") ||
+      (page === "journey.html" && href === "simulation.html");
     if (active) {
       a.classList.add("active");
       a.setAttribute("aria-current", "page");

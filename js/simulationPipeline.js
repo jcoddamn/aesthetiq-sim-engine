@@ -1,8 +1,4 @@
 import {measurePreviewGeometry} from './previewMeasurements.js';
-// =========================================================
-// AESTHETIQ — SIMULATION PIPELINE
-// File: js/simulationPipeline.js
-// =========================================================
 
 import {
   getProcedureMask,
@@ -33,7 +29,7 @@ import {
   warpUpperBlepharoplasty,
   warpLowerBlepharoplasty,
   warpLipLift
-} from "./faceWarp.js?v=26";
+} from "./faceWarp.js?v=28";
 
 import {
   renderWarp,
@@ -270,6 +266,38 @@ function usesGeometryWarp(procedure) {
     "lower-blepharoplasty",
     "lip-lift"
   ].includes(procedure);
+}
+
+function lipGeometrySpace(landmarks, width, height) {
+  if (!Array.isArray(landmarks) || landmarks.length < 468 || !(width > 0 && height > 0)) return null;
+  const face = Array.from({ length: 468 }, (_, i) => landmarks[i]);
+  if (!face.every(p => Number.isFinite(p?.x) && Number.isFinite(p?.y))) return null;
+  const xs = face.map(p => p.x * width), ys = face.map(p => p.y * height);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const side = Math.max(maxX - minX, maxY - minY) / .75;
+  if (side < 8) return null;
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  // Keep the strength the same when the photo's framing changes.
+  const points = landmarks.map(p => p ? { ...p,
+    x: .5 + (p.x * width - cx) / side,
+    y: .5 + (p.y * height - cy) / side,
+    z: Number.isFinite(p.z) ? p.z * width / side : p.z
+  } : p);
+  return {
+    points,
+    restore: warped => warped.map((point, i) => {
+      const original = landmarks[i], base = points[i];
+      if (!point || !original || !base) return point;
+      return { ...point,
+        x: original.x + (point.x - base.x) * side / width,
+        y: original.y + (point.y - base.y) * side / height,
+        z: Number.isFinite(point.z)
+          ? (Number(original.z) || 0) + (point.z - (Number(base.z) || 0)) * side / width
+          : original.z
+      };
+    })
+  };
 }
 
 function applyLandmarkConstraints(
@@ -716,11 +744,19 @@ function createSimulationLevel({
   let workingCanvas =
     copyCanvas(sourceCanvas);
 
+  let warpQuality = null;
+
   if (
     usesGeometryWarp(
       normalizedProcedure
     )
   ) {
+    const lipSpace = normalizedProcedure === "lip-filler"
+      ? lipGeometrySpace(landmarks, sourceCanvas.width, sourceCanvas.height)
+      : null;
+    const geometryOriginal = lipSpace?.points || landmarks;
+    const geometrySize = lipSpace ? { width: 1, height: 1 }
+      : { width: sourceCanvas.width, height: sourceCanvas.height };
     const constraints =
       getProcedureConstraints({
         procedure:
@@ -738,7 +774,7 @@ function createSimulationLevel({
     workingLandmarks =
       createWarpedLandmarks(
         normalizedProcedure,
-        landmarks,
+        geometryOriginal,
         level,
         anatomyProfile,
         tissueModel,
@@ -747,29 +783,30 @@ function createSimulationLevel({
         lipStyle,
         fillerProduct,
         fillerGoal,
-        {width:sourceCanvas.width,height:sourceCanvas.height}
+        geometrySize
       );
 
     workingLandmarks =
       constrainWarpByFaceScale(
-        landmarks,
+        geometryOriginal,
         workingLandmarks,
         normalizedProcedure
       );
 
     workingLandmarks = depthAwareWarp(
-      landmarks,workingLandmarks,normalizedProcedure
+      geometryOriginal,workingLandmarks,normalizedProcedure
     );
 
-    const warpReview = inspectWarp(landmarks,workingLandmarks,normalizedProcedure);
+    const warpReview = inspectWarp(geometryOriginal,workingLandmarks,normalizedProcedure);
     if (!warpReview.valid) {
-      workingLandmarks = moderateWarp(landmarks,workingLandmarks,warpReview.scale);
+      workingLandmarks = moderateWarp(geometryOriginal,workingLandmarks,warpReview.scale);
     }
+    warpQuality = inspectWarp(geometryOriginal,workingLandmarks,normalizedProcedure);
 
-    if (level === "balanced") {
+    if (DEBUG_MASKS && level === "balanced") {
       const comparison =
         compareFaceMorphometrics(
-          landmarks,
+          geometryOriginal,
           workingLandmarks
         );
       if (comparison) {
@@ -780,6 +817,8 @@ function createSimulationLevel({
         );
       }
     }
+
+    if (lipSpace) workingLandmarks = lipSpace.restore(workingLandmarks);
 
     // Render the complete displacement field, including surrounding skin.
     // A lip-only composite clipped out support motion and retained old edges.
@@ -925,7 +964,7 @@ function createSimulationLevel({
     quality: {
       ...quality,
       warp: usesGeometryWarp(normalizedProcedure)
-        ? inspectWarp(landmarks,workingLandmarks,normalizedProcedure)
+        ? warpQuality || inspectWarp(landmarks,workingLandmarks,normalizedProcedure)
         : null
     }
   };
@@ -1025,22 +1064,14 @@ export function runProcedureSimulation({
       mirrorX
     });
 
-  console.log(
-    "[AesthetIQ] LEVEL RESULTS",
-    {
-      procedure:
-        normalizedProcedure,
-
-      natural:
-        !!naturalResult?.canvas,
-
-      balanced:
-        !!balancedResult?.canvas,
-
-      enhanced:
-        !!enhancedResult?.canvas
-    }
-  );
+  if (DEBUG_MASKS) {
+    console.log("[AesthetIQ] Simulation levels", {
+      procedure: normalizedProcedure,
+      natural: !!naturalResult?.canvas,
+      balanced: !!balancedResult?.canvas,
+      enhanced: !!enhancedResult?.canvas
+    });
+  }
 
   return {
     procedure:

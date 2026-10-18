@@ -2087,6 +2087,45 @@ function getProcedureOptionData(procedureId) {
     return "#";
   }
 
+  function completePreviewUrl(cameraUrl) {
+    const destination = new URL(cameraUrl, window.location.href);
+    for (const key of ["option", "style", "product", "neuromodulator", "intensity", "stage", "day", "mode", "view"]) {
+      if (!destination.searchParams.has(key) && parameters.has(key)) {
+        destination.searchParams.set(key, parameters.get(key));
+      }
+    }
+    const settings = destination.searchParams;
+    const otherView = ["mode", "view"].some(key => {
+      const value = settings.get(key)?.trim().toLowerCase();
+      return value && !["2d", "preview", "camera"].includes(value);
+    });
+    if (!destination.pathname.endsWith("/simulation.html") || otherView) return destination;
+
+    const hasLipProduct = id => lipProducts.some(product => product.id === id);
+    const option = settings.get("option");
+    const lipProduct = settings.get("product") || (hasLipProduct(option) ? option : "provider");
+    const classicLip = settings.get("procedure") === "lip-filler" &&
+      (settings.get("style") || "classic") === "classic" && hasLipProduct(lipProduct) &&
+      (!option || option === "hyaluronic-acid" || hasLipProduct(option));
+    const botox = settings.get("procedure") === "glabella-neuromodulator" &&
+      (!option || option === "botox") &&
+      (!settings.get("product") || settings.get("product") === "botox") &&
+      (!settings.get("neuromodulator") || settings.get("neuromodulator") === "botox");
+    if (classicLip) {
+      if (!settings.get("style")) settings.set("style", "classic");
+      if (!settings.get("option")) settings.set("option", "hyaluronic-acid");
+      if (!settings.get("product")) settings.set("product", lipProduct);
+    } else if (botox) {
+      if (!settings.get("option")) settings.set("option", "botox");
+      if (!settings.get("product")) settings.set("product", "botox");
+      if (!settings.get("neuromodulator")) settings.set("neuromodulator", "botox");
+    } else {
+      return destination;
+    }
+    destination.pathname = destination.pathname.replace(/simulation\.html$/, "journey.html");
+    return destination;
+  }
+
   function renderError() {
     document.title =
       "Procedure Not Found | AesthetIQ";
@@ -3152,7 +3191,7 @@ continueButton.addEventListener(
         );
 
         window.location.href =
-          cameraUrl.href;
+          completePreviewUrl(cameraUrl).href;
 
         return;
       }
@@ -3207,7 +3246,7 @@ continueButton.addEventListener(
         );
 
         window.location.href =
-          cameraUrl.href;
+          completePreviewUrl(cameraUrl).href;
 
         return;
       }
