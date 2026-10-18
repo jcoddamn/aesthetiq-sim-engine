@@ -372,6 +372,20 @@ const SOURCES = {
     url: "https://www.galderma.com/us/sites/default/files/2023-05/Restylane_Kysse_eIFU_USA.pdf",
     summary: "Clinical studies tracked early reactions across several time windows and found that response varied between people and products."
   },
+  "lip-day10-photos": {
+    id: "lip-day10-photos",
+    title: "HA lip photographs before treatment and at day 10",
+    publisher: "Scientific Reports (2023)",
+    url: "https://www.nature.com/articles/s41598-023-31332-1",
+    summary: "Published examples informed checks of lip contours, mouth opening and surface detail. They do not determine the amount of simulated fullness or swelling."
+  },
+  "lip-agex-photos": {
+    id: "lip-agex-photos",
+    title: "Agex Fill Volume lip appearance study",
+    publisher: "Cureus (2024)",
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10911686/",
+    summary: "Before, immediate and six-month photo examples informed the visual review. The preview covers the first 28 days; it does not predict the six-month result."
+  },
   "botox-faq": {
     id: "botox-faq",
     title: "BOTOX Cosmetic frequently asked questions",
@@ -422,7 +436,8 @@ const JOURNEYS = {
     bruisingDefault: false,
     evidenceBasis: "The recovery windows draw on AAD, Cleveland Clinic and Restylane Kysse labeling. Published HA photos inform contour review. These references do not establish an exact outcome or identical behavior across fillers.",
     coefficientNote: COEFFICIENT_NOTE,
-    sources: ["aad-fillers", "cleveland-lip-fillers", "fda-kysse-patient", "galderma-kysse-ifu", "ruiz-lip-photos"].map(id => SOURCES[id]),
+    sources: ["aad-fillers", "cleveland-lip-fillers", "fda-kysse-patient", "galderma-kysse-ifu",
+      "ruiz-lip-photos", "lip-day10-photos", "lip-agex-photos"].map(id => SOURCES[id]),
     safetyInfo: {
       eligibility: "The Kysse reference labeling is for adults 22 and older. A clinician must check whether treatment is suitable.",
       common: [
@@ -575,7 +590,7 @@ const JOURNEYS = {
       journeyStage({
         id: "final", label: "Full-effect example", timing: "Around day 30", day: 30,
         phase: "established", effectProgress: 1,
-        note: "BOTOX Cosmetic describes full results by 30 days. This view shows the selected effect on frown creasing, with any remaining static lines preserved.",
+        note: "BOTOX Cosmetic describes full results by 30 days. This view illustrates less visible frown creasing. Resting creases may remain.",
         care: "A clinician can review the result in person. The image cannot determine a dose or a treatment plan.",
         sourceIds: ["botox-faq", "botox-prescribing"]
       }),

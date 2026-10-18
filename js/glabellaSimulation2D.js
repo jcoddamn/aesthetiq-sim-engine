@@ -141,6 +141,16 @@ function sample(values, width, height, x, y) {
     (values[y1 * width + x0] * (1 - u) + values[y1 * width + x1] * u) * v;
 }
 
+function chromaticMismatch(centerTone, centerColor, nearbyTone, nearbyColor) {
+  const ratio = clamp(centerTone / Math.max(1, nearbyTone), 0, 1);
+  // A shadow can reduce channels by a shared offset or by a shared proportion.
+  const offsetDifference = Math.max(Math.abs(centerColor[0] - nearbyColor[0]),
+    Math.abs(centerColor[1] - nearbyColor[1]));
+  const proportionalDifference = Math.max(Math.abs(centerColor[0] - nearbyColor[0] * ratio),
+    Math.abs(centerColor[1] - nearbyColor[1] * ratio));
+  return Math.min(offsetDifference, proportionalDifference);
+}
+
 function copyCanvas(source) {
   const canvas = globalThis.document?.createElement('canvas') ??
     (typeof OffscreenCanvas === 'function' ? new OffscreenCanvas(source.width, source.height) : null);
@@ -179,13 +189,21 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
     return { canvas, quality: failure('unreadable-photo', 'Use a photo captured or uploaded in this app.') };
   }
   const luminance = new Float32Array(width * height);
+  const redGreen = new Float32Array(luminance.length);
+  const blueGreen = new Float32Array(luminance.length);
   for (let i = 0; i < luminance.length; i++) {
     const p = i * 4;
     luminance[i] = pixels.data[p] * 0.2126 + pixels.data[p + 1] * 0.7152 + pixels.data[p + 2] * 0.0722;
+    redGreen[i] = pixels.data[p] - pixels.data[p + 1];
+    blueGreen[i] = pixels.data[p + 2] - pixels.data[p + 1];
   }
-  const fine = boxBlur(luminance, width, height, Math.max(1, Math.round(frame.eyeDistance / 220)));
+  const fineRadius = Math.max(1, Math.round(frame.eyeDistance / 220));
+  const fine = boxBlur(luminance, width, height, fineRadius);
+  const fineRedGreen = boxBlur(redGreen, width, height, fineRadius);
+  const fineBlueGreen = boxBlur(blueGreen, width, height, fineRadius);
   const correction = new Float32Array(luminance.length);
   const weights = new Float32Array(luminance.length);
+  const colorWeights = new Float32Array(luminance.length);
   const across = Math.max(3, frame.eyeDistance * 0.045);
   const along = Math.max(2, frame.eyeDistance * 0.026);
   const { axis } = frame;
@@ -193,11 +211,12 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
     x: axis.x * Math.cos(angle) - axis.y * Math.sin(angle),
     y: axis.x * Math.sin(angle) + axis.y * Math.cos(angle)
   }));
-  const tone = (x, y, normal) => (sample(fine, width, height, x, y) * 2 +
-    sample(fine, width, height, x - normal.y * along, y + normal.x * along) +
-    sample(fine, width, height, x + normal.y * along, y - normal.x * along) +
-    0.5 * sample(fine, width, height, x - normal.y * along * 2, y + normal.x * along * 2) +
-    0.5 * sample(fine, width, height, x + normal.y * along * 2, y - normal.x * along * 2)) / 5;
+  const tone = (values, x, y, normal) => (sample(values, width, height, x, y) * 2 +
+    sample(values, width, height, x - normal.y * along, y + normal.x * along) +
+    sample(values, width, height, x + normal.y * along, y - normal.x * along) +
+    0.5 * sample(values, width, height, x - normal.y * along * 2, y + normal.x * along * 2) +
+    0.5 * sample(values, width, height, x + normal.y * along * 2, y - normal.x * along * 2)) / 5;
+  const color = (x, y, normal) => [tone(fineRedGreen, x, y, normal), tone(fineBlueGreen, x, y, normal)];
   let creasePixels = 0;
   for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
     weights[y * width + x] = glabellaWeight(frame, x + x0, y + y0);
@@ -208,6 +227,7 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
     const index = y * width + x;
     const weight = weights[index];
     if (!weight || pixels.data[index * 4 + 3] < 250) continue;
+    let strongest = 0;
     for (const normal of directions) {
       // Do not read a brow or an eye as the dark side of a skin crease.
       const supports = [-1, 0, 1].every(side => [-1, 0, 1].every(end =>
@@ -215,17 +235,32 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
           x + normal.x * across * side - normal.y * along * 2 * end,
           y + normal.y * across * side + normal.x * along * 2 * end) > 0));
       if (!supports) continue;
-      const center = tone(x, y, normal);
-      const left = tone(x - normal.x * across, y - normal.y * across, normal);
-      const right = tone(x + normal.x * across, y + normal.y * across, normal);
+      const leftX = x - normal.x * across, leftY = y - normal.y * across;
+      const rightX = x + normal.x * across, rightY = y + normal.y * across;
+      const center = tone(fine, x, y, normal);
+      const left = tone(fine, leftX, leftY, normal);
+      const right = tone(fine, rightX, rightY, normal);
       const trough = Math.min(left, right) - center;
       if (trough <= 1.5) continue;
+      const centerColor = color(x, y, normal);
+      const colorDifference = Math.min(
+        chromaticMismatch(center, centerColor, left, color(leftX, leftY, normal)),
+        chromaticMismatch(center, centerColor, right, color(rightX, rightY, normal))
+      );
+      // Leave strong local color changes alone. This avoids artifacts; it does not identify skin marks.
+      const colorWeight = 1 - smoothstep((colorDifference - 2) / Math.max(3, trough * 0.5));
+      if (!colorWeight) continue;
       const alongContrast = Math.max(0, (sample(fine, width, height, x - normal.y * across, y + normal.x * across) +
         sample(fine, width, height, x + normal.y * across, y - normal.x * across)) / 2 -
         sample(fine, width, height, x, y));
       const orientation = clamp(1 - alongContrast / Math.max(2, trough), 0, 1);
-      correction[index] = Math.max(correction[index],
-        Math.min(45, trough - 1.5) * strength * orientation * weight);
+      const candidate = Math.min(45, trough - 1.5) * strength * orientation * weight * colorWeight;
+      if (candidate * colorWeight > strongest) {
+        strongest = candidate * colorWeight;
+        correction[index] = candidate;
+        // Keep this direction's color protection after softening the correction.
+        colorWeights[index] = colorWeight;
+      }
     }
     if (correction[index] > 1) creasePixels++;
   }
@@ -236,7 +271,7 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
     const p = i * 4;
     if (pixels.data[p + 3] < 250) continue;
     const room = 255 - Math.max(pixels.data[p], pixels.data[p + 1], pixels.data[p + 2]);
-    const delta = Math.min(room, Math.round(smoothCorrection[i] * weights[i]));
+    const delta = Math.min(room, Math.round(smoothCorrection[i] * weights[i] * colorWeights[i]));
     if (delta < 1) continue;
     // Equal channel offsets retain the source color differences and fine skin detail.
     pixels.data[p] += delta; pixels.data[p + 1] += delta; pixels.data[p + 2] += delta;
@@ -247,7 +282,7 @@ export function renderGlabellaPreview(sourceCanvas, landmarks, { level = 'balanc
   if (changedPixels < Math.max(12, frame.eyeDistance * 0.12)) {
     warnings.push(expression === 'neutral'
       ? 'Few resting lines are visible. A relaxed photo can show little visible change.'
-      : 'Few clear frown lines were detected. Use even lighting and capture a clear frown.');
+      : 'Few clear frown lines are visible in this photo. The preview may show little visible change.');
   }
   return { canvas, quality: { valid: true, code: 'ready', reason: null, warnings,
     metrics: { ...frame.metrics, expression, level, creasePixels, changedPixels,

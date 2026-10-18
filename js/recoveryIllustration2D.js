@@ -1,4 +1,5 @@
 import { renderWarp } from './warpRenderer.js';
+import { getGlabellaFrame, glabellaWeight } from './glabellaSimulation2D.js?v=3';
 
 // Recovery examples. Strengths control the drawing, not a patient's healing.
 const UPPER_OUTER = [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291];
@@ -154,17 +155,38 @@ function lipReactions(canvas, points, redness, bruising) {
 
 function glabellaReactions(canvas, points, redness, bruising) {
   if (!points || (!redness && !bruising)) return canvas;
+  const frame = getGlabellaFrame(normalized(points, canvas.width, canvas.height), canvas.width, canvas.height);
+  if (!frame.valid) return canvas;
   const left = points[107], right = points[336];
   const width = Math.hypot(right.x - left.x, right.y - left.y);
   if (width < 4) return canvas;
   const angle = Math.atan2(right.y - left.y, right.x - left.x);
   const x = (left.x + right.x) / 2, y = (left.y + right.y) / 2;
-  const output = copyCanvas(canvas);
-  if (output === canvas) return canvas;
-  const ctx = output.getContext('2d');
+  const extent = Math.ceil(Math.hypot(frame.radiusX, frame.radiusY));
+  const x0 = Math.max(0, Math.floor(frame.imageCenter.x - extent));
+  const y0 = Math.max(0, Math.floor(frame.imageCenter.y - extent));
+  const layer = document.createElement('canvas');
+  layer.width = Math.min(canvas.width, Math.ceil(frame.imageCenter.x + extent)) - x0;
+  layer.height = Math.min(canvas.height, Math.ceil(frame.imageCenter.y + extent)) - y0;
+  const ctx = layer.getContext('2d');
+  if (!ctx) return canvas;
+  ctx.save();
+  ctx.translate(-x0, -y0);
   // A diffuse reaction example between the brows, not an injection map.
   ellipse(ctx, x, y, width * .32, width * .40, '175,64,59', redness * .10, angle);
   ellipse(ctx, x, y, width * .20, width * .22, '101,59,81', bruising * .15, angle);
+  ctx.restore();
+  const pixels = ctx.getImageData(0, 0, layer.width, layer.height);
+  // Keep the tint off brow hair and eyes, even when the brows pull inward.
+  for (let row = 0; row < layer.height; row++) for (let col = 0; col < layer.width; col++) {
+    const alpha = (row * layer.width + col) * 4 + 3;
+    if (!pixels.data[alpha]) continue;
+    pixels.data[alpha] = Math.round(pixels.data[alpha] * glabellaWeight(frame, x0 + col, y0 + row));
+  }
+  ctx.putImageData(pixels, 0, 0);
+  const output = copyCanvas(canvas);
+  if (output === canvas) return canvas;
+  output.getContext('2d').drawImage(layer, x0, y0);
   return output;
 }
 

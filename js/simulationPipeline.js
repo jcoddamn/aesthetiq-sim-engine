@@ -1,4 +1,5 @@
 import {measurePreviewGeometry} from './previewMeasurements.js';
+import { getLipStyleProfile } from './lipProfiles.js?v=3';
 
 import {
   getProcedureMask,
@@ -272,26 +273,41 @@ function lipGeometrySpace(landmarks, width, height) {
   if (!Array.isArray(landmarks) || landmarks.length < 468 || !(width > 0 && height > 0)) return null;
   const face = Array.from({ length: 468 }, (_, i) => landmarks[i]);
   if (!face.every(p => Number.isFinite(p?.x) && Number.isFinite(p?.y))) return null;
-  const xs = face.map(p => p.x * width), ys = face.map(p => p.y * height);
+  const left = landmarks[61], right = landmarks[291];
+  const dx = (right.x - left.x) * width, dy = (right.y - left.y) * height;
+  const mouthWidth = Math.hypot(dx, dy);
+  if (mouthWidth < 2) return null;
+  const ux = dx / mouthWidth, uy = dy / mouthWidth;
+  const local = p => ({
+    x: p.x * width * ux + p.y * height * uy,
+    y: -p.x * width * uy + p.y * height * ux
+  });
+  const aligned = face.map(local);
+  const xs = aligned.map(p => p.x), ys = aligned.map(p => p.y);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
   const minY = Math.min(...ys), maxY = Math.max(...ys);
   const side = Math.max(maxX - minX, maxY - minY) / .75;
   if (side < 8) return null;
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-  // Keep the strength the same when the photo's framing changes.
-  const points = landmarks.map(p => p ? { ...p,
-    x: .5 + (p.x * width - cx) / side,
-    y: .5 + (p.y * height - cy) / side,
-    z: Number.isFinite(p.z) ? p.z * width / side : p.z
-  } : p);
+  // Work along the mouth so crop, scale and head tilt do not change the result.
+  const points = landmarks.map(p => {
+    if (!p) return p;
+    const alignedPoint = local(p);
+    return { ...p,
+      x: .5 + (alignedPoint.x - cx) / side,
+      y: .5 + (alignedPoint.y - cy) / side,
+      z: Number.isFinite(p.z) ? p.z * width / side : p.z
+    };
+  });
   return {
     points,
     restore: warped => warped.map((point, i) => {
       const original = landmarks[i], base = points[i];
       if (!point || !original || !base) return point;
+      const dx = (point.x - base.x) * side, dy = (point.y - base.y) * side;
       return { ...point,
-        x: original.x + (point.x - base.x) * side / width,
-        y: original.y + (point.y - base.y) * side / height,
+        x: original.x + (dx * ux - dy * uy) / width,
+        y: original.y + (dx * uy + dy * ux) / height,
         z: Number.isFinite(point.z)
           ? (Number(original.z) || 0) + (point.z - (Number(base.z) || 0)) * side / width
           : original.z
@@ -745,6 +761,7 @@ function createSimulationLevel({
     copyCanvas(sourceCanvas);
 
   let warpQuality = null;
+  const resolvedLipStyle = getLipStyleProfile(lipStyle).id;
 
   if (
     usesGeometryWarp(
@@ -780,7 +797,7 @@ function createSimulationLevel({
         tissueModel,
         constraints,
         procedureOption,
-        lipStyle,
+        resolvedLipStyle,
         fillerProduct,
         fillerGoal,
         geometrySize
@@ -796,6 +813,15 @@ function createSimulationLevel({
     workingLandmarks = depthAwareWarp(
       geometryOriginal,workingLandmarks,normalizedProcedure
     );
+
+    if (normalizedProcedure === "lip-filler" && resolvedLipStyle === "classic") {
+      // Add fullness around the captured mouth opening without changing the expression.
+      for (const id of [78, 191, 80, 81, 82, 13, 312, 311, 310, 415,
+        308, 324, 318, 402, 317, 14, 87, 178, 88, 95]) {
+        workingLandmarks[id] = { ...workingLandmarks[id],
+          x: geometryOriginal[id].x, y: geometryOriginal[id].y };
+      }
+    }
 
     const warpReview = inspectWarp(geometryOriginal,workingLandmarks,normalizedProcedure);
     if (!warpReview.valid) {

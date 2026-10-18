@@ -1,4 +1,4 @@
-import { getGlabellaFrame, glabellaWeight } from './glabellaSimulation2D.js';
+import { getGlabellaFrame, glabellaWeight } from './glabellaSimulation2D.js?v=3';
 
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const mean = values => values.reduce((sum, value) => sum + value, 0) / Math.max(1, values.length);

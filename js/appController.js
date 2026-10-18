@@ -12,7 +12,7 @@ import {
   runProcedureSimulationFromLandmarks,
   renderCanvasToElement,
   renderResultsToTargets
-} from "./simulationPipeline.js?v=48";
+} from "./simulationPipeline.js?v=49";
 
 import {
   getProcedureLabel,
@@ -44,8 +44,8 @@ import {
   getProcedureJourney,
   getRecoveryTimeline,
   getRecoveryStage
-} from "./recoveryTimeline.js?v=3";
-import {renderRecoveryIllustration} from "./recoveryIllustration2D.js?v=2";
+} from "./recoveryTimeline.js?v=4";
+import {renderRecoveryIllustration} from "./recoveryIllustration2D.js?v=3";
 
 import {
   drawPolygonOutline

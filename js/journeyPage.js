@@ -7,15 +7,15 @@ import { preparePreviewSource } from "./previewInput.js";
 import {
   runProcedureSimulationFromLandmarks,
   setMaskDebugEnabled,
-} from "./simulationPipeline.js?v=48";
-import { renderGlabellaPreview } from "./glabellaSimulation2D.js?v=2";
-import { compareExpressionCaptures } from "./expressionCapture.js";
+} from "./simulationPipeline.js?v=49";
+import { renderGlabellaPreview } from "./glabellaSimulation2D.js?v=3";
+import { compareExpressionCaptures } from "./expressionCapture.js?v=1";
 import {
   getProcedureJourney,
   getRecoveryStage,
   getRecoveryStageAtDay,
-} from "./recoveryTimeline.js?v=3";
-import { renderRecoveryIllustration } from "./recoveryIllustration2D.js?v=2";
+} from "./recoveryTimeline.js?v=4";
+import { renderRecoveryIllustration } from "./recoveryIllustration2D.js?v=3";
 import { createComparisonCanvas } from "./comparisonExport.js?v=2";
 
 const LEVELS = ["natural", "balanced", "enhanced"];
@@ -40,10 +40,19 @@ export function getJourneySelection(search = "") {
   const intensity = LEVELS.includes(params.get("intensity"))
     ? params.get("intensity")
     : "balanced";
+  const stageId = params.get("stage") || "immediate";
+  const namedStage = journey?.stages.some(stage => stage.id === stageId);
+  const dayInput = params.has("day")
+    ? params.get("day")
+    : !namedStage && stageId.startsWith("day-")
+      ? stageId.slice(4)
+      : null;
+  // Links use the same whole days as the slider.
+  const day = dayInput?.trim() ? Math.round(Number(dayInput)) : NaN;
   const stage = journey
-    ? params.has("day")
-      ? getRecoveryStageAtDay(procedure, params.get("day"), context)
-      : getRecoveryStage(procedure, params.get("stage") || "immediate", context)
+    ? dayInput !== null
+      ? getRecoveryStageAtDay(procedure, day, context)
+      : getRecoveryStage(procedure, stageId, context)
     : null;
   return {
     procedure,
@@ -879,4 +888,4 @@ export function initJourneyPage(root = document) {
   return { clear };
 }
 
-if (typeof document !== "undefined") initJourneyPage();
+if (typeof document !== "undefined" && typeof document.getElementById === "function") initJourneyPage();
