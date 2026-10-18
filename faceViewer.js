@@ -1,7 +1,7 @@
 import {viewerPresentation,framedCameraDistance} from './js/viewerPresentation.js';
 import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
-import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccalSlimming,warpFacelift,warpBrowLift,warpUpperBlepharoplasty,warpLowerBlepharoplasty,warpLipLift} from "./js/faceWarp.js?v=25";
+import {warpLipFiller,warpChin,warpJawline,warpCheeks,warpRhinoplasty,warpBuccalSlimming,warpFacelift,warpBrowLift,warpUpperBlepharoplasty,warpLowerBlepharoplasty,warpLipLift} from "./js/faceWarp.js?v=29";
 import {constrainWarpByFaceScale} from "./js/faceMorphometrics.js?v=3";
 import {getSharedIntensity} from "./js/sharedProcedureMath.js?v=1";
 import {detectFaceLandmarksFromImage} from "./js/mediapipeRunner.js?v=2";

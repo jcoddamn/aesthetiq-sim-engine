@@ -18,7 +18,7 @@
     "frown_line_photo_reference_sources": 19,
     "onabotulinum_containing_photo_source_entries": 8
   },
-  "photographic_assets_visually_reviewed": 4,
+  "photographic_assets_visually_reviewed": 8,
   "new_quantitatively_calibrated_patient_cases": 0,
   "patient_images_in_app_or_repository": false,
   "changes": [
@@ -45,6 +45,38 @@
       ],
       "change": "Add a day-3 onset checkpoint before the stronger day-7 example. 0.25 is a conservative drawing setting, not a proportion calculated from an ordinal wrinkle score, a responder rate, or photo pixels. Existing day-2/day-7/day-30 anchors remain.",
       "measured_coefficient_fit": false
+    },
+    {
+      "procedure": "lip-filler",
+      "source_ids": [
+        "L21",
+        "L02"
+      ],
+      "change": "Classic filler keeps the captured inner-mouth opening fixed in the image plane. Added fullness stays around the existing opening; teeth and expression are preserved. The existing Classic displacement-only lower-contour smoothing is retained.",
+      "measured_coefficient_fit": false
+    },
+    {
+      "procedure": "lip-filler",
+      "source_ids": [
+        "L01",
+        "L21"
+      ],
+      "change": "Normalize geometry along the mouth before shaping, then rotate the displacement back. The same face gets the same lip change after in-plane head tilt, scaling or reframing. This is an engineering invariance fix, not a tissue model fit.",
+      "measured_coefficient_fit": false
+    },
+    {
+      "procedure": "glabella-neuromodulator",
+      "source_ids": [
+        "R02"
+      ],
+      "change": "Protect strong local color differences while softening coherent crease shadows, including slanted creases. Apply the existing glabella mask to the separate redness/bruising layer. Faint-line guidance describes a subtle result rather than treating small pixel change as a capture failure.",
+      "measured_coefficient_fit": false
+    },
+    {
+      "procedure": "both journeys",
+      "source_ids": [],
+      "change": "Make URL days agree with the whole-day slider and export; preserve named anchors and support generated day-N links. State that resting creases may remain without claiming the renderer classifies static lines.",
+      "measured_coefficient_fit": false
     }
   ],
   "reviews": [
@@ -57,16 +89,16 @@
       "figures": "Figure 2: baseline and immediate day 0. Figure 3: one patient at baseline, 2 weeks and 3 months; unique cases across both figures not verified.",
       "license": "CC BY 4.0, verified in primary article XML",
       "consent": "Written consent for participation and anonymized clinical-data use for future training/scientific purposes. Does not separately establish machine-learning use.",
-      "limitations": "Selected examples from 13 women aged 42\u201369. No actual day 1, day 3 or day 7 panels verified. Captions and license verified from indexed primary full text; no pixel-level audit.",
+      "limitations": "Selected published examples. The images are cropped below the eyes; pose, scale, gloss and lighting differ. Printed panel dates disagree with the XML figure-number mapping, so these assets are excluded from exact stage fitting.",
       "review_use": "qualitative reference review only",
-      "verification": "pixels and full-text XML inspected",
+      "verification": "Two publisher PNG assets and primary article XML inspected; all seven frontal panels attempted with local Face Landmarker, none detected.",
       "observed_asset_labels": {
-        "jcm-13-05705-g002.jpg": [
+        "jcm-13-05705-g002.png": [
           "Before T0",
           "After T2 Weeks",
           "After T3 Months"
         ],
-        "jcm-13-05705-g003.jpg": [
+        "jcm-13-05705-g003.png": [
           "two rows of Before T0 / After T0 post"
         ]
       },
@@ -106,11 +138,51 @@
       "consent": "Explicit written consent for images for research purposes and paper publication.",
       "limitations": "Combined glabellar and lateral canthal treatment prevents attributing all changes to glabella alone. Different illustrated patients at different follow-ups, rather than one continuous timeline. Five early sets have rest/smile/frown views; the three later sets have one expression each and illustrate limited eye-size response. Eight unique cases were not independently established.",
       "review_use": "qualitative reference review only",
-      "verification": "pixels for figures 4 and 7 and full-text XML inspected",
+      "verification": "Figures 4, 7 and 8 plus primary XML inspected. Twelve rest/frown panels passed local Face Landmarker and the glabella frame check. Three strengths per panel were compared against the latest main renderer.",
       "fit_exclusions": [
         "Glabellar and lateral-canthal co-treatment",
         "Different people at day 3 and day 5, not one longitudinal curve",
         "No reliable isolated-glabella effect-size estimate"
+      ],
+      "render_limit": "The renderer softens local shadows; it does not reproduce muscle relaxation, eye opening, brow movement, or the magnitude of the pictured clinical outcomes."
+    },
+    {
+      "id": "L21",
+      "title": "Evaluation of the attractiveness of lips with different volumes after filling with hyaluronic acid",
+      "doi": "10.1038/s41598-023-31332-1",
+      "url": "https://www.nature.com/articles/s41598-023-31332-1",
+      "product": "Rennova Fill",
+      "figures": "Figures 3 and 4, frontal/profile panels before treatment and at day 10.",
+      "license": "CC BY 4.0, verified in primary article XML; no separate figure credit excluding the pictured panels was found.",
+      "consent": "Article states that all patients signed informed consent. This review does not establish authorization for a persistent training corpus.",
+      "verification": "Both original figures visually inspected. All four frontal panels attempted with local Face Landmarker; no face detected.",
+      "review_use": "Qualitative contour, mouth-closure and surface-detail review; synthetic regression design.",
+      "observations": [
+        "Figure 3 shows closed lips in both frontal panels.",
+        "Figure 4 retains a small central opening with visible teeth.",
+        "Lip gloss, lighting, pose and surface appearance differ."
+      ],
+      "fit_exclusions": [
+        "Lower-face crops lack stable eye anchors.",
+        "Two selected examples do not establish outcome magnitude or recovery coefficients.",
+        "Profile panels cannot supply the supported frontal 2D metrics."
+      ]
+    },
+    {
+      "id": "L02",
+      "title": "Real-World Outcomes of Lip Augmentation Using a Hyaluronic Acid-Based Filler With Low 1,4-Butanediol Diglycidyl Ether Content: A Prospective, Open-Label, Multicenter, Post-marketing Study",
+      "doi": "10.7759/cureus.53513",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10911686/",
+      "product": "Agex Fill Volume",
+      "figures": "Figure 1, two lower-face sequences before, immediately after and at six months.",
+      "license": "CC BY 4.0, verified in primary article XML.",
+      "consent": "The ethics statement says consent was obtained or waived; photo-specific processing consent was not independently established. Temporary article-figure review only, no redistribution or persistent corpus.",
+      "verification": "Original figure extracted from the publisher PDF and visually inspected. All six frontal panels attempted with local Face Landmarker; no face detected.",
+      "review_use": "Qualitative mouth-opening, contour and surface-detail review.",
+      "fit_exclusions": [
+        "Small lower-face crops, approximately 328–329 by 211–212 pixels each.",
+        "Missing eye alignment anchors and differing lighting, gloss and expression.",
+        "Six-month reference follow-up is outside the 28-day simulator horizon."
       ]
     }
   ],
@@ -119,5 +191,119 @@
     "Clinician review of both expression and recovery outputs",
     "Physical iPhone 12 capture, touch and image-save testing"
   ],
-  "temporary_image_handling": "Reference photos are only temporary review inputs; remove local photos after inspection. Preserve URLs, stage-label conflicts and decisions here."
+  "temporary_image_handling": "All downloaded patient photographs, publisher PDF copies, panel crops, generated patient previews, landmark coordinates and individual image-comparison files were deleted after this review. Only aggregate checks, source URLs, stage-label conflicts and engineering decisions remain. No patient images or landmarks are in the app or repository.",
+  "baseline_commit": "977bf38ad9feeb67e31994cd054d4c96b6acff86",
+  "software_comparison": {
+    "review_type": "Temporary local engineering comparison; not patient outcome validation",
+    "article_figure_assets": 8,
+    "panel_detection_attempts": 29,
+    "lip_panels": {
+      "attempted": 17,
+      "detected": 0,
+      "usable_full_face_comparisons": 0,
+      "reason": "Published frontal panels were lower-face crops. No face or missing landmarks were fabricated."
+    },
+    "glabella_panels": {
+      "attempted": 12,
+      "detected": 12,
+      "caption_defined_patient_figure_sets": 3,
+      "expressions": [
+        "neutral",
+        "frown"
+      ],
+      "before_treatment_inputs": 6,
+      "after_treatment_stress_inputs": 6,
+      "render_comparisons": 36,
+      "strengths": [
+        "natural",
+        "balanced",
+        "enhanced"
+      ],
+      "scope": "Baseline and already-treated images were both used to check renderer behavior. These are 36 software output comparisons, not 36 patients or clinically calibrated cases."
+    },
+    "actual_reference_days": [
+      3,
+      5
+    ],
+    "lip_model_horizon_days": 28,
+    "timing_rule": "Retain source follow-up separately from the model day. Do not relabel a day-30, month-3 or month-6 source as the settled day-28 view.",
+    "landmark_runtime": {
+      "name": "MediaPipe Python Face Landmarker",
+      "version": "1.1.0",
+      "delegate": "CPU",
+      "model_url": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+      "model_sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+      "detection_confidence": 0.5,
+      "presence_confidence": 0.5,
+      "note": "The browser uses its existing FaceMesh build; this local research runner does not validate equivalence between detectors."
+    },
+    "measurement_protocol": "No numerical lip comparison was possible. Glabella is not quantifiable with the current frontal facial-landmark endpoint registry. No calibration gate was bypassed.",
+    "clinical_calibration_applied": false,
+    "patient_specific_coordinates_or_images_retained": false,
+    "temporary_assets_deleted": true,
+    "aggregate_render_checks": {
+      "valid_frames_and_renders": 36,
+      "checked_outputs": 36,
+      "outputs_changed_by_color_guard": 21,
+      "pixels_changed_outside_glabella_mask": 0,
+      "maximum_RGB_channel_difference_from_previous_renderer": 10,
+      "interpretation": "Output-locality and artifact checks only. These counts are not clinical error metrics or effect sizes. Recovery was disabled for the paper comparison montages; reaction boundaries were checked with synthetic regression fixtures."
+    }
+  },
+  "software_verification": {
+    "automated_tests": {
+      "command": "node --test --test-isolation=none tests/*.test.mjs",
+      "passed": 123,
+      "failed": 0
+    },
+    "browser": {
+      "script": "tests/journey.browser.mjs",
+      "engine": "Chromium 134.0.6998.35",
+      "scenarios": [
+        "desktop lip journey",
+        "desktop BOTOX journey",
+        "390px mobile lip journey",
+        "390px mobile BOTOX journey"
+      ],
+      "passed": 4,
+      "page_errors": 0,
+      "horizontal_overflow": false,
+      "real_operations": [
+        "procedure wizard navigation",
+        "local synthetic PNG decoding and upload",
+        "consent and capture gating",
+        "duplicate expression rejection",
+        "three strengths",
+        "own original for each expression",
+        "whole-day deep links",
+        "timeline round trip",
+        "recovery and bruising toggles",
+        "close-up",
+        "actual labeled PNG download",
+        "photo clearing"
+      ],
+      "mocked_operations": [
+        "FaceMesh landmark detection",
+        "remote decorative images"
+      ],
+      "physical_device_tested": false
+    },
+    "lip_regressions": [
+      "original lower-lip curvature",
+      "closed and open mouth position",
+      "settled teeth pixels",
+      "head roll and framing invariance",
+      "style aliases and fallback",
+      "existing recovery contour and skin-tone fixtures"
+    ],
+    "glabella_regressions": [
+      "colored marks beside ordinary shadows",
+      "slanted marks and crease directions",
+      "additive and proportional shading",
+      "brow/eye reaction exclusions",
+      "both expressions through onset, peak and wearing off",
+      "repeat-scrub and recovery-toggle independence"
+    ],
+    "clinical_validation_complete": false
+  }
 }

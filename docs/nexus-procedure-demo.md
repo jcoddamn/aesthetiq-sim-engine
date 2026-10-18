@@ -1,6 +1,6 @@
 # Nexus procedure demo
 
-Use these two guided flows to show the complete software journey: add photos, create a preview, explore recovery, compare views, save a labeled image and clear the photos. Describe them as implemented procedure visualizations. Clinical review and real outcome comparison are still pending.
+Use these two guided flows to show the complete software journey: add photos, create a preview, explore recovery, compare views, save a labeled image and clear the photos. Describe them as implemented procedure visualizations. Clinical review and quantitative outcome validation are still pending.
 
 ## Scope
 
@@ -48,17 +48,28 @@ Status recorded on October 18, 2026. Passing a software check does not establish
 
 ### Photo-reference update
 
-The new references are now connected to three software changes:
+The references now inform these software changes:
 
 - Classic lip shaping smooths the added movement instead of averaging away the person's original lower-lip curve. Swelling remains separate and the settled view keeps the original color.
+- Classic shaping keeps the captured mouth opening and teeth in place. A closed mouth stays closed; an existing opening is preserved. Head tilt and photo framing no longer change the intended lip displacement.
 - Frown-line rendering now follows vertical and slanted creases. Sampling stays clear of eyes and brows, and the renderer does not add eye enlargement from the combined-treatment examples.
+- A local color check reduces unwanted lightening of strongly colored marks. Redness and bruising use the same protected glabella region as the crease effect. This check does not classify skin conditions or distinguish static from dynamic lines.
 - The BOTOX timeline has a day-3 checkpoint before the stronger day-7 example. Its drawing strength is illustrative; ordinal wrinkle scores were not converted into pixel percentages.
+- Timeline links use whole days, agree with the slider and export, and preserve named checkpoints. A `stage=day-10` link opens day 10. A source photographed after the lip model's day-28 endpoint keeps its actual follow-up date in the research record.
 
-Four published photographic assets were inspected. The lip article's retrieved figure captions and embedded image labels disagree, so it was used for contour review only. The BOTOX expression examples include treatment around the eyes as well as the glabella; they were used to review crease appearance, not to fit an isolated treatment magnitude. The onabotulinum onset study was checked against its primary text and table, without using its separate prabotulinum arm.
+Eight published photographic assets were visually inspected: two Genefill figures, two day-10 HA figures, one Agex figure and three onabotulinum expression figures. The Genefill captions and embedded image labels disagree, so those assets remain excluded from exact stage fitting.
+
+All 17 frontal lip panels were attempted with local Face Landmarker. None provided a detected full face: the published images omit the eye alignment anchors, and the Agex panels are also small. Their visible contours, closure and texture informed the engineering review, while synthetic faces provided reproducible geometry tests. No missing facial landmarks were invented.
+
+All 12 neutral/frown panels from three onabotulinum figure sets ran through the glabella renderer at all three strengths, producing 36 software output comparisons. These include six untreated inputs and six already-treated stress inputs. The revised crease effect changed no pixels outside its treatment mask. The photos include treatment around the eyes, differ in framing and exposure, and are selected examples. The renderer still retains more contraction and creasing than some published outcomes: local shadow softening does not reproduce muscle relaxation or establish clinical prediction accuracy. Reaction-boundary checks used synthetic fixtures separately.
+
+The existing day-3 onset checkpoint and its source review were retained from the preceding update. This additional pass did not fit or change the clinical drawing coefficients.
 
 The source decisions are in [the photo-reference review](../research/nexus-photo-reference-review.json). No patient photos are bundled with the app. This pass adds no clinically calibrated cases.
 
-All **104 automated tests pass**, including the guided journeys, stage rendering, exports, retained lip contour, slanted frown creases, and protection of eyes, brows and skin texture. Synthetic render sheets were inspected. A fresh local Chromium check could not launch because this environment denied its socket creation; the earlier browser checks below describe the preceding build. Physical iPhone testing and clinician review are still pending.
+All **123 automated tests pass**, including the guided journeys, stage rendering, exports, retained lip contour and teeth, roll invariance, slanted crease and color protection, and treatment boundaries. Run them with `node --test --test-isolation=none tests/*.test.mjs`.
+
+The combined update also passed four actual Chromium scenarios: both procedures on desktop and at a 390 px mobile viewport. These checks used synthetic PNG photos and a stubbed FaceMesh, with the real application rendering, controls and PNG download. There were no page errors or horizontal overflow. The reusable check is `tests/journey.browser.mjs`; it starts its own local server. Set `CHROMIUM_EXECUTABLE_PATH` if Chromium is installed outside Playwright's default location. Physical iPhone testing and clinician review remain pending.
 
 | Check | Status |
 | --- | --- |
@@ -67,9 +78,11 @@ All **104 automated tests pass**, including the guided journeys, stage rendering
 | Guided lip flow in real Chrome: upload, render, timeline, close-up, export and clear | Passed; export readability fixed and the photo flow rechecked twice |
 | Guided-page flow with real rendering, timelines and export, but mocked photos, detector and camera | All eight tests passed |
 | Photo helper: cancelled model loading, late callbacks, multiple faces and file checks | All five tests passed with a fake FaceMesh |
-| Synthetic frown rendering: local crease softening, protected eyes and brows, and expression checks | All seven tests passed |
+| Synthetic frown rendering: local and slanted creases, color protection, eyes, brows and expression checks | All current regression tests passed |
 | BOTOX guided flow in Chromium at 320 px and 390 px | Passed: expression and day switches, correct exports, no horizontal overflow or page errors; photo decoding and face detection were mocked |
 | Lip strength across portrait, landscape and padded versions of the same face | All four quality tests passed; framing no longer changes the treatment strength |
+| Latest combined build in desktop and 390 px Chromium: both complete procedure flows | Four scenarios passed, including actual PNG upload/decoding, export and clearing; FaceMesh was stubbed |
+| Temporary published photo review | Eight assets visually reviewed; 17 lip crops rejected by detection; 12 glabella panels rendered at three strengths; no calibrated cases |
 | Physical iPhone 12, including Safari camera, touch controls and saving images | Pending |
 | Matched real neutral/frown photos reviewed by a clinician | Pending |
 | Comparison against consented, documented treatment and recovery photo series | Pending |
@@ -90,4 +103,4 @@ The sources support the treatment sequence and recovery context. They do not val
 
 ## Application description draft
 
-AesthetIQ has implemented two photo-based procedure journeys: Classic HA lip filler and BOTOX Cosmetic for frown lines. Users can compare their starting photos with illustrative stages from immediately after treatment through settling or full effect, then save a labeled comparison. Published clinical information guides the timeline; the current checks cover software behavior and an uploaded-photo lip flow in Chrome. Clinical review, matched real-photo evaluation and physical-device testing remain to be completed.
+AesthetIQ has implemented two photo-based procedure journeys: Classic HA lip filler and BOTOX Cosmetic for frown lines. Users can compare their starting photos with illustrative stages from immediately after treatment through settling or full effect, then save a labeled comparison. Published clinical information guides the timeline, and reviewed reference photographs have informed contour, expression and surface-detail refinements. The build passes 123 automated tests and desktop/mobile Chromium workflow checks using synthetic test photos. Clinical review, quantitative evaluation against matched treatment series and physical-device testing remain to be completed.
